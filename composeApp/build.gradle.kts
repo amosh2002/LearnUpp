@@ -13,7 +13,7 @@ plugins {
 kotlin {
     cocoapods {
         version = "1.0"
-        summary = "MCP Shared Module"
+        summary = "LearnUpp Shared Module"
         homepage = ""
         ios.deploymentTarget = "15.6"
 
@@ -80,11 +80,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.mcp"
+    namespace = "com.learnupp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.mcp"
+        applicationId = "com.learnupp"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -111,7 +111,7 @@ android {
 }
 
 buildkonfig {
-    packageName = "com.mcp"
+    packageName = "com.learnupp"
     defaultConfigs {
     }
 }
