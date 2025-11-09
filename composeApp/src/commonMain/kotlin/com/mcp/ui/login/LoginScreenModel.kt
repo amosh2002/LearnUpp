@@ -1,0 +1,43 @@
+package com.mcp.ui.login
+
+import com.mcp.domain.usecase.auth.LoginUseCase
+import com.mcp.domain.usecase.auth.LoginUserParams
+import com.mcp.ui.base.BaseScreenModel
+import com.mcp.util.MCPStrings
+import com.mcp.util.getValue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+class LoginScreenModel(
+    private val loginUseCase: LoginUseCase
+) : BaseScreenModel() {
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    suspend fun login(
+        ipAddress: String,
+        port: String,
+        username: String,
+        password: String
+    ): String? {
+        _isLoading.value = true
+
+        val success =
+            loginUseCase(
+                LoginUserParams(
+                    ipAddress,
+                    port,
+                    username,
+                    password
+                )
+            )
+
+        _isLoading.value = false
+
+        return if (success) null else MCPStrings.LOGIN_ERROR_INVALID_CREDENTIALS.getValue()
+    }
+}
+
+

@@ -1,0 +1,13 @@
+package com.mcp.di
+
+import org.koin.core.module.Module
+
+fun sharedModules(): List<Module> = listOf(
+	dataModule,
+	domainModule,
+	screenModelsModule,
+	networkModule,
+	permissionsModule
+)
+
+
