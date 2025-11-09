@@ -17,9 +17,7 @@ class LoginScreenModel(
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     suspend fun login(
-        ipAddress: String,
-        port: String,
-        username: String,
+        email: String,
         password: String
     ): String? {
         _isLoading.value = true
@@ -27,9 +25,7 @@ class LoginScreenModel(
         val success =
             loginUseCase(
                 LoginUserParams(
-                    ipAddress,
-                    port,
-                    username,
+                    email,
                     password
                 )
             )

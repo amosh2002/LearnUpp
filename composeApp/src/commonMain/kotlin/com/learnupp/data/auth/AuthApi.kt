@@ -5,8 +5,7 @@ import kotlinx.coroutines.delay
 
 interface AuthApi {
     suspend fun login(
-        ipAddress: String, port: String,
-        username: String, password: String
+        email: String, password: String
     ): String?
 
     suspend fun logout(): Boolean
@@ -14,12 +13,11 @@ interface AuthApi {
 
 class KtorAuthApi(private val client: HttpClient) : AuthApi {
     override suspend fun login(
-        ipAddress: String, port: String,
-        username: String, password: String
+        email: String, password: String
     ): String? {
         delay(300)
 
-        if (username == "user" && password == "pass") {
+        if (email == "user" && password == "pass") {
             return "bearer token_123"
         }
 

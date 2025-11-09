@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,9 +52,8 @@ class LoginScreen : BaseScreen(ScreenNameStrings.LOGIN) {
         val navigator = LocalNavigator.currentOrThrow
         val dialogState = LocalDialogState.current
 
-        var ipAddress by remember { mutableStateOf("") }
-        var port by remember { mutableStateOf("") }
-        var username by remember { mutableStateOf("") }
+        
+        var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
 
         val isLoading by screenModel.isLoading.collectAsState()
@@ -99,33 +97,14 @@ class LoginScreen : BaseScreen(ScreenNameStrings.LOGIN) {
                         color = Color(0xFF64748B)
                     )
                     Spacer(Modifier.height(20.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = ipAddress,
-                            onValueChange = { ipAddress = it },
-                            label = { Text("IP Address") },
-                            modifier = Modifier.weight(2f),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-
-                        OutlinedTextField(
-                            value = port,
-                            onValueChange = { port = it },
-                            label = { Text("Port") },
-                            modifier = Modifier.weight(1f),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-                    }
+                    
                     Spacer(Modifier.height(20.dp))
                     OutlinedTextField(
-                        value = username,
-                        onValueChange = { username = it },
-                        label = { Text("Username") },
-                        modifier = Modifier.fillMaxWidth()
+                        value = email,
+                        onValueChange = { email = it },
+                        label = { Text("Email") },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                     )
                     Spacer(Modifier.height(12.dp))
                     OutlinedTextField(
@@ -140,8 +119,7 @@ class LoginScreen : BaseScreen(ScreenNameStrings.LOGIN) {
                             screenModel.screenModelScope.launch {
                                 val errorMessage =
                                     screenModel.login(
-                                        ipAddress, port,
-                                        username, password
+                                        email, password
                                     )
 
                                 // Show error dialog if there's an error

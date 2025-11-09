@@ -2,9 +2,7 @@ package com.learnupp.domain.repo
 
 interface AuthRepository {
     suspend fun login(
-        ipAddress: String,
-        port: String,
-        username: String,
+        email: String,
         password: String
     ): Boolean
 

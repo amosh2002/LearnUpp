@@ -9,15 +9,12 @@ class AuthRepositoryImpl(
     private val authApi: AuthApi,
 ) : AuthRepository {
     override suspend fun login(
-        ipAddress: String,
-        port: String,
-        username: String,
+        email: String,
         password: String
     ): Boolean {
         // Call API to get bearer token
         val bearerToken = authApi.login(
-            ipAddress, port,
-            username, password)
+            email, password)
 
         // Save token in session manager and return true if login was successful
         if (!bearerToken.isNullOrBlank()) {

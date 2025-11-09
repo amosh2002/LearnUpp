@@ -6,9 +6,7 @@ import com.learnupp.domain.repo.AuthRepository
 abstract class LoginUseCase : BaseSuspendUseCase<LoginUserParams, Boolean>()
 
 data class LoginUserParams(
-    val ipAddress: String,
-    val port: String,
-    val username: String,
+    val email: String,
     val password: String
 )
 
@@ -17,9 +15,7 @@ class LoginUseCaseImpl(
 ) : LoginUseCase() {
     override suspend fun invoke(params: LoginUserParams): Boolean {
         return authRepository.login(
-            ipAddress = params.ipAddress,
-            port = params.port,
-            username = params.username,
+            email = params.email,
             password = params.password
         )
     }
