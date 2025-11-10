@@ -10,6 +10,12 @@ import com.learnupp.data.camera.InMemoryCameraStorage
 import com.learnupp.data.camera.KtorCameraApi
 import com.learnupp.domain.repo.AuthRepository
 import com.learnupp.domain.repo.CameraRepository
+import com.learnupp.data.reels.ReelsApi
+import com.learnupp.data.reels.MockReelsApi
+import com.learnupp.data.reels.ReelsStorage
+import com.learnupp.data.reels.InMemoryReelsStorage
+import com.learnupp.data.reels.ReelsRepositoryImpl
+import com.learnupp.domain.repo.ReelsRepository
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -21,6 +27,11 @@ val dataModule = module {
     single<CameraApi> { KtorCameraApi(client = get(Qualifiers.Auth)) }
     single<CameraStorage> { InMemoryCameraStorage() }
     single<CameraRepository> { CameraRepositoryImpl(get(), get()) }
+
+    // Reels (mocked)
+    single<ReelsApi> { MockReelsApi() }
+    single<ReelsStorage> { InMemoryReelsStorage() }
+    single<ReelsRepository> { ReelsRepositoryImpl(get(), get()) }
 }
 
 

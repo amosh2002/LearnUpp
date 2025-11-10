@@ -3,7 +3,7 @@ package com.learnupp.di
 import com.learnupp.ui.home.HomeScreenModel
 import com.learnupp.ui.login.LoginScreenModel
 import com.learnupp.ui.more.MoreScreenModel
-import org.koin.core.module.dsl.factoryOf
+import com.learnupp.ui.reels.ReelsScreenModel
 import org.koin.dsl.module
 
 val screenModelsModule = module {
@@ -26,6 +26,18 @@ val screenModelsModule = module {
         )
     }
 
+    // Reels
+    single {
+        ReelsScreenModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
 
     // More
     single {

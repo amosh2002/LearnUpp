@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,9 +29,11 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.learnupp.ui.cameras.CamerasScreen
 import com.learnupp.ui.home.HomeScreen
 import com.learnupp.ui.more.MoreScreen
+import com.learnupp.ui.reels.ReelsScreen
 
 enum class ScreenNameStrings(val valueEN: String) {
     HOME("Home"),
+    REELS("Reels"),
     CAMERAS("Cameras"),
     MORE("More"),
     LOGIN("Login");
@@ -44,6 +47,7 @@ interface NavigationItem {
 
 enum class NavBarItems(override val title: ScreenNameStrings) : NavigationItem {
     Home(ScreenNameStrings.HOME),
+    Reels(ScreenNameStrings.REELS),
     Cameras(ScreenNameStrings.CAMERAS),
     More(ScreenNameStrings.MORE)
 }
@@ -103,6 +107,7 @@ fun LearnUppBottomNavBar() {
             val isSelected = (navigator.lastItem as? BaseScreen)?.key == item.title.getValue()
             val iconChar = when (item) {
                 NavBarItems.Home -> Icons.Default.Home
+                NavBarItems.Reels -> Icons.Default.PlayArrow
                 NavBarItems.Cameras -> Icons.Default.Videocam
                 NavBarItems.More -> Icons.Default.MoreHoriz
             }
@@ -125,6 +130,7 @@ fun LearnUppBottomNavBar() {
                 onClick = {
                     val screen = when (item) {
                         NavBarItems.Home -> HomeScreen()
+                        NavBarItems.Reels -> ReelsScreen()
                         NavBarItems.Cameras -> CamerasScreen()
                         NavBarItems.More -> MoreScreen()
                     }

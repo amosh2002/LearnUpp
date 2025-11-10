@@ -11,14 +11,16 @@ import com.learnupp.di.sharedModules
 import com.learnupp.util.LocalAppComponent
 import com.learnupp.util.LocalizationService
 import com.learnupp.util.PreferencesManager
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
+import com.learnupp.util.AppContextHolder
 import org.koin.mp.KoinPlatform.getKoin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        // Init application context holder for utilities like share sheets
+        AppContextHolder.appContext = applicationContext
 
         // Retrieve PermissionsService (after delegates are in Koin)
         val preferencesManager: PreferencesManager = getKoin().get()

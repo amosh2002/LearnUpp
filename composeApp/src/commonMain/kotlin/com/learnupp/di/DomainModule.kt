@@ -16,6 +16,20 @@ import com.learnupp.domain.usecase.camera.ReloadAllCamerasUseCase
 import com.learnupp.domain.usecase.camera.ReloadAllCamerasUseCaseImpl
 import com.learnupp.domain.usecase.camera.ReloadFeaturedCameraUseCase
 import com.learnupp.domain.usecase.camera.ReloadFeaturedCameraUseCaseImpl
+import com.learnupp.domain.usecase.reels.GetReelsUseCase
+import com.learnupp.domain.usecase.reels.GetReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.PreloadReelsUseCase
+import com.learnupp.domain.usecase.reels.PreloadReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.ReloadReelsUseCase
+import com.learnupp.domain.usecase.reels.ReloadReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.ToggleReelLikeUseCase
+import com.learnupp.domain.usecase.reels.ToggleReelLikeUseCaseImpl
+import com.learnupp.domain.usecase.reels.LoadMoreReelsUseCase
+import com.learnupp.domain.usecase.reels.LoadMoreReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.GetLikedReelsUseCase
+import com.learnupp.domain.usecase.reels.GetLikedReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.ShareReelUseCase
+import com.learnupp.domain.usecase.reels.ShareReelUseCaseImpl
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -30,6 +44,15 @@ val domainModule = module {
     single<PreloadFeaturedCameraUseCase> { PreloadFeaturedCameraUseCaseImpl(get()) }
     single<ReloadAllCamerasUseCase> { ReloadAllCamerasUseCaseImpl(get()) }
     single<ReloadFeaturedCameraUseCase> { ReloadFeaturedCameraUseCaseImpl(get()) }
+
+    // Reels
+    single<GetReelsUseCase> { GetReelsUseCaseImpl(get()) }
+    single<GetLikedReelsUseCase> { GetLikedReelsUseCaseImpl(get()) }
+    single<PreloadReelsUseCase> { PreloadReelsUseCaseImpl(get()) }
+    single<ReloadReelsUseCase> { ReloadReelsUseCaseImpl(get()) }
+    single<ToggleReelLikeUseCase> { ToggleReelLikeUseCaseImpl(get()) }
+    single<LoadMoreReelsUseCase> { LoadMoreReelsUseCaseImpl(get()) }
+    single<ShareReelUseCase> { ShareReelUseCaseImpl(get()) }
 }
 
 

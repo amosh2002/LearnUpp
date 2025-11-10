@@ -1,0 +1,42 @@
+package com.learnupp.ui.video
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.interop.UIKitView
+import platform.AVFoundation.AVPlayer
+import platform.AVFoundation.AVPlayerLayer
+import platform.AVFoundation.AVPlayerViewController
+import platform.CoreGraphics.CGRectMake
+import platform.Foundation.NSURL
+import platform.UIKit.UIView
+
+@Composable
+actual fun PlatformVideoPlayer(
+    url: String,
+    playWhenReady: Boolean,
+    modifier: Modifier,
+    onClicked: (() -> Unit)?
+) {
+    UIKitView(
+        modifier = modifier,
+        factory = {
+            val view = UIView()
+            val player = AVPlayer(uRL = NSURL.URLWithString(url))
+            val layer = AVPlayerLayer.playerLayerWithPlayer(player)
+            layer.frame = CGRectMake(0.0, 0.0, 0.0, 0.0)
+            view.layer.addSublayer(layer)
+            view
+        },
+        update = { view ->
+            val layer = view.layer.sublayers?.firstObject() as? AVPlayerLayer
+            if (playWhenReady) {
+                layer?.player?.play()
+            } else {
+                layer?.player?.pause()
+            }
+        }
+    )
+}
+
+

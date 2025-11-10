@@ -46,11 +46,14 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.androidx.media3.exoplayer)
+            implementation(libs.androidx.media3.ui)
 
         }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
+            implementation(compose.animation)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
             implementation(compose.ui)
@@ -69,6 +72,9 @@ kotlin {
             implementation(libs.voyager.koin)
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.tab.navigator)
+
+            // Images for thumbnails in Reels
+            implementation(libs.kamel)
 
             implementation(libs.androidx.datastore.preferences.core)
         }
