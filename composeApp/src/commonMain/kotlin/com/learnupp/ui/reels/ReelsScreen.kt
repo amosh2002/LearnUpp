@@ -45,19 +45,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.koin.koinScreenModel
 import com.learnupp.domain.model.Reel
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 import com.learnupp.ui.video.PlatformVideoPlayer
 import com.learnupp.ui.video.prefetchVideo
+import com.learnupp.util.LearnUppNonPrimaryColors
 import com.learnupp.util.openShareSheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -96,7 +93,7 @@ class ReelsScreen : BaseScreen(ScreenNameStrings.REELS) {
             contentPadding = PaddingValues(0.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.background)
         ) { page ->
             val reel = reels[page]
             val isPaused = pausedMap[reel.id] == true
@@ -162,7 +159,7 @@ private fun ReelItem(
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = null,
-                tint = Color(0xFFFF4D4D),
+                tint = LearnUppNonPrimaryColors.RED,
                 modifier = Modifier.size(120.dp)
             )
         }
@@ -170,7 +167,7 @@ private fun ReelItem(
         // Center title overlay
         Text(
             text = "Course Video Short",
-            color = Color.White.copy(alpha = 0.92f),
+            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .align(Alignment.Center)
@@ -190,14 +187,14 @@ private fun ReelItem(
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Like",
-                    tint = if (isLiked) Color(0xFFFF4D4D) else Color.White,
+                    tint = if (isLiked) LearnUppNonPrimaryColors.RED else MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
                         .clickable { onToggleReelLike() }
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = formatCount(reel.likesCount + if (isLiked) 1 else 0),
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
             ActionWithCount(icon = Icons.Default.ChatBubble, count = reel.commentsCount)
@@ -205,7 +202,7 @@ private fun ReelItem(
                 Icon(
                     imageVector = Icons.Default.Share,
                     contentDescription = "Share",
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.clickable {
                         onShare()
                         openShareSheet(
@@ -215,7 +212,7 @@ private fun ReelItem(
                     }
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("Share", color = Color.White)
+                Text("Share", color = MaterialTheme.colorScheme.onPrimary)
             }
 
             Card(
@@ -245,34 +242,34 @@ private fun ReelItem(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(MaterialTheme.shapes.extraLarge)
-                        .background(Color.White.copy(alpha = 0.85f)),
+                        .background(MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = reel.authorName.split(" ").map { it.firstOrNull() ?: ' ' }.joinToString(""),
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 Spacer(modifier = Modifier.size(12.dp))
                 Column {
-                    Text(reel.authorName, color = Color.White, style = MaterialTheme.typography.titleMedium)
-                    Text(reel.authorTitle, color = Color.White.copy(alpha = 0.9f))
+                    Text(reel.authorName, color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.titleMedium)
+                    Text(reel.authorTitle, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f))
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 reel.title,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.height(12.dp))
             Button(
                 onClick = { /* Open full course later */ },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD71C1C)),
+                colors = ButtonDefaults.buttonColors(containerColor = LearnUppNonPrimaryColors.RED),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("View Full Course")
+                Text("View Full Course", color = MaterialTheme.colorScheme.onPrimary)
             }
         }
     }
@@ -281,11 +278,11 @@ private fun ReelItem(
 @Composable
 private fun ActionWithCount(icon: androidx.compose.ui.graphics.vector.ImageVector, count: Int) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(imageVector = icon, contentDescription = null, tint = Color.White)
+        Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = formatCount(count),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
