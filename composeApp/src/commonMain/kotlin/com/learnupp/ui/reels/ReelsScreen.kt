@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -135,19 +137,19 @@ private fun ReelItem(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(reel.id) {
-                    detectTapGestures(
-                        onTap = { onTogglePlay() },
-                        onDoubleTap = {
-                            onToggleReelLike()
-                            heartVisible.value = true
-                            scope.launch {
-                                delay(700)
-                                heartVisible.value = false
-                            }
+                .combinedClickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { onTogglePlay() },
+                    onDoubleClick = {
+                        onToggleReelLike()
+                        heartVisible.value = true
+                        scope.launch {
+                            delay(700)
+                            heartVisible.value = false
                         }
-                    )
-                }
+                    }
+                )
         )
 
         AnimatedVisibility(

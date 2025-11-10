@@ -11,6 +11,7 @@ import com.learnupp.domain.usecase.reels.LoadMoreReelsUseCase
 import com.learnupp.domain.usecase.reels.ShareReelUseCase
 import com.learnupp.ui.base.BaseScreenModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow

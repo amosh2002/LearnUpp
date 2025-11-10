@@ -16,5 +16,4 @@ fun MainViewController() = ComposeUIViewController {
     CompositionLocalProvider(LocalAppComponent provides LocalUIViewController.current) {
         App(preferencesManager, localizationService)
     }
-    App(preferencesManager, localizationService)
 }

@@ -19,6 +19,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         // Add notification setting later here
+        // Configure audio session for video playback (works in silent mode)
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback, options: [])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            os_log("Failed to configure AVAudioSession: %@", type: .error, error.localizedDescription)
+        }
 
         return true
     }
