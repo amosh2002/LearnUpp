@@ -25,8 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -65,15 +63,11 @@ class LoginScreen : BaseScreen(ScreenNameStrings.LOGIN) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFF1565C0), Color(0xFF2E7D32))
-                    )
-                ),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             Card(
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
                 modifier = Modifier
                     .padding(24.dp)
@@ -89,12 +83,12 @@ class LoginScreen : BaseScreen(ScreenNameStrings.LOGIN) {
                         text = "Welcome back",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF0F172A)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(Modifier.height(12.dp))
                     Text(
                         text = "Sign in to continue",
-                        color = Color(0xFF64748B)
+                        color = MaterialTheme.colorScheme.secondary
                     )
                     Spacer(Modifier.height(20.dp))
                     
@@ -143,7 +137,7 @@ class LoginScreen : BaseScreen(ScreenNameStrings.LOGIN) {
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0))
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) { Text("Login") }
                 }
             }

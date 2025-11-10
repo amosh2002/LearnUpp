@@ -10,5 +10,7 @@ class LearnUppNonPrimaryColors {
         val MEDIUM_GRAY = Color(0xFF969696)
         val DARK_GRAY = Color(0xFF767676)
         val EXTRA_DARK_GRAY = Color(0xFF717578)
+        val WARNING_ORANGE = Color(0xFFFFB224)
+        val SUCCESS_GREEN = Color(0xFF019421)
     }
 }

@@ -33,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -152,7 +151,7 @@ private fun FeaturedCameraCard(featuredCamera: Camera?) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
-                .background(Color(0xFFEFF6FF))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Text(
                 text = featuredCamera?.name ?: "No featured camera",
@@ -178,13 +177,13 @@ private fun FeaturedCameraCard(featuredCamera: Camera?) {
 
 @Composable
 private fun CameraChip(camera: Camera) {
-    Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F5F9))) {
+    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
         Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.Start) {
             Box(
                 modifier = Modifier
                     .size(120.dp, 80.dp)
                     .clip(MaterialTheme.shapes.medium)
-                    .background(Color(0xFFE2E8F0))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             )
             Spacer(Modifier.height(8.dp))
             Text(text = camera.name, color = MaterialTheme.colorScheme.onBackground)

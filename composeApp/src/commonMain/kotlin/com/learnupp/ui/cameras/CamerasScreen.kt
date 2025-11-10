@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
@@ -37,7 +36,7 @@ class CamerasScreen : BaseScreen(ScreenNameStrings.CAMERAS) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             items(cameras) { name ->
-                Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF6FF))) {
+                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
                     Text(
                         text = name,
                         modifier = Modifier.padding(16.dp),

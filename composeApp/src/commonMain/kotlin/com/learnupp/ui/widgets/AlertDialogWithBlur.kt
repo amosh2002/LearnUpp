@@ -99,8 +99,8 @@ fun AlertDialogWithBlur(
                             },
                             tint = when (dialogType) {
                                 DialogType.ERROR -> LearnUppNonPrimaryColors.RED
-                                DialogType.QUESTION -> Color(0xFFFFB224)
-                                DialogType.SUCCESS -> Color(0xFF019421)
+                                DialogType.QUESTION -> LearnUppNonPrimaryColors.WARNING_ORANGE
+                                DialogType.SUCCESS -> LearnUppNonPrimaryColors.SUCCESS_GREEN
                                 DialogType.INFO -> MaterialTheme.colorScheme.primary
                             },
                             contentDescription = null,
