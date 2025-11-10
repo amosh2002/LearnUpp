@@ -1,54 +1,34 @@
 package com.learnupp.ui.reels
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.remember
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.koin.koinScreenModel
 import com.learnupp.domain.model.Reel
@@ -60,8 +40,10 @@ import com.learnupp.util.LearnUppNonPrimaryColors
 import com.learnupp.util.openShareSheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class ReelsScreen : BaseScreen(ScreenNameStrings.REELS) {
+
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
@@ -79,34 +61,46 @@ class ReelsScreen : BaseScreen(ScreenNameStrings.REELS) {
             return
         }
 
+        // Smooth snap/fling. PagerDefaults gives good feel across platforms.
         val pagerState = rememberPagerState(pageCount = { reels.size }, initialPage = 0)
+        val flingBehavior = PagerDefaults.flingBehavior(state = pagerState)
+
+        // Local pause state per-reel (id -> paused)
         val pausedMap = remember { mutableStateMapOf<String, Boolean>() }
 
         LaunchedEffect(pagerState.currentPage, reels.size) {
-            // Auto-load more when 2 from the end
-            val nearEnd = pagerState.currentPage >= reels.size - 2
-            if (nearEnd) viewModel.loadMore()
-            // Prefetch next video to reduce start latency
+            // Load more a bit before the end
+            if (pagerState.currentPage >= reels.size - 2) viewModel.loadMore()
+            // Prefetch next video to reduce startup lag
             reels.getOrNull(pagerState.currentPage + 1)?.let { prefetchVideo(it.videoUrl) }
         }
 
         VerticalPager(
             state = pagerState,
+            flingBehavior = flingBehavior,
             contentPadding = PaddingValues(0.dp),
+            beyondViewportPageCount = 1,
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) { page ->
             val reel = reels[page]
             val isPaused = pausedMap[reel.id] == true
-            val play = page == pagerState.currentPage && !isPaused
+            val play = (page == pagerState.currentPage) && !isPaused
+
             ReelItem(
                 reel = reel,
                 isLiked = liked.contains(reel.id),
                 isPlaying = play,
                 onTogglePlay = { pausedMap[reel.id] = !(pausedMap[reel.id] ?: false) },
                 onToggleReelLike = { viewModel.toggleReelLike(reel.id) },
-                onShare = { viewModel.shareReel(reel.id) }
+                onShare = {
+                    viewModel.shareReel(reel.id)
+                    openShareSheet(
+                        text = "Check out this course short: ${reel.title} by ${reel.authorName}",
+                        url = reel.videoUrl
+                    )
+                }
             )
         }
     }
@@ -122,41 +116,61 @@ private fun ReelItem(
     onShare: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+
+    // Heart animation visibility + where to show it (tap position)
     val heartVisible = remember { mutableStateOf(false) }
+    val heartPos = remember { mutableStateOf(Offset.Zero) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Video fills the screen; tap toggles pause/play
+
+        // 1) Fullscreen video
         PlatformVideoPlayer(
             url = reel.videoUrl,
-            playWhenReady = isPlaying,
+            playVideoWhenReady = isPlaying,
             modifier = Modifier.fillMaxSize(),
-            onClicked = { onTogglePlay() }
+            onClicked = null // we handle taps in the overlay below for single/double tap
         )
 
-        // Gesture overlay to handle single tap (play/pause) and double tap (like + animation)
+        // 2) Gesture overlay (does not block vertical drag -> pager remains smooth)
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .combinedClickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = { onTogglePlay() },
-                    onDoubleClick = {
-                        onToggleReelLike()
-                        heartVisible.value = true
-                        scope.launch {
-                            delay(700)
-                            heartVisible.value = false
+                .pointerInput(reel.id) {
+                    // detectTapGestures properly recognizes double-tap vs single-tap.
+                    detectTapGestures(
+                        onDoubleTap = { offset ->
+                            // Show heart at tap position
+                            heartPos.value = offset
+                            onToggleReelLike()
+                            heartVisible.value = true
+                            scope.launch {
+                                delay(700)
+                                heartVisible.value = false
+                            }
+                        },
+                        onTap = {
+                            // Single tap toggles play/pause
+                            onTogglePlay()
                         }
-                    }
-                )
+                    )
+                }
         )
 
+        // 3) Heart animation shown where the user double-tapped
         AnimatedVisibility(
             visible = heartVisible.value,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
-            modifier = Modifier.align(Alignment.Center)
+            enter = fadeIn(animationSpec = tween(120, easing = FastOutSlowInEasing)) +
+                    scaleIn(initialScale = 0.6f, animationSpec = tween(180)),
+            exit = fadeOut(animationSpec = tween(220)) +
+                    scaleOut(targetScale = 0.6f, animationSpec = tween(220)),
+            modifier = Modifier
+                .offset {
+                    // Convert tap position (px) -> IntOffset for placement
+                    IntOffset(
+                        x = heartPos.value.x.roundToInt() - 60, // center 120dp-ish icon
+                        y = heartPos.value.y.roundToInt() - 60
+                    )
+                }
         ) {
             Icon(
                 imageVector = Icons.Default.Favorite,
@@ -166,7 +180,7 @@ private fun ReelItem(
             )
         }
 
-        // Center title overlay
+        // 4) Title overlay (optional)
         Text(
             text = "Course Video Short",
             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
@@ -176,7 +190,7 @@ private fun ReelItem(
                 .padding(horizontal = 24.dp)
         )
 
-        // Right action rail
+        // 5) Right action rail
         Column(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
@@ -184,13 +198,14 @@ private fun ReelItem(
             verticalArrangement = Arrangement.spacedBy(18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Like button
+            // Like
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Like",
                     tint = if (isLiked) LearnUppNonPrimaryColors.RED else MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
+                        .size(30.dp)
                         .clickable { onToggleReelLike() }
                 )
                 Spacer(modifier = Modifier.height(6.dp))
@@ -199,24 +214,25 @@ private fun ReelItem(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
+
+            // Comments
             ActionWithCount(icon = Icons.Default.ChatBubble, count = reel.commentsCount)
+
+            // Share
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     imageVector = Icons.Default.Share,
                     contentDescription = "Share",
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.clickable {
-                        onShare()
-                        openShareSheet(
-                            text = "Check out this course short: ${reel.title} by ${reel.authorName}",
-                            url = reel.videoUrl
-                        )
-                    }
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clickable { onShare() }
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text("Share", color = MaterialTheme.colorScheme.onPrimary)
             }
 
+            // Plus
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = MaterialTheme.shapes.extraLarge
@@ -230,16 +246,14 @@ private fun ReelItem(
             }
         }
 
-        // Bottom info & CTA
+        // 6) Bottom metadata & CTA
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Author row
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Simple circular placeholder avatar
                 Box(
                     modifier = Modifier
                         .size(40.dp)
@@ -248,24 +262,36 @@ private fun ReelItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = reel.authorName.split(" ").map { it.firstOrNull() ?: ' ' }.joinToString(""),
+                        text = reel.authorName.split(" ").mapNotNull { it.firstOrNull() }
+                            .joinToString(""),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 Spacer(modifier = Modifier.size(12.dp))
                 Column {
-                    Text(reel.authorName, color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.titleMedium)
-                    Text(reel.authorTitle, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f))
+                    Text(
+                        reel.authorName,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        reel.authorTitle,
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
+                    )
                 }
             }
+
             Spacer(modifier = Modifier.height(8.dp))
+
             Text(
                 reel.title,
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.titleLarge
             )
+
             Spacer(modifier = Modifier.height(12.dp))
+
             Button(
                 onClick = { /* Open full course later */ },
                 colors = ButtonDefaults.buttonColors(containerColor = LearnUppNonPrimaryColors.RED),
@@ -280,12 +306,14 @@ private fun ReelItem(
 @Composable
 private fun ActionWithCount(icon: androidx.compose.ui.graphics.vector.ImageVector, count: Int) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = formatCount(count),
-            color = MaterialTheme.colorScheme.onPrimary
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.size(28.dp)
         )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(text = formatCount(count), color = MaterialTheme.colorScheme.onPrimary)
     }
 }
 
@@ -302,5 +330,3 @@ private fun Double.format1(): String {
     val s = rounded.toString()
     return if (s.endsWith(".0")) s.dropLast(2) else s
 }
-
-

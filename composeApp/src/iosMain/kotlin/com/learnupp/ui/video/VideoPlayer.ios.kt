@@ -1,51 +1,111 @@
 package com.learnupp.ui.video
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.AVFoundation.AVPlayer
-import platform.AVFoundation.AVPlayerLayer
 import platform.AVFoundation.AVLayerVideoGravityResizeAspectFill
-import platform.AVFoundation.pause
+import platform.AVFoundation.AVPlayer
+import platform.AVFoundation.AVPlayerItem
+import platform.AVFoundation.AVPlayerLayer
+import platform.AVFoundation.AVPlayerItemDidPlayToEndTimeNotification
+import platform.AVFoundation.AVURLAsset
+import platform.AVFoundation.cancelPendingSeeks
 import platform.AVFoundation.play
+import platform.AVFoundation.pause
+import platform.AVFoundation.seekToTime
+import platform.CoreGraphics.CGRectMake
+import platform.CoreGraphics.CGRectZero
+import platform.CoreMedia.CMTimeMake
+import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSURL
+import platform.UIKit.UIColor
 import platform.UIKit.UIView
+import platform.darwin.NSObjectProtocol
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 actual fun PlatformVideoPlayer(
     url: String,
-    playWhenReady: Boolean,
+    playVideoWhenReady: Boolean,
     modifier: Modifier,
     onClicked: (() -> Unit)?
 ) {
+    // Build player state once per URL
+    val state = remember(url) {
+        val nsUrl = NSURL.URLWithString(url) ?: return@remember null
+        val item = AVPlayerItem.playerItemWithAsset(AVURLAsset(uRL = nsUrl, options = null))
+        val player = AVPlayer.playerWithPlayerItem(item)
+        PlayerStateIOS(player = player, item = item)
+    }
+
+    // Loop: on end -> seek to 0 -> play if requested
+    LaunchedEffect(state) {
+        state ?: return@LaunchedEffect
+        val obs = NSNotificationCenter.defaultCenter.addObserverForName(
+            name = AVPlayerItemDidPlayToEndTimeNotification,
+            `object` = state.item,
+            queue = null
+        ) { _ ->
+            state.player.seekToTime(CMTimeMake(value = 0, timescale = 1))
+            if (playVideoWhenReady) state.player.play()
+        }
+        state.endObserver = obs
+    }
+
     UIKitView(
         modifier = modifier,
         factory = {
-            val view = UIView().apply {
-                userInteractionEnabled = false // let Compose handle gestures (pager swipes)
+            // ✅ Use designated initializer init(frame:)
+            val view = UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)).apply {
+                userInteractionEnabled = false
                 clipsToBounds = true
+                backgroundColor = UIColor.blackColor
             }
-            val player = NSURL.URLWithString(url)?.let { AVPlayer(uRL = it) }
-            val layer = AVPlayerLayer.playerLayerWithPlayer(player)
-            // Match the view bounds initially; will keep updated below
-            layer.frame = view.layer.bounds
-            layer.videoGravity = AVLayerVideoGravityResizeAspectFill
-            view.layer.addSublayer(layer)
+
+            state?.let {
+                val layer = AVPlayerLayer.playerLayerWithPlayer(it.player)
+                layer.videoGravity = AVLayerVideoGravityResizeAspectFill
+                layer.frame = view.layer.bounds
+                view.layer.addSublayer(layer)
+                it.layer = layer
+            }
+
             view
         },
         update = { view ->
-            val layer = view.layer.sublayers?.first() as? AVPlayerLayer
-            // Ensure the layer matches current view bounds during layout changes
-            layer?.frame = view.layer.bounds
-            if (playWhenReady) {
-                layer?.player?.play()
-            } else {
-                layer?.player?.pause()
+            state?.let {
+                // keep layer sized to view bounds
+                it.layer?.frame = view.layer.bounds
+                // toggle play/pause
+                if (playVideoWhenReady) it.player.play() else it.player.pause()
             }
         }
     )
+
+    // Clean up
+    DisposableEffect(state) {
+        onDispose {
+            state?.let {
+                it.player.pause()
+                it.item.cancelPendingSeeks()
+                it.endObserver?.let { obs ->
+                    NSNotificationCenter.defaultCenter.removeObserver(obs)
+                }
+                it.endObserver = null
+            }
+        }
+    }
 }
 
-
+@OptIn(ExperimentalForeignApi::class)
+private class PlayerStateIOS(
+    val player: AVPlayer,
+    val item: AVPlayerItem
+) {
+    var layer: AVPlayerLayer? = null
+    var endObserver: NSObjectProtocol? = null // more precise than Any?
+}
