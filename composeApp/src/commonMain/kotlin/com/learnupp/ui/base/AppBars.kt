@@ -3,6 +3,7 @@ package com.learnupp.ui.base
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -23,6 +24,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -65,12 +67,13 @@ fun LearnUppTopAppBar() {
             title = {
                 Text(
                     text = currentScreen.key,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.titleMedium
+                    color = MaterialTheme.colorScheme.onBackground, // White text
+                    style = MaterialTheme.typography.titleMedium,
                 )
             },
             colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.background, // Dark background
+                titleContentColor = MaterialTheme.colorScheme.onBackground
             ),
             navigationIcon = {
                 if (navigator.canPop) {
@@ -78,13 +81,13 @@ fun LearnUppTopAppBar() {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            tint = MaterialTheme.colorScheme.onBackground // White icon
                         )
                     }
                 } else {
                     Spacer(modifier = Modifier.width(9.dp))
                 }
-            }
+            },
         )
     }
 }
@@ -101,7 +104,7 @@ fun LearnUppBottomNavBar() {
     }
 
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.primary,
+        containerColor = MaterialTheme.colorScheme.background, // Dark background
     ) {
         items.forEach { item ->
             val isSelected = (navigator.lastItem as? BaseScreen)?.key == item.title.getValue()
@@ -116,13 +119,13 @@ fun LearnUppBottomNavBar() {
                     Icon(
                         imageVector = iconChar,
                         contentDescription = item.title.getValue(),
-                        tint = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary
+                        tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
                     )
                 },
                 label = {
                     Text(
                         item.title.getValue(),
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
                     )
                 },
                 selected = isSelected,
@@ -139,10 +142,10 @@ fun LearnUppBottomNavBar() {
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                    selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedIconColor = MaterialTheme.colorScheme.primary, // Red for selected
+                    unselectedIconColor = MaterialTheme.colorScheme.secondary, // Light gray for unselected
+                    selectedTextColor = MaterialTheme.colorScheme.primary, // Red for selected
+                    unselectedTextColor = MaterialTheme.colorScheme.secondary, // Light gray for unselected
                     indicatorColor = Color.Transparent
                 )
             )
