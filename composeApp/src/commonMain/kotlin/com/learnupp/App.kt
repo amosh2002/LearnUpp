@@ -36,11 +36,13 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.FadeTransition
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.learnupp.ui.login.LoginScreen
+import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.LearnUppBottomNavBar
 import com.learnupp.ui.base.LearnUppTopAppBar
 import com.learnupp.ui.base.AppTheme
@@ -389,6 +391,21 @@ enum class DialogType {
     INFO
 }
 
+/**
+ * Safe push function that prevents pushing the same screen key.
+ * This prevents crashes when users tap navigation buttons quickly multiple times.
+ */
+fun Navigator.safePush(screen: Screen) {
+    val currentKey = this.lastItem.key
+    val newKey = screen.key
+
+    // Only push if the new screen has a different key than the current one
+    if (currentKey != newKey) {
+        // Call the original push method
+        this.push(screen)
+    }
+}
+
 fun Navigator.safePop(
     askBeforeGoingBack: MutableState<Boolean?>,
     askBeforeMovingToTab: MutableState<Boolean?>,
@@ -407,7 +424,6 @@ fun Navigator.safePop(
                 onConfirm = {
                     clearAllProgress.value = true
                     dialogState.value = null
-                    val currentScreen = this.lastItem
                     this.pop()
                     askBeforeGoingBack.value = false
                     askBeforeMovingToTab.value = false
