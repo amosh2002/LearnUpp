@@ -20,6 +20,28 @@ class MockReelsApi : ReelsApi {
         val start = page * pageSize
         return (start until start + pageSize).map { index ->
             val id = "reel-$index"
+            val random = Random(index)
+            // Randomly decide if this reel has a full course (about 60% chance)
+            val hasFullCourse = random.nextFloat() < 0.6f
+            val fullCourseId = if (hasFullCourse) {
+                "course-${index + 100}" // Generate a course ID
+            } else {
+                null
+            }
+            
+            // Add description only when there's no course (about 70% chance for reels without course)
+            val description = if (!hasFullCourse && random.nextFloat() < 0.7f) {
+                when (index % 5) {
+                    0 -> "Learn the fundamentals of design thinking and create beautiful interfaces"
+                    1 -> "Master async programming with Kotlin's powerful coroutines API"
+                    2 -> "Explore modern Swift concurrency patterns and best practices"
+                    3 -> "Build scalable architectures using clean code principles"
+                    else -> "Tips and tricks for cross-platform development with Compose"
+                }
+            } else {
+                null
+            }
+            
             Reel(
                 id = id,
                 title = when (index % 5) {
@@ -34,8 +56,10 @@ class MockReelsApi : ReelsApi {
                 thumbnailUrl = thumbs[index % thumbs.size],
                 authorName = listOf("Sarah Johnson", "Alex Kim", "Emily Chen", "Michael Brown", "Ava Lee")[index % 5],
                 authorTitle = listOf("UI/UX Designer", "Android Engineer", "iOS Developer", "Software Architect", "Mobile Dev")[index % 5],
-                likesCount = 800 + Random(index).nextInt(900),
-                commentsCount = 20 + Random(index + 42).nextInt(120)
+                likesCount = 800 + random.nextInt(900),
+                commentsCount = 20 + random.nextInt(120),
+                fullCourseId = fullCourseId,
+                description = description
             )
         }
     }

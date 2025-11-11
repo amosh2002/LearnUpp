@@ -24,6 +24,10 @@ data class Reel(
     val likesCount: Int,
     @SerialName("comments_count")
     val commentsCount: Int,
+    @SerialName("full_course_id")
+    val fullCourseId: String? = null, // Optional: if null, no "View Full Course" button is shown
+    @SerialName("description")
+    val description: String? = null, // Optional: shown with plus button when there's no course
 ) : CommonSerializable
 
 

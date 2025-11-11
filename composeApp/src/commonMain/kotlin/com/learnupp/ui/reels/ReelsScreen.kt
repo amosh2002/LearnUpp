@@ -15,10 +15,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -180,124 +183,166 @@ private fun ReelItem(
             )
         }
 
-        // 4) Title overlay (optional)
-        Text(
-            text = "Course Video Short",
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 24.dp)
-        )
-
-        // 5) Right action rail
-        Column(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Like
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Like",
-                    tint = if (isLiked) LearnUppNonPrimaryColors.RED else MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clickable { onToggleReelLike() }
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = formatCount(reel.likesCount + if (isLiked) 1 else 0),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-
-            // Comments
-            ActionWithCount(icon = Icons.Default.ChatBubble, count = reel.commentsCount)
-
-            // Share
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(
-                    imageVector = Icons.Default.Share,
-                    contentDescription = "Share",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clickable { onShare() }
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text("Share", color = MaterialTheme.colorScheme.onPrimary)
-            }
-
-            // Plus
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-                shape = MaterialTheme.shapes.extraLarge
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(10.dp)
-                )
-            }
-        }
-
-        // 6) Bottom metadata & CTA
+        // 5) Bottom area - Instagram-style layout
+        // Column with: 1) Row with metadata (left) and actions (right), 2) Optional "View Full Course" button at bottom
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .background(MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)),
-                    contentAlignment = Alignment.Center
+            // 1) Row with metadata (left) and action buttons (right)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                // Left: Author info and title
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    // Author row with avatar
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(MaterialTheme.shapes.extraLarge)
+                                .background(MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = reel.authorName.split(" ").mapNotNull { it.firstOrNull() }
+                                    .joinToString(""),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(12.dp))
+                        Column {
+                            Text(
+                                reel.authorName,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                reel.authorTitle,
+                                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+
+                    // Course title
                     Text(
-                        text = reel.authorName.split(" ").mapNotNull { it.firstOrNull() }
-                            .joinToString(""),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold
+                        reel.title,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.titleLarge
                     )
                 }
-                Spacer(modifier = Modifier.size(12.dp))
-                Column {
-                    Text(
-                        reel.authorName,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        reel.authorTitle,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
+
+                // Right: Action buttons (like, comment, share)
+                Column(
+                    modifier = Modifier.padding(start = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(18.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Like
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Like",
+                            tint = if (isLiked) LearnUppNonPrimaryColors.RED else MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickable { onToggleReelLike() }
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = formatCount(reel.likesCount + if (isLiked) 1 else 0),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+
+                    // Comments
+                    ActionWithCount(icon = Icons.Default.ChatBubble, count = reel.commentsCount)
+
+                    // Share
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clickable { onShare() }
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("Share", color = MaterialTheme.colorScheme.onPrimary)
+                    }
+
+                    // More options
+                    Icon(
+                        imageVector = Icons.Default.MoreHoriz,
+                        contentDescription = "More options",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clickable { /* Show more options menu */ }
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // 2) "View Full Course" button OR description + plus button
+            // All options have exact same height to prevent layout shift
+            if (reel.fullCourseId != null) {
+                // Full course button replaces description + plus button
+                Button(
+                    onClick = { /* Open full course with ID: reel.fullCourseId */ },
+                    colors = ButtonDefaults.buttonColors(containerColor = LearnUppNonPrimaryColors.RED),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("View Full Course", color = MaterialTheme.colorScheme.onPrimary)
+                }
+            } else {
+                // Row with description (left) and plus button (right)
+                // Height matches course button (48.dp) to prevent layout shift
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp), // Match course button height
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Description text on the left (if available)
+                    if (reel.description != null) {
+                        Text(
+                            text = reel.description,
+                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 12.dp)
+                        )
+                    } else {
+                        // Spacer to maintain layout when no description
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
 
-            Text(
-                reel.title,
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Button(
-                onClick = { /* Open full course later */ },
-                colors = ButtonDefaults.buttonColors(containerColor = LearnUppNonPrimaryColors.RED),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("View Full Course", color = MaterialTheme.colorScheme.onPrimary)
+                    // Red plus button on the right
+                    FloatingActionButton(
+                        onClick = { /* Add to favorites or follow */ },
+                        shape = CircleShape,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(48.dp) // Match course button height
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
             }
         }
     }
