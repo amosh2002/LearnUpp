@@ -11,7 +11,18 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -21,10 +32,21 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -177,8 +199,8 @@ private fun ReelItem(
         ) {
             Icon(
                 imageVector = Icons.Default.Favorite,
-                contentDescription = null,
-                tint = LearnUppNonPrimaryColors.RED,
+                contentDescription = "Liked",
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(120.dp)
             )
         }
@@ -252,7 +274,7 @@ private fun ReelItem(
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = "Like",
-                            tint = if (isLiked) LearnUppNonPrimaryColors.RED else MaterialTheme.colorScheme.onPrimary,
+                            tint = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier
                                 .size(30.dp)
                                 .clickable { onToggleReelLike() }
@@ -265,7 +287,11 @@ private fun ReelItem(
                     }
 
                     // Comments
-                    ActionWithCount(icon = Icons.Default.ChatBubble, count = reel.commentsCount)
+                    ActionWithCount(
+                        icon = Icons.Default.ChatBubble,
+                        count = reel.commentsCount,
+                        onClick = { /* Open comments */ }
+                    )
 
                     // Share
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -299,7 +325,7 @@ private fun ReelItem(
                 // Full course button replaces description + plus button
                 Button(
                     onClick = { /* Open full course with ID: reel.fullCourseId */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = LearnUppNonPrimaryColors.RED),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("View Full Course", color = MaterialTheme.colorScheme.onPrimary)
@@ -349,13 +375,25 @@ private fun ReelItem(
 }
 
 @Composable
-private fun ActionWithCount(icon: androidx.compose.ui.graphics.vector.ImageVector, count: Int) {
+private fun ActionWithCount(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    count: Int,
+    onClick: (() -> Unit)? = null
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier
+                .size(28.dp)
+                .then(
+                    if (onClick != null) {
+                        Modifier.clickable { onClick() }
+                    } else {
+                        Modifier
+                    }
+                )
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(text = formatCount(count), color = MaterialTheme.colorScheme.onPrimary)
