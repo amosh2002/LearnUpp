@@ -1,5 +1,7 @@
 package com.learnupp
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -34,7 +36,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.FadeTransition
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.learnupp.ui.login.LoginScreen
 import com.learnupp.ui.base.LearnUppBottomNavBar
@@ -188,8 +192,9 @@ fun App(
                                 )
                             }
                         ) { innerPadding ->
-                            SlideTransition(
+                            FadeTransition(
                                 navigator = navigator,
+                                animationSpec = spring(stiffness = Spring.StiffnessHigh),
                                 modifier = Modifier
                                     .padding(innerPadding)
                                     .consumeWindowInsets(innerPadding)

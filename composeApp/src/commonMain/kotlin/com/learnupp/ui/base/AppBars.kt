@@ -3,7 +3,6 @@ package com.learnupp.ui.base
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -24,7 +23,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -58,47 +56,47 @@ enum class NavBarItems(override val title: ScreenNameStrings) : NavigationItem {
 @Composable
 fun LearnUppTopAppBar() {
     val navigator = LocalNavigator.currentOrThrow
-    val currentScreen = navigator.lastItem
+    val currentScreen = navigator.lastItem as BaseScreen
 
-    if (currentScreen.key == ScreenNameStrings.LOGIN.getValue()) {
+    if (currentScreen.hideTopAppBar) {
         Box(modifier = Modifier.fillMaxWidth())
-    } else {
-        TopAppBar(
-            title = {
-                Text(
-                    text = currentScreen.key,
-                    color = MaterialTheme.colorScheme.onBackground, // White text
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            },
-            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.background, // Dark background
-                titleContentColor = MaterialTheme.colorScheme.onBackground
-            ),
-            navigationIcon = {
-                if (navigator.canPop) {
-                    IconButton(onClick = { navigator.pop() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground // White icon
-                        )
-                    }
-                } else {
-                    Spacer(modifier = Modifier.width(9.dp))
-                }
-            },
-        )
+        return
     }
+
+    TopAppBar(
+        title = {
+            Text(
+                text = currentScreen.key,
+                color = MaterialTheme.colorScheme.onBackground, // White text
+                style = MaterialTheme.typography.titleMedium,
+            )
+        },
+        colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background, // Dark background
+            titleContentColor = MaterialTheme.colorScheme.onBackground
+        ),
+        navigationIcon = {
+            if (navigator.canPop) {
+                IconButton(onClick = { navigator.pop() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground // White icon
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.width(9.dp))
+            }
+        },
+    )
 }
 
 @Composable
 fun LearnUppBottomNavBar() {
     val navigator = LocalNavigator.currentOrThrow
-    val items = NavBarItems.entries
+    val currentScreen = navigator.lastItem as BaseScreen
 
-    // Hide bottom bar on Login
-    if (navigator.lastItem.key == ScreenNameStrings.LOGIN.getValue()) {
+    if (currentScreen.hideBottomNavBar) {
         Box(modifier = Modifier.fillMaxWidth())
         return
     }
@@ -106,7 +104,7 @@ fun LearnUppBottomNavBar() {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.background, // Dark background
     ) {
-        items.forEach { item ->
+        NavBarItems.entries.forEach { item ->
             val isSelected = (navigator.lastItem as? BaseScreen)?.key == item.title.getValue()
             val iconChar = when (item) {
                 NavBarItems.Home -> Icons.Default.Home

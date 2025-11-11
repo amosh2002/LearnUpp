@@ -43,7 +43,7 @@ import com.learnupp.util.LearnUppStrings
 import com.learnupp.util.getValue
 import kotlinx.coroutines.launch
 
-class LoginScreen : BaseScreen(ScreenNameStrings.LOGIN) {
+class LoginScreen : BaseScreen(ScreenNameStrings.LOGIN, hideTopAppBar = true, hideBottomNavBar = true) {
     @Composable
     override fun Content() {
         val screenModel: LoginScreenModel = koinScreenModel()
