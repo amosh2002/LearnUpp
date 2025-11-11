@@ -90,8 +90,10 @@ class ReelsScreen : BaseScreen(ScreenNameStrings.REELS) {
         val pagerState = rememberPagerState(pageCount = { reels.size }, initialPage = 0)
         val flingBehavior = PagerDefaults.flingBehavior(state = pagerState)
 
-        // Local pause state per-reel (id -> paused)
-        val pausedMap = remember { mutableStateMapOf<String, Boolean>() }
+        // Local mute state per-reel (id -> muted)
+        val mutedMap = remember { mutableStateMapOf<String, Boolean>() }
+        // Local pause state for tap-and-hold (id -> paused while holding)
+        val heldPausedMap = remember { mutableStateMapOf<String, Boolean>() }
 
         LaunchedEffect(pagerState.currentPage, reels.size) {
             // Load more a bit before the end
@@ -110,14 +112,17 @@ class ReelsScreen : BaseScreen(ScreenNameStrings.REELS) {
                 .background(MaterialTheme.colorScheme.background)
         ) { page ->
             val reel = reels[page]
-            val isPaused = pausedMap[reel.id] == true
-            val play = (page == pagerState.currentPage) && !isPaused
+            val isHeldPaused = heldPausedMap[reel.id] == true
+            val isMuted = mutedMap[reel.id] == true
+            val play = (page == pagerState.currentPage) && !isHeldPaused
 
             ReelItem(
                 reel = reel,
                 isLiked = liked.contains(reel.id),
                 isPlaying = play,
-                onTogglePlay = { pausedMap[reel.id] = !(pausedMap[reel.id] ?: false) },
+                isMuted = isMuted,
+                onToggleMute = { mutedMap[reel.id] = !(mutedMap[reel.id] ?: false) },
+                onHoldPause = { paused -> heldPausedMap[reel.id] = paused },
                 onToggleReelLike = { viewModel.toggleReelLike(reel.id) },
                 onShare = {
                     viewModel.shareReel(reel.id)
@@ -136,7 +141,9 @@ private fun ReelItem(
     reel: Reel,
     isLiked: Boolean,
     isPlaying: Boolean,
-    onTogglePlay: () -> Unit,
+    isMuted: Boolean,
+    onToggleMute: () -> Unit,
+    onHoldPause: (Boolean) -> Unit, // true = pause, false = resume
     onToggleReelLike: () -> Unit,
     onShare: () -> Unit
 ) {
@@ -145,6 +152,9 @@ private fun ReelItem(
     // Heart animation visibility + where to show it (tap position)
     val heartVisible = remember { mutableStateOf(false) }
     val heartPos = remember { mutableStateOf(Offset.Zero) }
+    
+    // Track if video is being held paused
+    val isHeld = remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -153,7 +163,8 @@ private fun ReelItem(
             url = reel.videoUrl,
             playVideoWhenReady = isPlaying,
             modifier = Modifier.fillMaxSize(),
-            onClicked = null // we handle taps in the overlay below for single/double tap
+            onClicked = null, // we handle taps in the overlay below for single/double tap
+            isMuted = isMuted
         )
 
         // 2) Gesture overlay (does not block vertical drag -> pager remains smooth)
@@ -161,7 +172,7 @@ private fun ReelItem(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(reel.id) {
-                    // detectTapGestures properly recognizes double-tap vs single-tap.
+                    // detectTapGestures properly recognizes double-tap vs single-tap and long press
                     detectTapGestures(
                         onDoubleTap = { offset ->
                             // Show heart at tap position
@@ -174,10 +185,31 @@ private fun ReelItem(
                             }
                         },
                         onTap = {
-                            // Single tap toggles play/pause
-                            onTogglePlay()
+                            // Single tap toggles mute/unmute
+                            onToggleMute()
+                        },
+                        onLongPress = {
+                            // Long press pauses video while held
+                            isHeld.value = true
+                            onHoldPause(true)
                         }
                     )
+                }
+                .pointerInput(reel.id) {
+                    // Detect when pointer is released after long press
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            val change = event.changes.firstOrNull()
+                            if (change != null && !change.pressed && change.previousPressed) {
+                                // Pointer released - resume if it was held paused
+                                if (isHeld.value) {
+                                    isHeld.value = false
+                                    onHoldPause(false)
+                                }
+                            }
+                        }
+                    }
                 }
         )
 

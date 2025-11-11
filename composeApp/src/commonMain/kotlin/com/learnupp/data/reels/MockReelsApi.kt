@@ -28,9 +28,9 @@ class MockReelsApi : ReelsApi {
             } else {
                 null
             }
-            
+
             // Add description only when there's no course (about 70% chance for reels without course)
-            val description = if (!hasFullCourse && random.nextFloat() < 0.7f) {
+            val description =
                 when (index % 5) {
                     0 -> "Learn the fundamentals of design thinking and create beautiful interfaces"
                     1 -> "Master async programming with Kotlin's powerful coroutines API"
@@ -38,10 +38,7 @@ class MockReelsApi : ReelsApi {
                     3 -> "Build scalable architectures using clean code principles"
                     else -> "Tips and tricks for cross-platform development with Compose"
                 }
-            } else {
-                null
-            }
-            
+
             Reel(
                 id = id,
                 title = when (index % 5) {
@@ -54,8 +51,20 @@ class MockReelsApi : ReelsApi {
                 // Note: Video URLs are placeholders. We'll render using platform players.
                 videoUrl = "https://storage.googleapis.com/exoplayer-test-media-1/mp4/android-screens-10s.mp4",
                 thumbnailUrl = thumbs[index % thumbs.size],
-                authorName = listOf("Sarah Johnson", "Alex Kim", "Emily Chen", "Michael Brown", "Ava Lee")[index % 5],
-                authorTitle = listOf("UI/UX Designer", "Android Engineer", "iOS Developer", "Software Architect", "Mobile Dev")[index % 5],
+                authorName = listOf(
+                    "Sarah Johnson",
+                    "Alex Kim",
+                    "Emily Chen",
+                    "Michael Brown",
+                    "Ava Lee"
+                )[index % 5],
+                authorTitle = listOf(
+                    "UI/UX Designer",
+                    "Android Engineer",
+                    "iOS Developer",
+                    "Software Architect",
+                    "Mobile Dev"
+                )[index % 5],
                 likesCount = 800 + random.nextInt(900),
                 commentsCount = 20 + random.nextInt(120),
                 fullCourseId = fullCourseId,

@@ -32,7 +32,8 @@ actual fun PlatformVideoPlayer(
     url: String,
     playVideoWhenReady: Boolean,
     modifier: Modifier,
-    onClicked: (() -> Unit)?
+    onClicked: (() -> Unit)?,
+    isMuted: Boolean
 ) {
     // Build player state once per URL
     val state = remember(url) {
@@ -42,7 +43,7 @@ actual fun PlatformVideoPlayer(
         PlayerStateIOS(player = player, item = item)
     }
 
-    // Loop: on end -> seek to 0 -> play if requested
+    // Loop: on end -> seek to 0 -> play again (endless loop like Instagram/TikTok)
     LaunchedEffect(state) {
         state ?: return@LaunchedEffect
         val obs = NSNotificationCenter.defaultCenter.addObserverForName(
@@ -50,8 +51,11 @@ actual fun PlatformVideoPlayer(
             `object` = state.item,
             queue = null
         ) { _ ->
+            // Always restart video when it ends (endless loop)
             state.player.seekToTime(CMTimeMake(value = 0, timescale = 1))
-            if (playVideoWhenReady) state.player.play()
+            // Play again immediately for endless loop (like Instagram/TikTok)
+            // The update block will handle pausing if playVideoWhenReady is false
+            state.player.play()
         }
         state.endObserver = obs
     }
@@ -82,6 +86,8 @@ actual fun PlatformVideoPlayer(
                 it.layer?.frame = view.layer.bounds
                 // toggle play/pause
                 if (playVideoWhenReady) it.player.play() else it.player.pause()
+                // toggle mute/unmute
+                it.player.isMuted = isMuted
             }
         }
     )

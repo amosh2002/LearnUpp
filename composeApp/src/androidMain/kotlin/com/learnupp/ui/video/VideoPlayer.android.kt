@@ -23,7 +23,8 @@ actual fun PlatformVideoPlayer(
     url: String,
     playVideoWhenReady: Boolean, // <- treat as input; don't mutate
     modifier: Modifier,
-    onClicked: (() -> Unit)?
+    onClicked: (() -> Unit)?,
+    isMuted: Boolean
 ) {
     val context = LocalContext.current
 
@@ -45,6 +46,11 @@ actual fun PlatformVideoPlayer(
     // Drive play/pause from the parent state
     LaunchedEffect(playVideoWhenReady) {
         exo.playWhenReady = playVideoWhenReady
+    }
+
+    // Drive mute/unmute from the parent state
+    LaunchedEffect(isMuted) {
+        exo.volume = if (isMuted) 0f else 1f
     }
 
     AndroidView(

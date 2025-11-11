@@ -13,6 +13,7 @@ expect fun PlatformVideoPlayer(
     playVideoWhenReady: Boolean,
     modifier: Modifier = Modifier,
     onClicked: (() -> Unit)? = null,
+    isMuted: Boolean = false, // Mute/unmute control
 )
 
 
