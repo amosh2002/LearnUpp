@@ -1,7 +1,7 @@
 package com.learnupp.util
 
-import android.content.Intent
 import android.content.Context
+import android.content.Intent
 
 actual fun openShareSheet(text: String, url: String?) {
     // Acquire application context through a static holder

@@ -2,14 +2,20 @@ package com.learnupp.ui.base
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.VideoFile
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,15 +32,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.learnupp.ui.cameras.CamerasScreen
-import com.learnupp.ui.home.HomeScreen
 import com.learnupp.ui.more.MoreScreen
 import com.learnupp.ui.reels.ReelsScreen
+import com.learnupp.ui.videos.VideosScreen
 
 enum class ScreenNameStrings(val valueEN: String) {
-    HOME("Home"),
+    VIDEOS("Videos"),
     REELS("Reels"),
-    CAMERAS("Cameras"),
     MORE("More"),
     LOGIN("Login");
 }
@@ -46,9 +50,8 @@ interface NavigationItem {
 }
 
 enum class NavBarItems(override val title: ScreenNameStrings) : NavigationItem {
-    Home(ScreenNameStrings.HOME),
+    Videos(ScreenNameStrings.VIDEOS),
     Reels(ScreenNameStrings.REELS),
-    Cameras(ScreenNameStrings.CAMERAS),
     More(ScreenNameStrings.MORE)
 }
 
@@ -59,7 +62,15 @@ fun LearnUppTopAppBar() {
     val currentScreen = navigator.lastItem as BaseScreen
 
     if (currentScreen.hideTopAppBar) {
-        Box(modifier = Modifier.fillMaxWidth())
+        if (currentScreen.ignoreTopImePadding) {
+            Box(modifier = Modifier.fillMaxWidth())
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Top))
+            )
+        }
         return
     }
 
@@ -97,7 +108,15 @@ fun LearnUppBottomNavBar() {
     val currentScreen = navigator.lastItem as BaseScreen
 
     if (currentScreen.hideBottomNavBar) {
-        Box(modifier = Modifier.fillMaxWidth())
+        if (currentScreen.ignoreBottomImePadding) {
+            Box(modifier = Modifier.fillMaxWidth())
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Bottom))
+            )
+        }
         return
     }
 
@@ -107,9 +126,8 @@ fun LearnUppBottomNavBar() {
         NavBarItems.entries.forEach { item ->
             val isSelected = (navigator.lastItem as? BaseScreen)?.key == item.title.getValue()
             val iconChar = when (item) {
-                NavBarItems.Home -> Icons.Default.Home
+                NavBarItems.Videos -> Icons.Default.VideoFile
                 NavBarItems.Reels -> Icons.Default.PlayArrow
-                NavBarItems.Cameras -> Icons.Default.Videocam
                 NavBarItems.More -> Icons.Default.MoreHoriz
             }
             NavigationBarItem(
@@ -130,9 +148,8 @@ fun LearnUppBottomNavBar() {
                 enabled = true,
                 onClick = {
                     val screen = when (item) {
-                        NavBarItems.Home -> HomeScreen()
+                        NavBarItems.Videos -> VideosScreen()
                         NavBarItems.Reels -> ReelsScreen()
-                        NavBarItems.Cameras -> CamerasScreen()
                         NavBarItems.More -> MoreScreen()
                     }
                     if (!isSelected) {

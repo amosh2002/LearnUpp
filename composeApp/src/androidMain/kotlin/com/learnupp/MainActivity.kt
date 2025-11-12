@@ -4,14 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.tooling.preview.Preview
-import com.learnupp.di.sharedModules
+import com.learnupp.util.AppContextHolder
 import com.learnupp.util.LocalAppComponent
 import com.learnupp.util.LocalizationService
 import com.learnupp.util.PreferencesManager
-import com.learnupp.util.AppContextHolder
 import org.koin.mp.KoinPlatform.getKoin
 
 class MainActivity : ComponentActivity() {

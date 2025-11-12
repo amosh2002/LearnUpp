@@ -1,11 +1,11 @@
 package com.learnupp.data.auth
 
-import com.learnupp.data.camera.CameraStorage
+//import com.learnupp.data.camera.CameraStorage
 import com.learnupp.domain.repo.AuthRepository
 import com.learnupp.util.SessionManager
 
 class AuthRepositoryImpl(
-    private val cameraStorage: CameraStorage,
+//    private val cameraStorage: CameraStorage,
     private val authApi: AuthApi,
 ) : AuthRepository {
     override suspend fun login(
@@ -37,7 +37,7 @@ class AuthRepositoryImpl(
         val result = authApi.logout()
         if (result) {
             // Clear data in storages
-            cameraStorage.clearAllData()
+//            cameraStorage.clearAllData()
             // Remove data from phone
             SessionManager.logout()
         }

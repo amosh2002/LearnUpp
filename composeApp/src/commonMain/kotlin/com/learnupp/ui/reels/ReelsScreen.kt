@@ -69,7 +69,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-class ReelsScreen : BaseScreen(ScreenNameStrings.REELS, hideTopAppBar = true) {
+class ReelsScreen : BaseScreen(
+    ScreenNameStrings.REELS,
+    hideTopAppBar = true,
+    ignoreTopImePadding = true
+) {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable

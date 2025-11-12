@@ -37,29 +37,26 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.FadeTransition
-import cafe.adriel.voyager.transitions.SlideTransition
-import com.learnupp.ui.login.LoginScreen
-import com.learnupp.ui.base.BaseScreen
+import com.learnupp.ui.base.AppTheme
 import com.learnupp.ui.base.LearnUppBottomNavBar
 import com.learnupp.ui.base.LearnUppTopAppBar
-import com.learnupp.ui.base.AppTheme
-import com.learnupp.ui.home.HomeScreen
-import com.learnupp.util.LearnUppNonPrimaryColors
+import com.learnupp.ui.login.LoginScreen
+import com.learnupp.ui.videos.VideosScreen
+import com.learnupp.ui.widgets.AlertDialogWithBlur
+import com.learnupp.ui.widgets.LoadingScreen
 import com.learnupp.util.LanguageEnum
+import com.learnupp.util.LearnUppNonPrimaryColors
+import com.learnupp.util.LearnUppStrings
 import com.learnupp.util.LocalizationService
 import com.learnupp.util.Logger
-import com.learnupp.util.LearnUppStrings
 import com.learnupp.util.Platform
 import com.learnupp.util.PlatformBackHandler
 import com.learnupp.util.PreferencesManager
 import com.learnupp.util.SessionManager
 import com.learnupp.util.currentPlatform
 import com.learnupp.util.getValue
-import com.learnupp.ui.widgets.AlertDialogWithBlur
-import com.learnupp.ui.widgets.LoadingScreen
 import kotlinx.coroutines.runBlocking
 
 private const val TAG = "App.kt"
@@ -146,7 +143,7 @@ fun App(
                 // Decide the start screen based on login status
                 Logger.i(TAG, "User logged in: ${SessionManager.isLoggedIn()}")
                 val startScreen = if (SessionManager.isLoggedIn()) {
-                    HomeScreen()
+                    VideosScreen()
                 } else {
                     LoginScreen()
                 }

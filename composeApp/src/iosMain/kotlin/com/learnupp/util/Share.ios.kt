@@ -2,11 +2,6 @@ package com.learnupp.util
 
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
-import platform.UIKit.UIWindow
-import platform.UIKit.UIViewController
-import platform.Foundation.NSArray
-import platform.Foundation.NSString
-import platform.Foundation.create
 
 actual fun openShareSheet(text: String, url: String?) {
     val message = if (url.isNullOrBlank()) text else "$text\n$url"

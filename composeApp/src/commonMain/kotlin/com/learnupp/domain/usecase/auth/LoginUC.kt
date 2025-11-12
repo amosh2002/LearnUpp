@@ -1,7 +1,7 @@
 package com.learnupp.domain.usecase.auth
 
-import com.learnupp.domain.usecase.base.BaseSuspendUseCase
 import com.learnupp.domain.repo.AuthRepository
+import com.learnupp.domain.usecase.base.BaseSuspendUseCase
 
 abstract class LoginUseCase : BaseSuspendUseCase<LoginUserParams, Boolean>()
 

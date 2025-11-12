@@ -10,15 +10,16 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AVFoundation.AVLayerVideoGravityResizeAspectFill
 import platform.AVFoundation.AVPlayer
 import platform.AVFoundation.AVPlayerItem
-import platform.AVFoundation.AVPlayerLayer
 import platform.AVFoundation.AVPlayerItemDidPlayToEndTimeNotification
+import platform.AVFoundation.AVPlayerLayer
 import platform.AVFoundation.AVURLAsset
 import platform.AVFoundation.cancelPendingSeeks
-import platform.AVFoundation.play
+import platform.AVFoundation.isMuted
+import platform.AVFoundation.muted
 import platform.AVFoundation.pause
+import platform.AVFoundation.play
 import platform.AVFoundation.seekToTime
 import platform.CoreGraphics.CGRectMake
-import platform.CoreGraphics.CGRectZero
 import platform.CoreMedia.CMTimeMake
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSURL
@@ -87,7 +88,7 @@ actual fun PlatformVideoPlayer(
                 // toggle play/pause
                 if (playVideoWhenReady) it.player.play() else it.player.pause()
                 // toggle mute/unmute
-                it.player.isMuted = isMuted
+                it.player.muted = isMuted
             }
         }
     )

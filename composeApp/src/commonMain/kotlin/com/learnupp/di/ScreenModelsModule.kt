@@ -1,9 +1,9 @@
 package com.learnupp.di
 
-import com.learnupp.ui.home.HomeScreenModel
 import com.learnupp.ui.login.LoginScreenModel
 import com.learnupp.ui.more.MoreScreenModel
 import com.learnupp.ui.reels.ReelsScreenModel
+import com.learnupp.ui.videos.VideosScreenModel
 import org.koin.dsl.module
 
 val screenModelsModule = module {
@@ -14,9 +14,10 @@ val screenModelsModule = module {
         )
     }
 
-    // Home
+    // Reels
     single {
-        HomeScreenModel(
+        ReelsScreenModel(
+            get(),
             get(),
             get(),
             get(),
@@ -26,9 +27,9 @@ val screenModelsModule = module {
         )
     }
 
-    // Reels
+    // Videos
     single {
-        ReelsScreenModel(
+        VideosScreenModel(
             get(),
             get(),
             get(),
