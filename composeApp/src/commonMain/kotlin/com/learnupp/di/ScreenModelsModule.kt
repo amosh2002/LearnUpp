@@ -1,6 +1,7 @@
 package com.learnupp.di
 
 import com.learnupp.ui.login.LoginScreenModel
+import com.learnupp.ui.messages.MessagesScreenModel
 import com.learnupp.ui.more.MoreScreenModel
 import com.learnupp.ui.reels.ReelsScreenModel
 import com.learnupp.ui.videos.VideosScreenModel
@@ -34,6 +35,15 @@ val screenModelsModule = module {
             get(),
             get(),
             get(),
+            get(),
+            get(),
+            get()
+        )
+    }
+
+    // Messages
+    single {
+        MessagesScreenModel(
             get(),
             get(),
             get()

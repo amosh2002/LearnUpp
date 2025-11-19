@@ -92,7 +92,13 @@ enum class LearnUppStrings(
         "Դասընթացները հասանելի են միայն դասախոսներին։ Թարմացրեք կարգավիճակը՝ հրապարակելու համար։",
         "Курсы доступны только преподавателям. Повышайте статус, чтобы публиковать."
     ),
-    PROFILE_AVATAR("Profile avatar", "Պրոֆիլի նկար", "Аватар профиля");
+    PROFILE_AVATAR("Profile avatar", "Պրոֆիլի նկար", "Аватар профиля"),
+    MESSAGES_TITLE("Messages", "Հաղորդագրություններ", "Сообщения"),
+    SEARCH_CHATS_PLACEHOLDER("Search chats...", "Որոնել զրույցներ...", "Поиск чатов..."),
+    TAB_ALL("All", "Բոլորը", "Все"),
+    TAB_DIRECT("Direct", "Անձնական", "Личные"),
+    TAB_GROUPS("Groups", "Խմբեր", "Группы"),
+    MEMBERS_LABEL("members", "մասնակից", "участников");
 }
 
 fun LearnUppStrings.getValue(): String {

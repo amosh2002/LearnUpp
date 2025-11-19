@@ -3,6 +3,11 @@ package com.learnupp.di
 import com.learnupp.data.auth.AuthApi
 import com.learnupp.data.auth.AuthRepositoryImpl
 import com.learnupp.data.auth.KtorAuthApi
+import com.learnupp.data.messages.InMemoryMessagesStorage
+import com.learnupp.data.messages.MessagesApi
+import com.learnupp.data.messages.MessagesRepositoryImpl
+import com.learnupp.data.messages.MessagesStorage
+import com.learnupp.data.messages.MockMessagesApi
 import com.learnupp.data.profile.InMemoryProfileStorage
 import com.learnupp.data.profile.MockProfileApi
 import com.learnupp.data.profile.ProfileApi
@@ -19,6 +24,7 @@ import com.learnupp.data.videos.VideosApi
 import com.learnupp.data.videos.VideosRepositoryImpl
 import com.learnupp.data.videos.VideosStorage
 import com.learnupp.domain.repo.AuthRepository
+import com.learnupp.domain.repo.MessagesRepository
 import com.learnupp.domain.repo.ProfileRepository
 import com.learnupp.domain.repo.ReelsRepository
 import com.learnupp.domain.repo.VideosRepository
@@ -33,6 +39,11 @@ val dataModule = module {
     single<ProfileApi> { MockProfileApi() }
     single<ProfileStorage> { InMemoryProfileStorage() }
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get()) }
+
+    // Messages (mocked)
+    single<MessagesApi> { MockMessagesApi() }
+    single<MessagesStorage> { InMemoryMessagesStorage() }
+    single<MessagesRepository> { MessagesRepositoryImpl(get(), get()) }
 
     // Reels (mocked)
     single<ReelsApi> { MockReelsApi() }

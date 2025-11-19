@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.VideoFile
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.learnupp.ui.messages.MessagesScreen
 import com.learnupp.ui.more.MoreScreen
 import com.learnupp.ui.reels.ReelsScreen
 import com.learnupp.ui.videos.VideosScreen
@@ -39,6 +41,7 @@ import com.learnupp.ui.videos.VideosScreen
 enum class ScreenNameStrings(val valueEN: String) {
     VIDEOS("Videos"),
     REELS("Reels"),
+    MESSAGES("Messages"),
     MORE("More"),
     SETTINGS("Settings"),
     LOGIN("Login");
@@ -53,6 +56,7 @@ interface NavigationItem {
 enum class NavBarItems(override val title: ScreenNameStrings) : NavigationItem {
     Videos(ScreenNameStrings.VIDEOS),
     Reels(ScreenNameStrings.REELS),
+    Messages(ScreenNameStrings.MESSAGES),
     More(ScreenNameStrings.MORE)
 }
 
@@ -129,6 +133,7 @@ fun LearnUppBottomNavBar() {
             val iconChar = when (item) {
                 NavBarItems.Videos -> Icons.Default.VideoFile
                 NavBarItems.Reels -> Icons.Default.PlayArrow
+                NavBarItems.Messages -> Icons.Default.Chat
                 NavBarItems.More -> Icons.Default.MoreHoriz
             }
             NavigationBarItem(
@@ -151,6 +156,7 @@ fun LearnUppBottomNavBar() {
                     val screen = when (item) {
                         NavBarItems.Videos -> VideosScreen()
                         NavBarItems.Reels -> ReelsScreen()
+                        NavBarItems.Messages -> MessagesScreen()
                         NavBarItems.More -> MoreScreen()
                     }
                     if (!isSelected) {

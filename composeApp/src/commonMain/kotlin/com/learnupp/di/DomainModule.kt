@@ -4,6 +4,12 @@ import com.learnupp.domain.usecase.auth.LoginUseCase
 import com.learnupp.domain.usecase.auth.LoginUseCaseImpl
 import com.learnupp.domain.usecase.auth.LogoutUseCase
 import com.learnupp.domain.usecase.auth.LogoutUseCaseImpl
+import com.learnupp.domain.usecase.messages.GetMessagesUseCase
+import com.learnupp.domain.usecase.messages.GetMessagesUseCaseImpl
+import com.learnupp.domain.usecase.messages.PreloadMessagesUseCase
+import com.learnupp.domain.usecase.messages.PreloadMessagesUseCaseImpl
+import com.learnupp.domain.usecase.messages.ReloadMessagesUseCase
+import com.learnupp.domain.usecase.messages.ReloadMessagesUseCaseImpl
 import com.learnupp.domain.usecase.profile.GetProfileUseCase
 import com.learnupp.domain.usecase.profile.GetProfileUseCaseImpl
 import com.learnupp.domain.usecase.profile.PreloadProfileUseCase
@@ -52,6 +58,11 @@ val domainModule = module {
     single<PreloadProfileUseCase> { PreloadProfileUseCaseImpl(get()) }
     single<ReloadProfileUseCase> { ReloadProfileUseCaseImpl(get()) }
     single<UpdateProfileAboutUseCase> { UpdateProfileAboutUseCaseImpl(get()) }
+
+    // Messages
+    single<GetMessagesUseCase> { GetMessagesUseCaseImpl(get()) }
+    single<PreloadMessagesUseCase> { PreloadMessagesUseCaseImpl(get()) }
+    single<ReloadMessagesUseCase> { ReloadMessagesUseCaseImpl(get()) }
 
     // Reels
     single<GetReelsUseCase> { GetReelsUseCaseImpl(get()) }
