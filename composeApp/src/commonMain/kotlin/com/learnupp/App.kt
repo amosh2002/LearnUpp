@@ -91,9 +91,9 @@ fun App(
 
     // State for the selected language
     val selectedLanguageState = remember {
-        // Initialize with the stored language or default to Armenian
+        // Initialize with the stored language or default to English
         val savedLangIso = runBlocking {
-            preferencesManager.getString("LANGUAGE") ?: LanguageEnum.Armenian.iso
+            preferencesManager.getString("LANGUAGE") ?: LanguageEnum.English.iso
         }
         Logger.i(TAG, "Initial language loaded: $savedLangIso")
         mutableStateOf(LanguageEnum.entries.first { it.iso == savedLangIso })

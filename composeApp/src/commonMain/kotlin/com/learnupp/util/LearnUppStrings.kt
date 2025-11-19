@@ -66,6 +66,33 @@ enum class LearnUppStrings(
         "Չհաջողվեց դուրս գալ",
         "Не удалось выйти из системы"
     ),
+    SETTINGS_TITLE("Settings", "Կարգավորումներ", "Настройки"),
+    NOTIFICATIONS("Notifications", "Ծանուցումներ", "Уведомления"),
+    PRIVACY("Privacy", "Գաղտնիություն", "Конфиденциальность"),
+    LANGUAGE("Language", "Լեզու", "Язык"),
+    DOWNLOAD_SETTINGS(
+        "Download Settings",
+        "Ներբեռնումների կարգավորումներ",
+        "Настройки загрузок"
+    ),
+    HELP_SUPPORT("Help & Support", "Օգնություն և աջակցություն", "Помощь и поддержка"),
+    VIDEOS_LABEL("Videos", "Տեսանյութեր", "Видео"),
+    SHORTS_LABEL("Shorts", "Կարճ տեսանյութեր", "Шорты"),
+    COURSES_LABEL("Courses", "Դասընթացներ", "Курсы"),
+    STUDENTS_LABEL("Students", "Ուսանողներ", "Студенты"),
+    FOLLOWERS_LABEL("Followers", "Հետևորդներ", "Подписчики"),
+    FOLLOWING_LABEL("Following", "Բաժանորդագրություններ", "Подписки"),
+    RATING_LABEL("Rating", "Վարկանիշ", "Рейтинг"),
+    POSTS_LABEL("Posts", "Հրապարակումներ", "Посты"),
+    ABOUT_ME("About me", "Իմ մասին", "Обо мне"),
+    EDIT_ABOUT("Edit About", "Խմբագրել «Իմ մասին»", "Изменить «Обо мне»"),
+    SAVE("Save", "Պահպանել", "Сохранить"),
+    COURSES_LOCKED_MESSAGE(
+        "Courses are available for Lecturers. Upgrade to start publishing.",
+        "Դասընթացները հասանելի են միայն դասախոսներին։ Թարմացրեք կարգավիճակը՝ հրապարակելու համար։",
+        "Курсы доступны только преподавателям. Повышайте статус, чтобы публиковать."
+    ),
+    PROFILE_AVATAR("Profile avatar", "Պրոֆիլի նկար", "Аватар профиля");
 }
 
 fun LearnUppStrings.getValue(): String {

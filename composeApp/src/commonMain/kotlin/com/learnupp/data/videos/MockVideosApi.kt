@@ -14,8 +14,12 @@ class MockVideosApi : VideosApi {
     )
 
     override suspend fun fetchVideos(page: Int, pageSize: Int): List<Video> {
+        val total = 50
         val start = page * pageSize
-        return (start until start + pageSize).map { index ->
+        if (start >= total) return emptyList()
+
+        val endExclusive = minOf(start + pageSize, total)
+        return (start until endExclusive).map { index ->
             val r = Random(index)
             val duration = 60 + r.nextInt(8 * 60)
             val id = "video-$index"

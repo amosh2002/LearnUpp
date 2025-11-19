@@ -40,6 +40,7 @@ enum class ScreenNameStrings(val valueEN: String) {
     VIDEOS("Videos"),
     REELS("Reels"),
     MORE("More"),
+    SETTINGS("Settings"),
     LOGIN("Login");
 }
 

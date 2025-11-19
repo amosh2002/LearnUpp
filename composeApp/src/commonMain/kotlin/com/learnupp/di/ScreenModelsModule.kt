@@ -43,6 +43,21 @@ val screenModelsModule = module {
     // More
     single {
         MoreScreenModel(
+            get(), // Logout
+            // Profile
+            get(),
+            get(),
+            get(),
+            get(),
+            // Videos
+            get(),
+            get(),
+            get(),
+            get(),
+            // Reels
+            get(),
+            get(),
+            get(),
             get()
         )
     }
