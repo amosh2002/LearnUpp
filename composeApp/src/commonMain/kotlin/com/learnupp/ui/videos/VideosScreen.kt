@@ -104,6 +104,8 @@ class VideosScreen : BaseScreen(ScreenNameStrings.VIDEOS, hideTopAppBar = true) 
                             onToggleLike = { screenModel.toggleLike(video.id) },
                             onShare = { screenModel.registerShare(video.id) }
                         )
+
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                     item { Spacer(modifier = Modifier.height(24.dp)) }
                 }
@@ -193,11 +195,11 @@ private fun VideoCard(
             )
         }
 
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(12.dp))
 
         Row(
             modifier = Modifier.padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.Top
         ) {
             Box(
@@ -308,5 +310,6 @@ private fun Double.format1(): String {
     val s = rounded.toString()
     return if (s.endsWith(".0")) s.dropLast(2) else s
 }
+
 
 
