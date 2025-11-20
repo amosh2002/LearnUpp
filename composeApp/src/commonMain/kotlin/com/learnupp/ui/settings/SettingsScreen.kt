@@ -2,7 +2,6 @@ package com.learnupp.ui.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,8 +39,8 @@ import com.learnupp.DialogType
 import com.learnupp.LocalDialogState
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
-import com.learnupp.ui.more.MoreScreenModel
 import com.learnupp.ui.login.LoginScreen
+import com.learnupp.ui.more.MoreScreenModel
 import com.learnupp.util.LearnUppStrings
 import com.learnupp.util.getValue
 import kotlinx.coroutines.launch

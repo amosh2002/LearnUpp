@@ -17,9 +17,9 @@ import com.learnupp.domain.usecase.videos.PreloadVideosUseCase
 import com.learnupp.domain.usecase.videos.ReloadVideosUseCase
 import com.learnupp.ui.base.BaseScreenModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
