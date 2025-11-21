@@ -98,7 +98,18 @@ enum class LearnUppStrings(
     TAB_ALL("All", "Բոլորը", "Все"),
     TAB_DIRECT("Direct", "Անձնական", "Личные"),
     TAB_GROUPS("Groups", "Խմբեր", "Группы"),
-    MEMBERS_LABEL("members", "մասնակից", "участников");
+    MEMBERS_LABEL("members", "մասնակից", "участников"),
+    SEARCH_COURSES_PLACEHOLDER(
+        "Search courses or creators",
+        "Փնտրեք դասընթացներ կամ հեղինակների",
+        "Ищите курсы или авторов"
+    ),
+    SEE_ALL("See all...", "Տեսնել բոլորը...", "Смотреть все..."),
+    ENROLL_NOW("Enroll Now", "Գրանցվել հիմա", "Записаться"),
+    LECTURES_LABEL("Lectures", "Դասախոսություններ", "Лекций"),
+    FITNESS_LABEL("Fitness", "Ֆիթնես", "Фитнес"),
+    DESIGN_LABEL("Design", "Դիզայն", "Дизайн"),
+    MARKETING_LABEL("Marketing", "Մարքեթինգ", "Маркетинг");
 }
 
 fun LearnUppStrings.getValue(): String {

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.VideoFile
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.learnupp.ui.courses.CoursesScreen
 import com.learnupp.ui.messages.MessagesScreen
 import com.learnupp.ui.more.MoreScreen
 import com.learnupp.ui.reels.ReelsScreen
@@ -39,6 +41,7 @@ import com.learnupp.ui.videos.VideosScreen
 enum class ScreenNameStrings(val valueEN: String) {
     VIDEOS("Videos"),
     REELS("Reels"),
+    COURSES("Courses"),
     MESSAGES("Messages"),
     MORE("More"),
     SETTINGS("Settings"),
@@ -54,6 +57,7 @@ interface NavigationItem {
 enum class NavBarItems(override val title: ScreenNameStrings) : NavigationItem {
     Videos(ScreenNameStrings.VIDEOS),
     Reels(ScreenNameStrings.REELS),
+    Courses(ScreenNameStrings.COURSES),
     Messages(ScreenNameStrings.MESSAGES),
     More(ScreenNameStrings.MORE)
 }
@@ -131,6 +135,7 @@ fun LearnUppBottomNavBar() {
             val iconChar = when (item) {
                 NavBarItems.Videos -> Icons.Default.VideoFile
                 NavBarItems.Reels -> Icons.Default.PlayArrow
+                NavBarItems.Courses -> Icons.Default.School
                 NavBarItems.Messages -> Icons.Default.Chat
                 NavBarItems.More -> Icons.Default.MoreHoriz
             }
@@ -154,6 +159,7 @@ fun LearnUppBottomNavBar() {
                     val screen = when (item) {
                         NavBarItems.Videos -> VideosScreen()
                         NavBarItems.Reels -> ReelsScreen()
+                        NavBarItems.Courses -> com.learnupp.ui.courses.CoursesScreen()
                         NavBarItems.Messages -> MessagesScreen()
                         NavBarItems.More -> MoreScreen()
                     }

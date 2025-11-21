@@ -10,6 +10,14 @@ import com.learnupp.domain.usecase.messages.PreloadMessagesUseCase
 import com.learnupp.domain.usecase.messages.PreloadMessagesUseCaseImpl
 import com.learnupp.domain.usecase.messages.ReloadMessagesUseCase
 import com.learnupp.domain.usecase.messages.ReloadMessagesUseCaseImpl
+import com.learnupp.domain.usecase.courses.GetCoursesUseCase
+import com.learnupp.domain.usecase.courses.GetCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.LoadMoreCoursesUseCase
+import com.learnupp.domain.usecase.courses.LoadMoreCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.PreloadCoursesUseCase
+import com.learnupp.domain.usecase.courses.PreloadCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.ReloadCoursesUseCase
+import com.learnupp.domain.usecase.courses.ReloadCoursesUseCaseImpl
 import com.learnupp.domain.usecase.profile.GetProfileUseCase
 import com.learnupp.domain.usecase.profile.GetProfileUseCaseImpl
 import com.learnupp.domain.usecase.profile.PreloadProfileUseCase
@@ -58,6 +66,12 @@ val domainModule = module {
     single<PreloadProfileUseCase> { PreloadProfileUseCaseImpl(get()) }
     single<ReloadProfileUseCase> { ReloadProfileUseCaseImpl(get()) }
     single<UpdateProfileAboutUseCase> { UpdateProfileAboutUseCaseImpl(get()) }
+
+    // Courses
+    single<GetCoursesUseCase> { GetCoursesUseCaseImpl(get()) }
+    single<PreloadCoursesUseCase> { PreloadCoursesUseCaseImpl(get()) }
+    single<ReloadCoursesUseCase> { ReloadCoursesUseCaseImpl(get()) }
+    single<LoadMoreCoursesUseCase> { LoadMoreCoursesUseCaseImpl(get()) }
 
     // Messages
     single<GetMessagesUseCase> { GetMessagesUseCaseImpl(get()) }
