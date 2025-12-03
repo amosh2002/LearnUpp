@@ -16,11 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -47,6 +45,7 @@ import com.learnupp.domain.model.Course
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.widgets.RefreshableBox
+import com.learnupp.ui.widgets.SearchFilterChipsSection
 import com.learnupp.util.LearnUppStrings
 import com.learnupp.util.getValue
 import io.kamel.image.KamelImage
@@ -96,82 +95,16 @@ class CoursesScreen : BaseScreen(ScreenNameStrings.COURSES, hideTopAppBar = true
 
 @Composable
 private fun SearchAndChips() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 20.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Surface(
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f),
-                shape = RoundedCornerShape(14.dp),
-                modifier = Modifier.weight(1f)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = LearnUppStrings.SEARCH_COURSES_PLACEHOLDER.getValue(),
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.65f)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Surface(
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(14.dp),
-                modifier = Modifier.size(48.dp),
-                tonalElevation = 0.dp
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.GridView,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            val chips = listOf(
-                LearnUppStrings.FITNESS_LABEL.getValue(),
-                LearnUppStrings.DESIGN_LABEL.getValue(),
-                LearnUppStrings.MARKETING_LABEL.getValue(),
-                LearnUppStrings.SEE_ALL.getValue()
-            )
-            chips.forEachIndexed { index, label ->
-                val selected = index == 0
-                Surface(
-                    shape = RoundedCornerShape(30.dp),
-                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary.copy(
-                        alpha = 0.08f
-                    )
-                ) {
-                    Text(
-                        text = label,
-                        color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
-                        fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
-                    )
-                }
-            }
-        }
-    }
+    SearchFilterChipsSection(
+        placeholder = LearnUppStrings.SEARCH_COURSES_PLACEHOLDER.getValue(),
+        chipLabels = listOf(
+            LearnUppStrings.FITNESS_LABEL.getValue(),
+            LearnUppStrings.DESIGN_LABEL.getValue(),
+            LearnUppStrings.MARKETING_LABEL.getValue()
+        ),
+        seeAllLabel = LearnUppStrings.SEE_ALL.getValue(),
+        modifier = Modifier.padding(bottom = 20.dp)
+    )
 }
 
 @Composable

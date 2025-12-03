@@ -123,7 +123,7 @@ private fun MessagesHeader(
 ) {
     Column(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 20.dp)
+            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
             .fillMaxWidth()
     ) {
         Row(

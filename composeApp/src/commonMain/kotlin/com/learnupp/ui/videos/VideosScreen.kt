@@ -20,10 +20,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +44,7 @@ import com.learnupp.domain.model.Video
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.widgets.RefreshableBox
+import com.learnupp.ui.widgets.SearchFilterChipsSection
 import com.learnupp.util.LearnUppStrings
 import com.learnupp.util.getValue
 import io.kamel.image.KamelImage
@@ -116,52 +115,16 @@ class VideosScreen : BaseScreen(ScreenNameStrings.VIDEOS, hideTopAppBar = true) 
 
 @Composable
 private fun SearchAndChips() {
-    Column(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 12.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f))
-                .padding(horizontal = 12.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search",
-                tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                text = LearnUppStrings.SEARCH_COURSES_PLACEHOLDER.getValue(),
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-
-        Spacer(modifier = Modifier.size(14.dp))
-
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            listOf(
-                LearnUppStrings.FITNESS_LABEL.getValue(),
-                LearnUppStrings.DESIGN_LABEL.getValue(),
-                LearnUppStrings.MARKETING_LABEL.getValue(),
-                LearnUppStrings.SEE_ALL.getValue()
-            ).forEachIndexed { idx, label ->
-                Surface(
-                    shape = RoundedCornerShape(30.dp),
-                    color = if (idx == 0) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                    else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.06f)
-                ) {
-                    Text(
-                        text = label,
-                        color = if (idx == 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        }
-    }
+    SearchFilterChipsSection(
+        placeholder = LearnUppStrings.SEARCH_COURSES_PLACEHOLDER.getValue(),
+        chipLabels = listOf(
+            LearnUppStrings.FITNESS_LABEL.getValue(),
+            LearnUppStrings.DESIGN_LABEL.getValue(),
+            LearnUppStrings.MARKETING_LABEL.getValue()
+        ),
+        seeAllLabel = LearnUppStrings.SEE_ALL.getValue(),
+        modifier = Modifier.padding(bottom = 20.dp)
+    )
 }
 
 @Composable
