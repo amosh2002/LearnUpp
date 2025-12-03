@@ -47,6 +47,7 @@ import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.widgets.RefreshableBox
 import com.learnupp.ui.widgets.SearchFilterChipsSection
 import com.learnupp.util.LearnUppStrings
+import com.learnupp.util.formatPrice
 import com.learnupp.util.getValue
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -175,14 +176,14 @@ private fun CourseCard(course: Course) {
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = formatPrice(course.currentPrice),
+                                text = course.currentPrice.formatPrice(),
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold
                             )
                             course.originalPrice?.let {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = formatPrice(it),
+                                    text = it.formatPrice(),
                                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
                                     textDecoration = TextDecoration.LineThrough
                                 )
@@ -223,13 +224,5 @@ private fun Dot() {
         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
         modifier = Modifier.padding(horizontal = 6.dp)
     )
-}
-
-private fun formatPrice(value: Double): String {
-    return if (value % 1.0 == 0.0) {
-        "$${value.toInt()}"
-    } else {
-        "$$value"
-    }
 }
 

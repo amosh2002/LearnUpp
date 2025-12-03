@@ -33,6 +33,7 @@ import com.learnupp.domain.model.earnings.EarningsTransaction
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.widgets.PrimaryButton
+import com.learnupp.util.formatPrice
 
 class EarningsScreen : BaseScreen(ScreenNameStrings.EARNINGS) {
     @Composable
@@ -95,9 +96,12 @@ private fun EarningsHeader(total: Double, thisMonth: Double, lastMonth: Double) 
             modifier = Modifier.padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Total Earned", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
             Text(
-                text = "$$total",
+                text = "Total Earned",
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
+            )
+            Text(
+                text = total.formatPrice(),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -108,11 +112,11 @@ private fun EarningsHeader(total: Double, thisMonth: Double, lastMonth: Double) 
             ) {
                 Column(horizontalAlignment = Alignment.Start) {
                     Text(text = "This Month", fontWeight = FontWeight.Medium)
-                    Text(text = "$$thisMonth")
+                    Text(text = thisMonth.formatPrice())
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(text = "Last Month", fontWeight = FontWeight.Medium)
-                    Text(text = "$$lastMonth")
+                    Text(text = lastMonth.formatPrice())
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -162,7 +166,7 @@ private fun TransactionRow(transaction: EarningsTransaction) {
                 )
             }
             Text(
-                text = "+$${transaction.amount}",
+                text = transaction.amount.formatPrice(showSign = true),
                 color = Color(0xFF2ED573),
                 fontWeight = FontWeight.Bold
             )
