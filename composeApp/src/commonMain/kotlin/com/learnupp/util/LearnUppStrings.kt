@@ -70,6 +70,8 @@ enum class LearnUppStrings(
     NOTIFICATIONS("Notifications", "Ծանուցումներ", "Уведомления"),
     PRIVACY("Privacy", "Գաղտնիություն", "Конфиденциальность"),
     LANGUAGE("Language", "Լեզու", "Язык"),
+    EARNINGS("Earnings", "Եկամուտներ", "Заработок"),
+    PAYMENT_METHODS("Payment Methods", "Վճարման եղանակներ", "Методы оплаты"),
     DOWNLOAD_SETTINGS(
         "Download Settings",
         "Ներբեռնումների կարգավորումներ",

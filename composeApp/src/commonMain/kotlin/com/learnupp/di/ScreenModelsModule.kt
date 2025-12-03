@@ -5,6 +5,10 @@ import com.learnupp.ui.login.LoginScreenModel
 import com.learnupp.ui.messages.MessagesScreenModel
 import com.learnupp.ui.more.MoreScreenModel
 import com.learnupp.ui.reels.ReelsScreenModel
+import com.learnupp.ui.settings.earnings.EarningsScreenModel
+import com.learnupp.ui.settings.language.LanguageSelectionScreenModel
+import com.learnupp.ui.settings.notifications.NotificationsSettingsScreenModel
+import com.learnupp.ui.settings.payments.PaymentMethodsScreenModel
 import com.learnupp.ui.videos.VideosScreenModel
 import org.koin.dsl.module
 
@@ -82,6 +86,12 @@ val screenModelsModule = module {
             get()
         )
     }
+
+    // Settings
+    single { NotificationsSettingsScreenModel(get(), get(), get()) }
+    single { EarningsScreenModel(get(), get()) }
+    single { PaymentMethodsScreenModel(get(), get()) }
+    single { LanguageSelectionScreenModel(get(), get(), get()) }
 }
 
 

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -23,12 +24,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AttachMoney
+import androidx.compose.material.icons.outlined.HelpOutline
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Payment
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -36,6 +44,7 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,29 +58,44 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.outlined.Logout
+import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.learnupp.DialogParams
+import com.learnupp.DialogType
+import com.learnupp.LocalDialogState
+import com.learnupp.LocalDialogState
 import com.learnupp.domain.model.Profile
 import com.learnupp.domain.model.Reel
 import com.learnupp.domain.model.Video
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
-import com.learnupp.ui.settings.SettingsScreen
+import com.learnupp.ui.settings.earnings.EarningsScreen
+import com.learnupp.ui.settings.help.HelpSupportScreen
+import com.learnupp.ui.settings.language.LanguageSelectionScreen
+import com.learnupp.ui.settings.notifications.NotificationsSettingsScreen
+import com.learnupp.ui.settings.payments.PaymentMethodsScreen
+import com.learnupp.ui.widgets.SettingsSheetOption
 import com.learnupp.ui.widgets.LoadingScreen
 import com.learnupp.util.LearnUppStrings
 import com.learnupp.util.getValue
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class MoreScreen : BaseScreen(
     ScreenNameStrings.MORE,
     hideTopAppBar = true
 ) {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val dialogState = LocalDialogState.current
+        var showSettingsSheet by remember { mutableStateOf(false) }
 
         val moreScreenModel: MoreScreenModel = koinScreenModel()
 
@@ -84,6 +108,99 @@ class MoreScreen : BaseScreen(
             LoadingScreen()
         }
 
+        if (showSettingsSheet) {
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            ModalBottomSheet(
+                sheetState = sheetState,
+                onDismissRequest = { showSettingsSheet = false },
+                containerColor = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(48.dp)
+                            .height(4.dp)
+                            .clip(RoundedCornerShape(50))
+                            .background(MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f))
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.Notifications,
+                        text = LearnUppStrings.NOTIFICATIONS.getValue(),
+                        iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
+                    ) {
+                        showSettingsSheet = false
+                        navigator.push(NotificationsSettingsScreen())
+                    }
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.AttachMoney,
+                        text = LearnUppStrings.EARNINGS.getValue(),
+                        iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
+                    ) {
+                        showSettingsSheet = false
+                        navigator.push(EarningsScreen())
+                    }
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.Payment,
+                        text = LearnUppStrings.PAYMENT_METHODS.getValue(),
+                        iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
+                    ) {
+                        showSettingsSheet = false
+                        navigator.push(PaymentMethodsScreen())
+                    }
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.Language,
+                        text = LearnUppStrings.LANGUAGE.getValue(),
+                        iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
+                    ) {
+                        showSettingsSheet = false
+                        navigator.push(LanguageSelectionScreen())
+                    }
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.HelpOutline,
+                        text = LearnUppStrings.HELP_SUPPORT.getValue(),
+                        iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
+                    ) {
+                        showSettingsSheet = false
+                        navigator.push(HelpSupportScreen())
+                    }
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.Logout,
+                        text = LearnUppStrings.LOG_OUT.getValue(),
+                        iconTint = MaterialTheme.colorScheme.primary,
+                        textColor = MaterialTheme.colorScheme.primary,
+                        iconBackground = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                        showChevron = false
+                    ) {
+                        showSettingsSheet = false
+                        dialogState.value = DialogParams(
+                            title = LearnUppStrings.LOG_OUT_TITLE.getValue(),
+                            message = "",
+                            dialogType = DialogType.QUESTION,
+                            buttonCount = 2,
+                            confirmText = LearnUppStrings.LOG_OUT.getValue(),
+                            dismissText = LearnUppStrings.CANCEL.getValue(),
+                            onConfirm = {
+                                dialogState.value = null
+                                moreScreenModel.screenModelScope.launch {
+                                    val success = moreScreenModel.logout()
+                                    if (success) navigator.replaceAll(com.learnupp.ui.login.LoginScreen())
+                                }
+                            },
+                            onDismiss = { dialogState.value = null }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
+        }
+
         ProfileScaffold(
             profile = profile,
             videos = videos,
@@ -91,7 +208,7 @@ class MoreScreen : BaseScreen(
             onLoadMoreVideos = { moreScreenModel.loadMoreForVideos() },
             onLoadMoreReels = { moreScreenModel.loadMoreForReels() },
             onEditAbout = { moreScreenModel.updateAbout(it) },
-            onSettingsClick = { navigator.push(SettingsScreen()) }
+            onSettingsClick = { showSettingsSheet = true }
         )
     }
 }

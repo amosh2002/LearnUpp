@@ -44,7 +44,11 @@ enum class ScreenNameStrings(val valueEN: String) {
     COURSES("Courses"),
     MESSAGES("Messages"),
     MORE("More"),
-    SETTINGS("Settings"),
+    NOTIFICATIONS("Notifications"),
+    EARNINGS("Earnings"),
+    PAYMENTS("Payment Methods"),
+    LANGUAGE("Language"),
+    HELP("Help & Support"),
     LOGIN("Login");
 }
 

@@ -18,6 +18,26 @@ import com.learnupp.domain.usecase.courses.PreloadCoursesUseCase
 import com.learnupp.domain.usecase.courses.PreloadCoursesUseCaseImpl
 import com.learnupp.domain.usecase.courses.ReloadCoursesUseCase
 import com.learnupp.domain.usecase.courses.ReloadCoursesUseCaseImpl
+import com.learnupp.domain.usecase.earnings.GetEarningsSummaryUseCase
+import com.learnupp.domain.usecase.earnings.GetEarningsSummaryUseCaseImpl
+import com.learnupp.domain.usecase.earnings.ReloadEarningsUseCase
+import com.learnupp.domain.usecase.earnings.ReloadEarningsUseCaseImpl
+import com.learnupp.domain.usecase.language.GetLanguagesUseCase
+import com.learnupp.domain.usecase.language.GetLanguagesUseCaseImpl
+import com.learnupp.domain.usecase.language.ReloadLanguagesUseCase
+import com.learnupp.domain.usecase.language.ReloadLanguagesUseCaseImpl
+import com.learnupp.domain.usecase.language.SelectLanguageUseCase
+import com.learnupp.domain.usecase.language.SelectLanguageUseCaseImpl
+import com.learnupp.domain.usecase.notifications.GetNotificationSettingsUseCase
+import com.learnupp.domain.usecase.notifications.GetNotificationSettingsUseCaseImpl
+import com.learnupp.domain.usecase.notifications.ReloadNotificationSettingsUseCase
+import com.learnupp.domain.usecase.notifications.ReloadNotificationSettingsUseCaseImpl
+import com.learnupp.domain.usecase.notifications.ToggleNotificationSettingUseCase
+import com.learnupp.domain.usecase.notifications.ToggleNotificationSettingUseCaseImpl
+import com.learnupp.domain.usecase.payments.GetPaymentMethodsUseCase
+import com.learnupp.domain.usecase.payments.GetPaymentMethodsUseCaseImpl
+import com.learnupp.domain.usecase.payments.ReloadPaymentMethodsUseCase
+import com.learnupp.domain.usecase.payments.ReloadPaymentMethodsUseCaseImpl
 import com.learnupp.domain.usecase.profile.GetProfileUseCase
 import com.learnupp.domain.usecase.profile.GetProfileUseCaseImpl
 import com.learnupp.domain.usecase.profile.PreloadProfileUseCase
@@ -72,6 +92,24 @@ val domainModule = module {
     single<PreloadCoursesUseCase> { PreloadCoursesUseCaseImpl(get()) }
     single<ReloadCoursesUseCase> { ReloadCoursesUseCaseImpl(get()) }
     single<LoadMoreCoursesUseCase> { LoadMoreCoursesUseCaseImpl(get()) }
+
+    // Notifications
+    single<GetNotificationSettingsUseCase> { GetNotificationSettingsUseCaseImpl(get()) }
+    single<ReloadNotificationSettingsUseCase> { ReloadNotificationSettingsUseCaseImpl(get()) }
+    single<ToggleNotificationSettingUseCase> { ToggleNotificationSettingUseCaseImpl(get()) }
+
+    // Earnings
+    single<GetEarningsSummaryUseCase> { GetEarningsSummaryUseCaseImpl(get()) }
+    single<ReloadEarningsUseCase> { ReloadEarningsUseCaseImpl(get()) }
+
+    // Payment methods
+    single<GetPaymentMethodsUseCase> { GetPaymentMethodsUseCaseImpl(get()) }
+    single<ReloadPaymentMethodsUseCase> { ReloadPaymentMethodsUseCaseImpl(get()) }
+
+    // Languages
+    single<GetLanguagesUseCase> { GetLanguagesUseCaseImpl(get()) }
+    single<SelectLanguageUseCase> { SelectLanguageUseCaseImpl(get()) }
+    single<ReloadLanguagesUseCase> { ReloadLanguagesUseCaseImpl(get()) }
 
     // Messages
     single<GetMessagesUseCase> { GetMessagesUseCaseImpl(get()) }
