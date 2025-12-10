@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,6 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.learnupp.domain.model.earnings.EarningsTransaction
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
@@ -38,6 +39,7 @@ import com.learnupp.util.formatPrice
 class EarningsScreen : BaseScreen(ScreenNameStrings.EARNINGS) {
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
         val model: EarningsScreenModel = koinScreenModel()
         val summary by model.summary.collectAsState()
 
@@ -63,7 +65,7 @@ class EarningsScreen : BaseScreen(ScreenNameStrings.EARNINGS) {
                     ),
                     shape = RoundedCornerShape(18.dp),
                     height = 56.dp,
-                    onClick = { /* TODO: Withdraw funds action */ }
+                    onClick = { navigator.push(WithdrawFundsScreen) }
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
@@ -119,15 +121,6 @@ private fun EarningsHeader(total: Double, thisMonth: Double, lastMonth: Double) 
                     Text(text = lastMonth.formatPrice())
                 }
             }
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                onClick = { },
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Withdraw Funds", fontWeight = FontWeight.SemiBold)
-            }
         }
     }
 }
@@ -173,4 +166,3 @@ private fun TransactionRow(transaction: EarningsTransaction) {
         }
     }
 }
-
