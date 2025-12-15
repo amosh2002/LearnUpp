@@ -21,6 +21,8 @@ kotlin {
 
         framework {
             baseName = "ComposeApp"
+            // Re-export shared models so they remain visible on the iOS side if needed.
+            export(project(":sharedModel"))
         }
     }
 
@@ -37,6 +39,8 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            // Re-export shared models for iOS frameworks as well.
+            export(project(":sharedModel"))
         }
     }
 
@@ -77,6 +81,9 @@ kotlin {
             implementation(libs.kamel)
 
             implementation(libs.androidx.datastore.preferences.core)
+
+            // Shared domain/data models used by both client and server
+            implementation(project(":sharedModel"))
         }
 
         iosMain.dependencies {

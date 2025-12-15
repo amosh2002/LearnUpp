@@ -330,7 +330,7 @@ private fun ThreadRow(thread: MessageThread) {
             }
         } else {
             KamelImage(
-                resource = asyncPainterResource(thread.avatarUrl),
+                resource = asyncPainterResource(thread.avatarUrl!!),
                 contentDescription = thread.title,
                 modifier = Modifier
                     .size(44.dp)

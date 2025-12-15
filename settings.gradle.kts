@@ -31,3 +31,5 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":sharedModel")
+include(":server")

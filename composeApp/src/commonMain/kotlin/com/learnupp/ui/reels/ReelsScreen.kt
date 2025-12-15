@@ -423,7 +423,7 @@ private fun ReelItem(
                             // Description text on the left (if available)
                             if (reel.description != null) {
                                 Text(
-                                    text = reel.description,
+                                    text = reel.description!!,
                                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier

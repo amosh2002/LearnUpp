@@ -1,0 +1,13 @@
+package com.learnupp.domain.model.settings
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class LanguageOption(
+    val code: String,
+    val name: String,
+    val flagEmoji: String,
+    val selected: Boolean = false
+)
+
+
