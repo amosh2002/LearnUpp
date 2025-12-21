@@ -129,7 +129,42 @@ enum class LearnUppStrings(
     LECTURES_LABEL("Lectures", "Դասախոսություններ", "Лекций"),
     FITNESS_LABEL("Fitness", "Ֆիթնես", "Фитнес"),
     DESIGN_LABEL("Design", "Դիզայն", "Дизайн"),
-    MARKETING_LABEL("Marketing", "Մարքեթինգ", "Маркетинг");
+    MARKETING_LABEL("Marketing", "Մարքեթինգ", "Маркетинг"),
+
+    // Screen titles
+    SCREEN_VIDEOS("Videos", "Տեսանյութեր", "Видео"),
+    SCREEN_REELS("Shorts", "Կարճ տեսանյութեր", "Шорты"),
+    SCREEN_COURSES("Courses", "Դասընթացներ", "Курсы"),
+    SCREEN_MESSAGES("Messages", "Հաղորդագրություններ", "Сообщения"),
+    SCREEN_MORE("More", "Ավելին", "Еще"),
+    SCREEN_NOTIFICATIONS("Notifications", "Ծանուցումներ", "Уведомления"),
+    SCREEN_EARNINGS("Earnings", "Եկամուտներ", "Заработок"),
+    SCREEN_PAYMENTS("Payment Methods", "Վճարման եղանակներ", "Методы оплаты"),
+    SCREEN_LANGUAGE("Language", "Լեզու", "Язык"),
+    SCREEN_HELP("Help & Support", "Օգնություն և աջակցություն", "Помощь и поддержка"),
+    SCREEN_WITHDRAW_FUNDS("Withdraw Funds", "Հանել միջոցներ", "Снять средства"),
+    SCREEN_WITHDRAW_METHODS("Select Payout Method", "Ընտրեք վճարման եղանակ", "Выберите способ выплаты"),
+    SCREEN_WITHDRAW_SUCCESS("Withdrawal Successful", "Հանելն ավարտված է", "Успешный вывод"),
+    SCREEN_LOGIN("Login", "Մուտք", "Логин"),
+    SCREEN_SIGN_UP("Create Account", "Գրանցել հաշիվ", "Создать аккаунт"),
+
+    // Register screen
+    REGISTER_TITLE("Create Account", "Գրանցել հաշիվ", "Создать аккаунт"),
+    REGISTER_FULL_NAME("Full Name", "Անուն Ազգանուն", "Полное имя"),
+    REGISTER_FULL_NAME_PLACEHOLDER("Enter your full name", "Մուտքագրեք ձեր անունը", "Введите ваше имя"),
+    REGISTER_EMAIL_ADDRESS("Email Address", "Էլ. հասցե", "Эл. адрес"),
+    REGISTER_EMAIL_PLACEHOLDER("Enter your email", "Մուտքագրեք ձեր էլ. հասցեն", "Введите ваш email"),
+    REGISTER_PASSWORD_PLACEHOLDER("Create a password", "Ստեղծեք գաղտնաբառ", "Придумайте пароль"),
+    REGISTER_CONFIRM_PASSWORD("Confirm Password", "Հաստատել գաղտնաբառը", "Подтвердите пароль"),
+    REGISTER_CONFIRM_PASSWORD_PLACEHOLDER("Re-enter your password", "Կրկին մուտքագրեք գաղտնաբառը", "Введите пароль еще раз"),
+    REGISTER_PASSWORD_HINT("Must be at least 8 characters", "Պետք է լինի առնվազն 8 նիշ", "Должен быть не менее 8 символов"),
+    REGISTER_TERMS_TEXT(
+        "I agree to the Terms of Service and Privacy Policy",
+        "Համաձայն եմ ծառայության պայմաններին և գաղտնիության քաղաքականությանը",
+        "Я соглашаюсь с Условиями использования и Политикой конфиденциальности"
+    ),
+    REGISTER_BUTTON("Create Account", "Գրանցել հաշիվ", "Создать аккаунт"),
+    REGISTER_HAVE_ACCOUNT("Already have an account?", "Արդեն ունե՞ք հաշիվ:", "Уже есть аккаунт?");
 }
 
 fun LearnUppStrings.getValue(): String {

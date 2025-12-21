@@ -50,6 +50,8 @@ import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.videos.VideosScreen
 import com.learnupp.ui.widgets.LoadingScreen
 import com.learnupp.ui.widgets.PrimaryButton
+import com.learnupp.util.LearnUppStrings
+import com.learnupp.util.getValue
 import kotlinx.coroutines.launch
 
 @Composable
@@ -168,7 +170,7 @@ class RegisterScreen : BaseScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Create Account",
+                        text = LearnUppStrings.REGISTER_TITLE.getValue(),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center
@@ -181,10 +183,10 @@ class RegisterScreen : BaseScreen(
                         OutlinedTextField(
                             value = fullName,
                             onValueChange = { fullName = it },
-                            label = { Text("Full Name") },
+                            label = { Text(LearnUppStrings.REGISTER_FULL_NAME.getValue()) },
                             placeholder = {
                                 Text(
-                                    "Enter your full name",
+                                    LearnUppStrings.REGISTER_FULL_NAME_PLACEHOLDER.getValue(),
                                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
                                 )
                             },
@@ -196,10 +198,10 @@ class RegisterScreen : BaseScreen(
                         OutlinedTextField(
                             value = email,
                             onValueChange = { email = it },
-                            label = { Text("Email Address") },
+                            label = { Text(LearnUppStrings.REGISTER_EMAIL_ADDRESS.getValue()) },
                             placeholder = {
                                 Text(
-                                    "Enter your email",
+                                    LearnUppStrings.REGISTER_EMAIL_PLACEHOLDER.getValue(),
                                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
                                 )
                             },
@@ -212,10 +214,10 @@ class RegisterScreen : BaseScreen(
                         OutlinedTextField(
                             value = password,
                             onValueChange = { password = it },
-                            label = { Text("Password") },
+                            label = { Text(LearnUppStrings.PASSWORD_LABEL.getValue()) },
                             placeholder = {
                                 Text(
-                                    "Create a password",
+                                    LearnUppStrings.REGISTER_PASSWORD_PLACEHOLDER.getValue(),
                                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
                                 )
                             },
@@ -238,10 +240,10 @@ class RegisterScreen : BaseScreen(
                         OutlinedTextField(
                             value = confirmPassword,
                             onValueChange = { confirmPassword = it },
-                            label = { Text("Confirm Password") },
+                            label = { Text(LearnUppStrings.REGISTER_CONFIRM_PASSWORD.getValue()) },
                             placeholder = {
                                 Text(
-                                    "Re-enter your password",
+                                    LearnUppStrings.REGISTER_CONFIRM_PASSWORD_PLACEHOLDER.getValue(),
                                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
                                 )
                             },
@@ -262,7 +264,7 @@ class RegisterScreen : BaseScreen(
                             colors = textFieldColors
                         )
                         Text(
-                            text = "Must be at least 8 characters",
+                            text = LearnUppStrings.REGISTER_PASSWORD_HINT.getValue(),
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -278,7 +280,7 @@ class RegisterScreen : BaseScreen(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "I agree to the Terms of Service and Privacy Policy",
+                            text = LearnUppStrings.REGISTER_TERMS_TEXT.getValue(),
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
                         )
                     }
@@ -293,7 +295,7 @@ class RegisterScreen : BaseScreen(
                     }
 
                     PrimaryButton(
-                        text = "Create Account",
+                        text = LearnUppStrings.REGISTER_BUTTON.getValue(),
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(26.dp),
                         height = 56.dp,
@@ -330,18 +332,18 @@ class RegisterScreen : BaseScreen(
                         }
                     )
 
-                    DividerWithLabel(text = "or continue with")
+                    DividerWithLabel(text = LearnUppStrings.OR_CONTINUE_WITH.getValue())
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         SocialLoginButton(
-                            text = "Google",
+                            text = LearnUppStrings.GOOGLE_LABEL.getValue(),
                             modifier = Modifier.weight(1f)
                         )
                         SocialLoginButton(
-                            text = "Apple",
+                            text = LearnUppStrings.APPLE_LABEL.getValue(),
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -352,12 +354,12 @@ class RegisterScreen : BaseScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Already have an account?",
+                            text = LearnUppStrings.REGISTER_HAVE_ACCOUNT.getValue(),
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Sign In",
+                            text = LearnUppStrings.SIGN_IN_BUTTON.getValue(),
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.clickable { navigator.pop() }

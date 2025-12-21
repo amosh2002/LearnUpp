@@ -37,26 +37,28 @@ import com.learnupp.ui.messages.MessagesScreen
 import com.learnupp.ui.more.MoreScreen
 import com.learnupp.ui.reels.ReelsScreen
 import com.learnupp.ui.videos.VideosScreen
+import com.learnupp.util.LearnUppStrings
+import com.learnupp.util.getValue
 
-enum class ScreenNameStrings(val valueEN: String) {
-    VIDEOS("Videos"),
-    REELS("Reels"),
-    COURSES("Courses"),
-    MESSAGES("Messages"),
-    MORE("More"),
-    NOTIFICATIONS("Notifications"),
-    EARNINGS("Earnings"),
-    PAYMENTS("Payment Methods"),
-    LANGUAGE("Language"),
-    HELP("Help & Support"),
-    WITHDRAW_FUNDS("Withdraw Funds"),
-    WITHDRAW_PAYOUT_METHODS("Select Payout Method"),
-    WITHDRAW_SUCCESS("Withdrawal Successful"),
-    SIGN_UP("Sign Up"),
-    LOGIN("Login");
+enum class ScreenNameStrings(val label: LearnUppStrings) {
+    VIDEOS(LearnUppStrings.SCREEN_VIDEOS),
+    REELS(LearnUppStrings.SCREEN_REELS),
+    COURSES(LearnUppStrings.SCREEN_COURSES),
+    MESSAGES(LearnUppStrings.SCREEN_MESSAGES),
+    MORE(LearnUppStrings.SCREEN_MORE),
+    NOTIFICATIONS(LearnUppStrings.SCREEN_NOTIFICATIONS),
+    EARNINGS(LearnUppStrings.SCREEN_EARNINGS),
+    PAYMENTS(LearnUppStrings.SCREEN_PAYMENTS),
+    LANGUAGE(LearnUppStrings.SCREEN_LANGUAGE),
+    HELP(LearnUppStrings.SCREEN_HELP),
+    WITHDRAW_FUNDS(LearnUppStrings.SCREEN_WITHDRAW_FUNDS),
+    WITHDRAW_PAYOUT_METHODS(LearnUppStrings.SCREEN_WITHDRAW_METHODS),
+    WITHDRAW_SUCCESS(LearnUppStrings.SCREEN_WITHDRAW_SUCCESS),
+    SIGN_UP(LearnUppStrings.SCREEN_SIGN_UP),
+    LOGIN(LearnUppStrings.SCREEN_LOGIN);
 }
 
-fun ScreenNameStrings.getValue() = valueEN
+fun ScreenNameStrings.getValue() = label.getValue()
 
 interface NavigationItem {
     val title: ScreenNameStrings

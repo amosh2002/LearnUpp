@@ -8,7 +8,9 @@ import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.bearerAuth
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -20,6 +22,7 @@ import kotlinx.serialization.json.Json
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.mp.KoinPlatform.getKoin
+import com.learnupp.data.auth.AuthApi
 
 val networkModule = module {
     single { jsonConfig() }
@@ -95,8 +98,36 @@ private fun buildAuthClient(
             header(HttpHeaders.Accept, ContentType.Application.Json)
             header("language-code", currentLanguage)
             contentType(ContentType.Application.Json)
-            SessionManager.getCachedBearerToken()
-                ?.let { bearerAuth(it) }
+        }
+
+        /* bearer auth with refresh ----------------------------------- */
+        install(Auth) {
+            bearer {
+                loadTokens {
+                    val access =
+                        SessionManager.getCachedBearerToken() ?: SessionManager.getBearerToken()
+                    val refresh =
+                        SessionManager.getCachedRefreshToken() ?: SessionManager.getRefreshToken()
+                    if (access != null && refresh != null) BearerTokens(access, refresh) else null
+                }
+                refreshTokens {
+                    val refresh =
+                        SessionManager.getCachedRefreshToken() ?: SessionManager.getRefreshToken()
+                    if (refresh.isNullOrEmpty()) {
+                        SessionManager.logout()
+                        return@refreshTokens null
+                    }
+                    val authApi: AuthApi = getKoin().get()
+                    val tokens = authApi.refresh(refresh)
+                    if (tokens != null) {
+                        SessionManager.setTokens(tokens.accessToken, tokens.refreshToken)
+                        BearerTokens(tokens.accessToken, tokens.refreshToken)
+                    } else {
+                        SessionManager.logout()
+                        null
+                    }
+                }
+            }
         }
 
         /* catch 401 in ONE place ----------------------------------- */
@@ -112,6 +143,7 @@ private fun buildAuthClient(
                 if (cause is ClientRequestException &&
                     cause.response.status == HttpStatusCode.Unauthorized
                 ) {
+                    // If refresh failed in Auth plugin, log out.
                     SessionManager.logout()
                 }
             }

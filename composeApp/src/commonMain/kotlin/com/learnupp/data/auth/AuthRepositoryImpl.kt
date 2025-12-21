@@ -15,9 +15,10 @@ class AuthRepositoryImpl(
         // Call API to get bearer token
         val tokens = authApi.login(email, password)
         return if (tokens != null) {
-            SessionManager.setBearerToken(tokens.accessToken)
+            SessionManager.setTokens(tokens.accessToken, tokens.refreshToken)
             true
         } else {
+            com.learnupp.util.Logger.e("AuthRepository", "login returned null tokens")
             false
         }
     }
@@ -31,9 +32,10 @@ class AuthRepositoryImpl(
         if (password != confirmPassword) return false
         val tokens = authApi.register(fullName, email, password)
         return if (tokens != null) {
-            SessionManager.setBearerToken(tokens.accessToken)
+            SessionManager.setTokens(tokens.accessToken, tokens.refreshToken)
             true
         } else {
+            com.learnupp.util.Logger.e("AuthRepository", "register returned null tokens")
             false
         }
     }
