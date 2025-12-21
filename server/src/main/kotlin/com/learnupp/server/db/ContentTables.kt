@@ -66,4 +66,64 @@ object ProfilesTable : Table("profiles") {
     override val primaryKey = PrimaryKey(id)
 }
 
+object EarningsTransactionsTable : Table("earnings_transactions") {
+    val id = varchar("id", 64)
+    val title = varchar("title", 256)
+    val date = varchar("date", 64)
+    val amount = double("amount")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object MessageCategoriesTable : Table("message_categories") {
+    val id = varchar("id", 64)
+    val title = varchar("title", 128)
+    val description = varchar("description", 256)
+    val iconText = varchar("icon_text", 16)
+    val iconColorHex = varchar("icon_color_hex", 16)
+    override val primaryKey = PrimaryKey(id)
+}
+
+object MessageThreadsTable : Table("message_threads") {
+    val id = varchar("id", 64)
+    val categoryId = varchar("category_id", 64).index()
+    val title = varchar("title", 128)
+    val subtitle = varchar("subtitle", 256)
+    val lastMessageSnippet = varchar("last_message_snippet", 256)
+    val timestamp = varchar("timestamp", 64).nullable()
+    val isUnread = bool("is_unread").default(false)
+    val unreadCount = integer("unread_count").default(0)
+    val avatarUrl = varchar("avatar_url", 512).nullable()
+    val memberCount = integer("member_count").nullable()
+    val type = varchar("type", 16)
+    override val primaryKey = PrimaryKey(id)
+}
+
+object NotificationSettingsTable : Table("notification_settings") {
+    val id = varchar("id", 64)
+    val title = varchar("title", 128)
+    val description = varchar("description", 256).nullable()
+    val enabled = bool("enabled").default(true)
+    val group = varchar("group_name", 32)
+    override val primaryKey = PrimaryKey(id)
+}
+
+object PaymentMethodsTable : Table("payment_methods") {
+    val id = varchar("id", 64)
+    val label = varchar("label", 128)
+    val subtitle = varchar("subtitle", 128)
+    val maskedNumber = varchar("masked_number", 64)
+    val type = varchar("type", 16)
+    val active = bool("active").default(false)
+    val primary = bool("primary").default(false)
+    override val primaryKey = PrimaryKey(id)
+}
+
+object LanguageOptionsTable : Table("language_options") {
+    val code = varchar("code", 8)
+    val name = varchar("name", 64)
+    val flagEmoji = varchar("flag_emoji", 8)
+    val selected = bool("selected").default(false)
+    override val primaryKey = PrimaryKey(code)
+}
+
 

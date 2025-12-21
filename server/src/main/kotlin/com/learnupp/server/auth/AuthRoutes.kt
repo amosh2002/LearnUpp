@@ -10,11 +10,12 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 
 fun Route.authRoutes(
-    store: InMemoryAuthStore,
+    store: AuthStore?,
     tokenService: TokenService,
 ) {
     route("/auth") {
         post("/register") {
+            val authStore = store ?: return@post call.respond(HttpStatusCode.ServiceUnavailable, "Database not configured")
             val req = call.receive<RegisterRequest>()
             val email = req.email.trim()
             val fullName = req.fullName.trim()
@@ -26,10 +27,10 @@ fun Route.authRoutes(
 
             try {
                 val passwordHash = PasswordManager.hash(req.password)
-                val user = store.createUser(fullName = fullName, email = email, passwordHash = passwordHash).user
+                val user = authStore.createUser(fullName = fullName, email = email, passwordHash = passwordHash)
 
                 val refreshToken = tokenService.generateRefreshToken()
-                store.createRefreshSession(userId = user.id, refreshToken = refreshToken)
+                authStore.createRefreshSession(userId = user.id, refreshToken = refreshToken)
 
                 val accessToken = tokenService.generateAccessToken(user.id)
                 call.respond(
@@ -51,8 +52,9 @@ fun Route.authRoutes(
         }
 
         post("/login") {
+            val authStore = store ?: return@post call.respond(HttpStatusCode.ServiceUnavailable, "Database not configured")
             val req = call.receive<LoginRequest>()
-            val record = store.findUserByEmail(req.email)
+            val record = authStore.findUserByEmail(req.email)
 
             if (record == null || !PasswordManager.verify(req.password, record.passwordHash)) {
                 call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
@@ -60,8 +62,8 @@ fun Route.authRoutes(
             }
 
             val refreshToken = tokenService.generateRefreshToken()
-            store.createRefreshSession(userId = record.user.id, refreshToken = refreshToken)
-            val accessToken = tokenService.generateAccessToken(record.user.id)
+            authStore.createRefreshSession(userId = record.id, refreshToken = refreshToken)
+            val accessToken = tokenService.generateAccessToken(record.id)
 
             call.respond(
                 AuthResponse(
@@ -73,11 +75,12 @@ fun Route.authRoutes(
         }
 
         post("/refresh") {
+            val authStore = store ?: return@post call.respond(HttpStatusCode.ServiceUnavailable, "Database not configured")
             val req = call.receive<RefreshRequest>()
             val oldToken = req.refreshToken
 
             // Validate first (so we can return 401 clearly)
-            val session = store.validateRefreshToken(oldToken)
+            val session = authStore.validateRefreshToken(oldToken)
             if (session == null) {
                 call.respond(HttpStatusCode.Unauthorized, "Invalid refresh token")
                 return@post
@@ -85,7 +88,7 @@ fun Route.authRoutes(
 
             // Rotate refresh token
             val newRefreshToken = tokenService.generateRefreshToken()
-            val newSession = store.rotateRefreshToken(oldToken, newRefreshToken)
+            val newSession = authStore.rotateRefreshToken(oldToken, newRefreshToken)
             if (newSession == null) {
                 call.respond(HttpStatusCode.Unauthorized, "Invalid refresh token")
                 return@post
@@ -102,8 +105,9 @@ fun Route.authRoutes(
         }
 
         post("/logout") {
+            val authStore = store ?: return@post call.respond(HttpStatusCode.ServiceUnavailable, "Database not configured")
             val req = call.receive<LogoutRequest>()
-            store.revokeRefreshToken(req.refreshToken)
+            authStore.revokeRefreshToken(req.refreshToken)
             call.respond(HttpStatusCode.NoContent)
         }
     }

@@ -11,6 +11,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class ContentRepository(private val db: Database) {
 
+    val database: Database get() = db
+
     fun getVideos(page: Int, pageSize: Int): List<Video> = transaction(db) {
         val offset = (page * pageSize).toLong()
         VideosTable

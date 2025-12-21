@@ -16,10 +16,18 @@ object DatabaseSeeder {
         db = database
         transaction(database) {
             SchemaUtils.createMissingTablesAndColumns(
+                UsersTable,
+                RefreshTokensTable,
                 VideosTable,
                 ReelsTable,
                 CoursesTable,
-                ProfilesTable
+                ProfilesTable,
+                EarningsTransactionsTable,
+                MessageCategoriesTable,
+                MessageThreadsTable,
+                NotificationSettingsTable,
+                PaymentMethodsTable,
+                LanguageOptionsTable
             )
         }
     }
@@ -27,11 +35,30 @@ object DatabaseSeeder {
     fun seedIfEmpty() {
         val database = db ?: return
         transaction(database) {
+            if (UsersTable.selectAll().empty()) seedUsers()
             if (VideosTable.selectAll().empty()) seedVideos()
             if (ReelsTable.selectAll().empty()) seedReels()
             if (CoursesTable.selectAll().empty()) seedCourses()
             if (ProfilesTable.selectAll().empty()) seedProfiles()
+            if (EarningsTransactionsTable.selectAll().empty()) seedEarnings()
+            if (MessageCategoriesTable.selectAll().empty()) seedMessages()
+            if (NotificationSettingsTable.selectAll().empty()) seedNotifications()
+            if (PaymentMethodsTable.selectAll().empty()) seedPayments()
+            if (LanguageOptionsTable.selectAll().empty()) seedLanguages()
         }
+    }
+
+    private fun seedUsers() {
+        val now = java.time.Instant.now()
+        UsersTable.insert {
+            it[id] = "user-1"
+            it[fullName] = "Test User"
+            it[email] = "user@example.com"
+            it[passwordHash] = com.learnupp.server.auth.PasswordManager.hash("pass")
+            it[avatarUrl] = null
+            it[createdAt] = now.epochSecond
+        }
+        Logger.i("Seeder", "Seeded users (user@example.com / pass)")
     }
 
     private fun seedVideos() {
@@ -194,6 +221,212 @@ object DatabaseSeeder {
         }
         Logger.i("Seeder", "Seeded profiles")
     }
+
+    private fun seedEarnings() {
+        (0 until 5).forEach { index ->
+            EarningsTransactionsTable.insert {
+                it[id] = "tx-$index"
+                it[title] = "Course Purchase: Sample ${index + 1}"
+                it[date] = "Nov ${24 - index}, 2025"
+                it[amount] = 25 + Random(index).nextDouble(10.0, 30.0)
+            }
+        }
+        Logger.i("Seeder", "Seeded earnings transactions")
+    }
+
+    private fun seedMessages() {
+        val avatars = listOf(
+            "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?q=80&w=600&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1525134479668-1bee5c7c6845?q=80&w=600&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600&auto=format&fit=crop",
+        )
+
+        data class Cat(val id: String, val title: String, val desc: String, val iconText: String, val color: String)
+        val categories = listOf(
+            Cat("course-branding", "Course Name", "2 chats", "</>", "#B71C1C"),
+            Cat("course-mobile", "Mobile UI Systems", "2 chats", "</>", "#D84315"),
+            Cat("course-analytics", "Course Name", "2 chats", "{ }", "#6A1B9A"),
+            Cat("ux-advanced", "Advanced UX Design", "1 group chat", "UX", "#1E88E5"),
+        )
+        categories.forEach { cat ->
+            MessageCategoriesTable.insert {
+                it[id] = cat.id
+                it[title] = cat.title
+                it[description] = cat.desc
+                it[iconText] = cat.iconText
+                it[iconColorHex] = cat.color
+            }
+        }
+
+        // threads roughly mimic mocks
+        MessageThreadsTable.insert {
+            it[id] = "lecturer-1"
+            it[categoryId] = "course-branding"
+            it[title] = "Lecturer Name"
+            it[subtitle] = "Lead Designer"
+            it[lastMessageSnippet] = "Last message short"
+            it[timestamp] = null
+            it[isUnread] = true
+            it[avatarUrl] = avatars[0]
+            it[memberCount] = null
+            it[type] = "DIRECT"
+        }
+        MessageThreadsTable.insert {
+            it[id] = "group-1"
+            it[categoryId] = "course-branding"
+            it[title] = "Course Group"
+            it[subtitle] = "Name: Last message short..."
+            it[lastMessageSnippet] = "Sprint planning call on Friday"
+            it[timestamp] = "4h"
+            it[isUnread] = false
+            it[avatarUrl] = avatars[1]
+            it[memberCount] = 24
+            it[type] = "GROUP"
+        }
+        MessageThreadsTable.insert {
+            it[id] = "lecturer-2"
+            it[categoryId] = "course-mobile"
+            it[title] = "Lecturer Name"
+            it[subtitle] = "Senior Android Engineer"
+            it[lastMessageSnippet] = "Iteration build is ready"
+            it[timestamp] = null
+            it[isUnread] = true
+            it[avatarUrl] = avatars[2]
+            it[memberCount] = null
+            it[type] = "DIRECT"
+        }
+        MessageThreadsTable.insert {
+            it[id] = "ta-1"
+            it[categoryId] = "course-mobile"
+            it[title] = "Instructor Assistant"
+            it[subtitle] = "Last message short"
+            it[lastMessageSnippet] = "Uploading today's recording"
+            it[timestamp] = null
+            it[isUnread] = false
+            it[avatarUrl] = avatars[3]
+            it[memberCount] = null
+            it[type] = "DIRECT"
+        }
+        MessageThreadsTable.insert {
+            it[id] = "lecturer-3"
+            it[categoryId] = "course-analytics"
+            it[title] = "Lecturer Name"
+            it[subtitle] = "Data Strategist"
+            it[lastMessageSnippet] = "Last message short"
+            it[timestamp] = null
+            it[isUnread] = true
+            it[avatarUrl] = avatars[0]
+            it[memberCount] = null
+            it[type] = "DIRECT"
+        }
+        MessageThreadsTable.insert {
+            it[id] = "mentor-1"
+            it[categoryId] = "course-analytics"
+            it[title] = "Mentor Team"
+            it[subtitle] = "Weekly sync summary"
+            it[lastMessageSnippet] = "Slides are ready for review"
+            it[timestamp] = null
+            it[isUnread] = false
+            it[avatarUrl] = avatars[1]
+            it[memberCount] = null
+            it[type] = "DIRECT"
+        }
+        MessageThreadsTable.insert {
+            it[id] = "group-ux"
+            it[categoryId] = "ux-advanced"
+            it[title] = "Course Group"
+            it[subtitle] = "Last message short..."
+            it[lastMessageSnippet] = "Prototype feedback is uploaded"
+            it[timestamp] = "11:32 AM"
+            it[isUnread] = false
+            it[avatarUrl] = avatars[2]
+            it[memberCount] = 247
+            it[type] = "GROUP"
+        }
+        Logger.i("Seeder", "Seeded messages")
+    }
+
+    private fun seedNotifications() {
+        val data = listOf(
+            Triple("push", "Push Notifications", null),
+            Triple("email", "Email Notifications", null),
+            Triple("sms", "SMS Notifications", null),
+            Triple("course_updates", "Course Updates", null),
+            Triple("comments", "Comments & Mentions", null),
+            Triple("messages", "Messages", null),
+            Triple("mute_all", "Mute All Notifications", "Temporarily pause all alerts"),
+        )
+        data.forEach { (idVal, titleVal, descVal) ->
+            NotificationSettingsTable.insert {
+                it[id] = idVal
+                it[title] = titleVal
+                it[description] = descVal
+                it[enabled] = idVal != "sms" && idVal != "mute_all"
+                it[group] = when (idVal) {
+                    "push", "email", "sms" -> "GENERAL"
+                    "course_updates", "comments", "messages" -> "APP_ACTIVITY"
+                    "mute_all" -> "PREFERENCES"
+                    else -> "GENERAL"
+                }
+            }
+        }
+        Logger.i("Seeder", "Seeded notifications")
+    }
+
+    private fun seedPayments() {
+        val methods = listOf(
+            PaymentMethodSeed("visa", "Visa Card", "Personal", "•••• 4821", "CARD", active = true, primary = true),
+            PaymentMethodSeed("mastercard", "Mastercard •••• 9012", "Expires 12/25", "•••• 9012", "CARD", active = false, primary = false),
+            PaymentMethodSeed("paypal", "john.doe@example.com", "PayPal Account", "", "PAYPAL", active = false, primary = false),
+        )
+        methods.forEach { m ->
+            PaymentMethodsTable.insert {
+                it[id] = m.id
+                it[label] = m.label
+                it[subtitle] = m.subtitle
+                it[maskedNumber] = m.maskedNumber
+                it[type] = m.type
+                it[active] = m.active
+                it[primary] = m.primary
+            }
+        }
+        Logger.i("Seeder", "Seeded payments")
+    }
+
+    private fun seedLanguages() {
+        val langs = listOf(
+            LanguageSeed("en", "English", "\uD83C\uDDEC\uD83C\uDDE7", selected = true),
+            LanguageSeed("ru", "Русский", "\uD83C\uDDF7\uD83C\uDDFA", selected = false),
+            LanguageSeed("hy", "Հայերեն", "\uD83C\uDDE6\uD83C\uDDF2", selected = false),
+        )
+        langs.forEach { lang ->
+            LanguageOptionsTable.insert {
+                it[code] = lang.code
+                it[name] = lang.name
+                it[flagEmoji] = lang.flagEmoji
+                it[selected] = lang.selected
+            }
+        }
+        Logger.i("Seeder", "Seeded languages")
+    }
+
+    private data class PaymentMethodSeed(
+        val id: String,
+        val label: String,
+        val subtitle: String,
+        val maskedNumber: String,
+        val type: String,
+        val active: Boolean,
+        val primary: Boolean,
+    )
+
+    private data class LanguageSeed(
+        val code: String,
+        val name: String,
+        val flagEmoji: String,
+        val selected: Boolean,
+    )
 }
 
 
