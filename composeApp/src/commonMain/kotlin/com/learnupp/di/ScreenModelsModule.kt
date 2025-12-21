@@ -10,12 +10,18 @@ import com.learnupp.ui.settings.language.LanguageSelectionScreenModel
 import com.learnupp.ui.settings.notifications.NotificationsSettingsScreenModel
 import com.learnupp.ui.settings.payments.PaymentMethodsScreenModel
 import com.learnupp.ui.videos.VideosScreenModel
+import com.learnupp.ui.register.RegisterScreenModel
 import org.koin.dsl.module
 
 val screenModelsModule = module {
     // Login
     single {
         LoginScreenModel(
+            get()
+        )
+    }
+    single {
+        RegisterScreenModel(
             get()
         )
     }

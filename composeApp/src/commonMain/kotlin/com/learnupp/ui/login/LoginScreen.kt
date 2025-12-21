@@ -52,6 +52,7 @@ import com.learnupp.LocalDialogState
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.videos.VideosScreen
+import com.learnupp.ui.register.RegisterScreen
 import com.learnupp.ui.widgets.LoadingScreen
 import com.learnupp.ui.widgets.PrimaryButton
 import com.learnupp.util.LearnUppStrings
@@ -252,7 +253,7 @@ class LoginScreen : BaseScreen(
                             text = LearnUppStrings.SIGN_UP_CTA.getValue(),
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.clickable { /* TODO: Navigate to sign-up */ }
+                            modifier = Modifier.clickable { navigator.push(RegisterScreen()) }
                         )
                     }
                 }

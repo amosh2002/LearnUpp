@@ -52,6 +52,7 @@ enum class ScreenNameStrings(val valueEN: String) {
     WITHDRAW_FUNDS("Withdraw Funds"),
     WITHDRAW_PAYOUT_METHODS("Select Payout Method"),
     WITHDRAW_SUCCESS("Withdrawal Successful"),
+    SIGN_UP("Sign Up"),
     LOGIN("Login");
 }
 

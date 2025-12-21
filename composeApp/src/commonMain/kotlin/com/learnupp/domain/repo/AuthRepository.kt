@@ -6,5 +6,12 @@ interface AuthRepository {
         password: String
     ): Boolean
 
+    suspend fun register(
+        fullName: String,
+        email: String,
+        password: String,
+        confirmPassword: String
+    ): Boolean
+
     suspend fun logout(): Boolean
 }

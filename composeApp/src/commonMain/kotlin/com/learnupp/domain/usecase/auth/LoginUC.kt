@@ -20,3 +20,28 @@ class LoginUseCaseImpl(
         )
     }
 }
+
+abstract class RegisterUseCase : BaseSuspendUseCase<RegisterUserParams, Boolean>()
+
+data class RegisterUserParams(
+    val fullName: String,
+    val email: String,
+    val password: String,
+    val confirmPassword: String,
+    val acceptedTerms: Boolean
+)
+
+class RegisterUseCaseImpl(
+    private val authRepository: AuthRepository
+) : RegisterUseCase() {
+    override suspend fun invoke(params: RegisterUserParams): Boolean {
+        if (!params.acceptedTerms) return false
+        if (params.password != params.confirmPassword) return false
+        return authRepository.register(
+            fullName = params.fullName,
+            email = params.email,
+            password = params.password,
+            confirmPassword = params.confirmPassword
+        )
+    }
+}

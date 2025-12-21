@@ -13,19 +13,30 @@ class AuthRepositoryImpl(
         password: String
     ): Boolean {
         // Call API to get bearer token
-        val bearerToken = authApi.login(
-            email, password)
-
-        // Save token in session manager and return true if login was successful
-        if (!bearerToken.isNullOrBlank()) {
-            SessionManager.setBearerToken(bearerToken)
-            return true
+        val tokens = authApi.login(email, password)
+        return if (tokens != null) {
+            SessionManager.setBearerToken(tokens.accessToken)
+            true
+        } else {
+            false
         }
-
-        // Login failed
-        return false
     }
 
+    override suspend fun register(
+        fullName: String,
+        email: String,
+        password: String,
+        confirmPassword: String
+    ): Boolean {
+        if (password != confirmPassword) return false
+        val tokens = authApi.register(fullName, email, password)
+        return if (tokens != null) {
+            SessionManager.setBearerToken(tokens.accessToken)
+            true
+        } else {
+            false
+        }
+    }
 
     override suspend fun logout(): Boolean {
         val token = SessionManager.getBearerToken()
