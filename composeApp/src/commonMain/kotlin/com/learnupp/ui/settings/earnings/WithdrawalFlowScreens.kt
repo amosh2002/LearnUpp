@@ -16,109 +16,83 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.learnupp.ui.base.BaseScreen
+import com.learnupp.ui.base.ScreenNameStrings
+import com.learnupp.ui.base.getValue
 import com.learnupp.ui.widgets.PrimaryButton
 
-object WithdrawFundsScreen : Screen {
+object WithdrawFundsScreen : BaseScreen(ScreenNameStrings.WITHDRAW_FUNDS) {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Withdraw Funds") },
-                    navigationIcon = {
-                        IconButton(onClick = { navigator.pop() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                        }
-                    }
-                )
-            }
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    PayoutMethod(onClick = { navigator.push(PaymentMethodsScreen) })
-                    AmountToWithdraw()
-                }
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    PrimaryButton(
-                        text = "Withdraw",
-                        onClick = { navigator.push(WithdrawalSuccessfulScreen) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedButton(
-                        onClick = { navigator.pop() },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(18.dp)
-                    ) {
-                        Text("Cancel")
-                    }
-                }
-            }
-        }
-    }
-}
 
-object PaymentMethodsScreen : Screen {
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Payment Methods") },
-                    navigationIcon = {
-                        IconButton(onClick = { navigator.pop() }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                        }
-                    }
-                )
-            }
-        ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.SpaceBetween
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text("CURRENT METHOD", style = MaterialTheme.typography.labelMedium)
-                    PaymentMethodItem(
-                        icon = "Visa",
-                        details = "**** 4821",
-                        primary = true,
-                        selected = true
-                    )
-                    Text("SAVED METHODS", style = MaterialTheme.typography.labelMedium)
-                    PaymentMethodItem(icon = "PayPal", details = "johndoe@uxpilot.com")
-                    PaymentMethodItem(icon = "Mastercard", details = "Expires 12/26")
-                }
+                PayoutMethod(onClick = { navigator.push(PaymentMethodsScreen) })
+                AmountToWithdraw()
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 PrimaryButton(
-                    text = "Add Payment Method",
-                    onClick = { /* TODO */ },
+                    text = "Withdraw",
+                    onClick = { navigator.push(WithdrawalSuccessfulScreen) },
                     modifier = Modifier.fillMaxWidth()
                 )
+                OutlinedButton(
+                    onClick = { navigator.pop() },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(18.dp)
+                ) {
+                    Text("Cancel")
+                }
             }
         }
     }
 }
 
-object WithdrawalSuccessfulScreen : Screen {
+object PaymentMethodsScreen : BaseScreen(ScreenNameStrings.WITHDRAW_PAYOUT_METHODS) {
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun Content() {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text("CURRENT METHOD", style = MaterialTheme.typography.labelMedium)
+                PaymentMethodItem(
+                    icon = "Visa",
+                    details = "**** 4821",
+                    primary = true,
+                    selected = true
+                )
+                Text("SAVED METHODS", style = MaterialTheme.typography.labelMedium)
+                PaymentMethodItem(icon = "PayPal", details = "johndoe@uxpilot.com")
+                PaymentMethodItem(icon = "Mastercard", details = "Expires 12/26")
+            }
+            PrimaryButton(
+                text = "Add Payment Method",
+                onClick = { /* TODO */ },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+object WithdrawalSuccessfulScreen : BaseScreen(ScreenNameStrings.WITHDRAW_SUCCESS) {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -136,7 +110,10 @@ object WithdrawalSuccessfulScreen : Screen {
                 Box(
                     modifier = Modifier
                         .size(80.dp)
-                        .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(50)),
+                        .background(
+                            MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(50)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -147,7 +124,7 @@ object WithdrawalSuccessfulScreen : Screen {
                     )
                 }
                 Text(
-                    "Withdrawal Successful",
+                    screenName.getValue(),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -204,14 +181,25 @@ private fun PayoutMethod(onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text("Visa", modifier = Modifier.background(Color.White, RoundedCornerShape(4.dp)).padding(horizontal = 8.dp, vertical = 4.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    "Visa",
+                    modifier = Modifier.background(Color.White, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
                 Column {
                     Text("Visa •••• 4821", fontWeight = FontWeight.Bold)
                     Text("Primary withdrawal method", style = MaterialTheme.typography.bodySmall)
                 }
             }
-            Icon(Icons.Default.ArrowBack, contentDescription = "Select method", modifier = Modifier.graphicsLayer(rotationZ = 180f))
+            Icon(
+                Icons.Default.ArrowBack,
+                contentDescription = "Select method",
+                modifier = Modifier.graphicsLayer(rotationZ = 180f)
+            )
         }
     }
 }
@@ -223,7 +211,10 @@ private fun AmountToWithdraw() {
         color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 "Amount to withdraw",
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
@@ -245,8 +236,16 @@ private fun AmountToWithdraw() {
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(Icons.Default.Check, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    Icons.Default.Check,
+                    contentDescription = null,
+                    tint = Color.Gray,
+                    modifier = Modifier.size(16.dp)
+                )
                 Text(
                     "No withdrawal fees. Processing takes 1-3 business days.",
                     style = MaterialTheme.typography.bodySmall,
@@ -277,19 +276,38 @@ private fun PaymentMethodItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(icon, modifier = Modifier.background(Color.White, RoundedCornerShape(4.dp)).padding(horizontal = 8.dp, vertical = 4.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    icon,
+                    modifier = Modifier.background(Color.White, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
                 Column {
                     Text(details, fontWeight = FontWeight.Bold)
                     if (primary) {
-                        Text("Primary withdrawal method", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                        Text(
+                            "Primary withdrawal method",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             }
             if (selected) {
-                Icon(Icons.Default.Check, contentDescription = "Selected", tint = MaterialTheme.colorScheme.primary)
+                Icon(
+                    Icons.Default.Check,
+                    contentDescription = "Selected",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             } else {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Select", modifier = Modifier.graphicsLayer(rotationZ = 180f))
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Select",
+                    modifier = Modifier.graphicsLayer(rotationZ = 180f)
+                )
             }
         }
     }
