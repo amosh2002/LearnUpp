@@ -54,6 +54,24 @@ enum class LearnUppStrings(
         "Սխալ օգտանուն կամ գաղտնաբառ։",
         "Неверное имя пользователя или пароль."
     ),
+    SIGN_IN_TITLE("Sign In", "Մուտք գործել", "Войти"),
+    SIGN_IN_SUBTITLE(
+        "Access your account to continue.",
+        "Մուտք գործեք ձեր հաշիվ՝ շարունակելու համար։",
+        "Войдите в свой аккаунт, чтобы продолжить."
+    ),
+    EMAIL_LABEL("Email", "Էլ. հասցե", "Эл. почта"),
+    EMAIL_PLACEHOLDER("you@example.com", "you@example.com", "you@example.com"),
+    PASSWORD_LABEL("Password", "Գաղտնաբառ", "Пароль"),
+    FORGOT_PASSWORD("Forgot Password?", "Մոռացե՞լ եք գաղտնաբառը?", "Забыли пароль?"),
+    SIGN_IN_BUTTON("Sign In", "Մուտք գործել", "Войти"),
+    OR_CONTINUE_WITH("or continue with", "կամ շարունակեք", "или продолжите через"),
+    GOOGLE_LABEL("Google", "Google", "Google"),
+    APPLE_LABEL("Apple", "Apple", "Apple"),
+    DONT_HAVE_ACCOUNT("Don't have an account?", "Չունե՞ք հաշիվ?", "Нет аккаунта?"),
+    SIGN_UP_CTA("Sign Up", "Գրանցվել", "Зарегистрироваться"),
+    SHOW_PASSWORD("Show password", "Ցույց տալ գաղտնաբառը", "Показать пароль"),
+    HIDE_PASSWORD("Hide password", "Թաքցնել գաղտնաբառը", "Скрыть пароль"),
     LOG_OUT_TITLE(
         "Are you sure you want to log out?",
         "Վստա՞հ եք, որ ցանկանում եք դուրս գալ։",
