@@ -16,12 +16,14 @@ data class AuthTokens(
     val expiresInSec: Int,
 )
 
+@Serializable
 data class RegisterPayload(
     val full_name: String,
     val email: String,
     val password: String,
 )
 
+@Serializable
 data class LoginPayload(
     val email: String,
     val password: String,
