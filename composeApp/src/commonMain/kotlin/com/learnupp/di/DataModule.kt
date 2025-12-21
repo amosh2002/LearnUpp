@@ -7,7 +7,7 @@ import com.learnupp.data.courses.CoursesApi
 import com.learnupp.data.courses.CoursesRepositoryImpl
 import com.learnupp.data.courses.CoursesStorage
 import com.learnupp.data.courses.InMemoryCoursesStorage
-import com.learnupp.data.courses.MockCoursesApi
+import com.learnupp.data.courses.KtorCoursesApi
 import com.learnupp.data.earnings.EarningsApi
 import com.learnupp.data.earnings.EarningsRepositoryImpl
 import com.learnupp.data.earnings.EarningsStorage
@@ -34,17 +34,17 @@ import com.learnupp.data.settings.notifications.NotificationsApi
 import com.learnupp.data.settings.notifications.NotificationsRepositoryImpl
 import com.learnupp.data.settings.notifications.NotificationsStorage
 import com.learnupp.data.profile.InMemoryProfileStorage
-import com.learnupp.data.profile.MockProfileApi
+import com.learnupp.data.profile.KtorProfileApi
 import com.learnupp.data.profile.ProfileApi
 import com.learnupp.data.profile.ProfileRepositoryImpl
 import com.learnupp.data.profile.ProfileStorage
 import com.learnupp.data.reels.InMemoryReelsStorage
-import com.learnupp.data.reels.MockReelsApi
+import com.learnupp.data.reels.KtorReelsApi
 import com.learnupp.data.reels.ReelsApi
 import com.learnupp.data.reels.ReelsRepositoryImpl
 import com.learnupp.data.reels.ReelsStorage
 import com.learnupp.data.videos.InMemoryVideosStorage
-import com.learnupp.data.videos.MockVideosApi
+import com.learnupp.data.videos.KtorVideosApi
 import com.learnupp.data.videos.VideosApi
 import com.learnupp.data.videos.VideosRepositoryImpl
 import com.learnupp.data.videos.VideosStorage
@@ -65,8 +65,8 @@ val dataModule = module {
     single<AuthApi> { KtorAuthApi(client = get(Qualifiers.Plain)) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 
-    // Profile (mocked)
-    single<ProfileApi> { MockProfileApi() }
+    // Profile (real)
+    single<ProfileApi> { KtorProfileApi(client = get(Qualifiers.Plain)) }
     single<ProfileStorage> { InMemoryProfileStorage() }
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get()) }
 
@@ -75,8 +75,8 @@ val dataModule = module {
     single<MessagesStorage> { InMemoryMessagesStorage() }
     single<MessagesRepository> { MessagesRepositoryImpl(get(), get()) }
 
-    // Courses (mocked)
-    single<CoursesApi> { MockCoursesApi() }
+    // Courses (real)
+    single<CoursesApi> { KtorCoursesApi(client = get(Qualifiers.Plain)) }
     single<CoursesStorage> { InMemoryCoursesStorage() }
     single<CoursesRepository> { CoursesRepositoryImpl(get(), get()) }
 
@@ -100,13 +100,13 @@ val dataModule = module {
     single<LanguageOptionsStorage> { InMemoryLanguageOptionsStorage() }
     single<LanguageOptionsRepository> { LanguageOptionsRepositoryImpl(get(), get(), get()) }
 
-    // Reels (mocked)
-    single<ReelsApi> { MockReelsApi() }
+    // Reels (real)
+    single<ReelsApi> { KtorReelsApi(client = get(Qualifiers.Plain)) }
     single<ReelsStorage> { InMemoryReelsStorage() }
     single<ReelsRepository> { ReelsRepositoryImpl(get(), get()) }
 
-    // Videos (mocked)
-    single<VideosApi> { MockVideosApi() }
+    // Videos (real)
+    single<VideosApi> { KtorVideosApi(client = get(Qualifiers.Plain)) }
     single<VideosStorage> { InMemoryVideosStorage() }
     single<VideosRepository> { VideosRepositoryImpl(get(), get()) }
 }

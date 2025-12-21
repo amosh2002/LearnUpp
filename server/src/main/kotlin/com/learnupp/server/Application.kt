@@ -5,6 +5,7 @@ import com.learnupp.server.plugins.configureRouting
 import com.learnupp.server.plugins.configureSecurity
 import com.learnupp.server.plugins.configureSerialization
 import com.learnupp.server.plugins.tryConfigureDatabases
+import com.learnupp.server.db.ContentRepository
 import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -21,10 +22,11 @@ fun main() {
 fun Application.module() {
     // Keep server startup resilient in dev: plugins should not crash if env isn't configured yet.
     configureSerialization()
-    tryConfigureDatabases()
+    val db = tryConfigureDatabases()
+    val contentRepo = db?.let { ContentRepository(it) }
     configureSecurity()
     configureFirebase()
-    configureRouting()
+    configureRouting(contentRepo)
 }
 
 

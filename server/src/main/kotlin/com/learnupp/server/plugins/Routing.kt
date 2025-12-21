@@ -1,6 +1,11 @@
 package com.learnupp.server.plugins
 
 import com.learnupp.domain.model.Video
+import com.learnupp.server.auth.InMemoryAuthStore
+import com.learnupp.server.auth.TokenService
+import com.learnupp.server.auth.authRoutes
+import com.learnupp.server.db.ContentRepository
+import com.learnupp.server.routes.contentRoutes
 import com.learnupp.util.Logger
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -10,11 +15,9 @@ import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 
-fun Application.configureRouting() {
+fun Application.configureRouting(contentRepository: ContentRepository?) {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             Logger.e("Routing", "Unhandled error: ${cause.message}")
@@ -27,18 +30,22 @@ fun Application.configureRouting() {
             call.respond(mapOf("ok" to true))
         }
 
+        val tokenService = TokenService(
+            secret = System.getenv("JWT_SECRET") ?: "dev_secret_do_not_use_in_prod",
+            issuer = System.getenv("JWT_ISSUER") ?: "https://learnupp.server",
+            audience = System.getenv("JWT_AUDIENCE") ?: "learnupp-client",
+            accessTtlSeconds = (System.getenv("ACCESS_TOKEN_TTL_SEC") ?: "600").toLong()
+        )
+        val authStore = InMemoryAuthStore(
+            refreshTtlSeconds = (System.getenv("REFRESH_TOKEN_TTL_SEC") ?: "${30L * 24 * 60 * 60}").toLong()
+        )
+
+        authRoutes(store = authStore, tokenService = tokenService)
+
+        contentRoutes(repo = contentRepository)
+
         // Minimal example endpoint proving we can share models between server + client:
         // - Client can deserialize the response using the same Video model from :sharedModel.
-        route("/videos") {
-            get {
-                call.respond(emptyList<Video>())
-            }
-
-            post {
-                val video = call.receive<Video>()
-                call.respond(HttpStatusCode.Created, video)
-            }
-        }
     }
 }
 
