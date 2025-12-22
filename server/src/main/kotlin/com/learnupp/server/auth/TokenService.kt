@@ -17,12 +17,14 @@ class TokenService(
     private val algorithm = Algorithm.HMAC256(secret)
     private val secureRandom = SecureRandom()
 
-    fun generateAccessToken(userId: String): String {
+    fun generateAccessToken(userId: String): String = generateAccessTokenWithJti(userId).first
+
+    fun generateAccessTokenWithJti(userId: String): Pair<String, String> {
         val now = Instant.now()
         val exp = now.plusSeconds(accessTtlSeconds)
         val jti = UUID.randomUUID().toString()
 
-        return JWT.create()
+        val token = JWT.create()
             .withIssuer(issuer)
             .withAudience(audience)
             .withSubject(userId)
@@ -30,6 +32,8 @@ class TokenService(
             .withIssuedAt(Date.from(now))
             .withExpiresAt(Date.from(exp))
             .sign(algorithm)
+
+        return token to jti
     }
 
     fun accessExpiresInSec(): Int = accessTtlSeconds.toInt()

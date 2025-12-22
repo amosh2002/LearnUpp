@@ -6,6 +6,7 @@ import com.learnupp.server.plugins.configureSecurity
 import com.learnupp.server.plugins.configureSerialization
 import com.learnupp.server.plugins.tryConfigureDatabases
 import com.learnupp.server.db.ContentRepository
+import com.learnupp.server.auth.TokenRevocationRepository
 import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -24,9 +25,10 @@ fun Application.module() {
     configureSerialization()
     val db = tryConfigureDatabases()
     val contentRepo = db?.let { ContentRepository(it) }
-    configureSecurity()
+    val revocationRepo = db?.let { TokenRevocationRepository(it) }
+    configureSecurity(revocationRepo)
     configureFirebase()
-    configureRouting(contentRepo)
+    configureRouting(contentRepo, revocationRepo)
 }
 
 

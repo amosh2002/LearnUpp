@@ -1,8 +1,11 @@
 package com.learnupp.server.auth
 
+import com.auth0.jwt.JWT
 import com.learnupp.util.Logger
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -12,6 +15,7 @@ import io.ktor.server.routing.route
 fun Route.authRoutes(
     store: AuthStore?,
     tokenService: TokenService,
+    tokenRevocationRepository: TokenRevocationRepository? = null,
 ) {
     route("/auth") {
         post("/register") {
@@ -32,7 +36,7 @@ fun Route.authRoutes(
                 val refreshToken = tokenService.generateRefreshToken()
                 authStore.createRefreshSession(userId = user.id, refreshToken = refreshToken)
 
-                val accessToken = tokenService.generateAccessToken(user.id)
+                val (accessToken, _) = tokenService.generateAccessTokenWithJti(user.id)
                 call.respond(
                     HttpStatusCode.Created,
                     AuthResponse(
@@ -63,7 +67,7 @@ fun Route.authRoutes(
 
             val refreshToken = tokenService.generateRefreshToken()
             authStore.createRefreshSession(userId = record.id, refreshToken = refreshToken)
-            val accessToken = tokenService.generateAccessToken(record.id)
+            val (accessToken, _) = tokenService.generateAccessTokenWithJti(record.id)
 
             call.respond(
                 AuthResponse(
@@ -107,7 +111,17 @@ fun Route.authRoutes(
         post("/logout") {
             val authStore = store ?: return@post call.respond(HttpStatusCode.ServiceUnavailable, "Database not configured")
             val req = call.receive<LogoutRequest>()
+            // Revoke refresh token
             authStore.revokeRefreshToken(req.refreshToken)
+
+            // Revoke current access token (if present)
+            val principal = call.principal<JWTPrincipal>()
+            val jti = principal?.jwtId ?: principal?.payload?.id
+            val sub = principal?.subject ?: principal?.payload?.subject
+            val exp = principal?.expiresAt?.toInstant()
+            if (jti != null && sub != null && exp != null) {
+                tokenRevocationRepository?.revokeAccessToken(jti, sub, exp)
+            }
             call.respond(HttpStatusCode.NoContent)
         }
     }

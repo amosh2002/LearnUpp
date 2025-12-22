@@ -18,6 +18,7 @@ object DatabaseSeeder {
             SchemaUtils.createMissingTablesAndColumns(
                 UsersTable,
                 RefreshTokensTable,
+                RevokedTokensTable,
                 VideosTable,
                 ReelsTable,
                 CoursesTable,

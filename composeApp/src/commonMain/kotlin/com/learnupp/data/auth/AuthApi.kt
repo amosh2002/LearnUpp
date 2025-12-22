@@ -42,7 +42,7 @@ interface AuthApi {
         password: String
     ): AuthTokens?
 
-    suspend fun logout(): Boolean
+    suspend fun logout(refreshToken: String?): Boolean
 }
 
 class KtorAuthApi(private val client: HttpClient) : AuthApi {
@@ -78,9 +78,21 @@ class KtorAuthApi(private val client: HttpClient) : AuthApi {
         }
     }
 
-    override suspend fun logout(): Boolean {
-        // Optional server call; for now just return true.
-        return true
+    override suspend fun logout(refreshToken: String?): Boolean {
+        if (refreshToken.isNullOrEmpty()) {
+            Logger.e("AuthApi", "logout skipped: no refresh token")
+            return false
+        }
+        return try {
+            val response = client.post("$apiBaseUrl/auth/logout") {
+                contentType(ContentType.Application.Json)
+                setBody(LogoutPayload(refresh_token = refreshToken))
+            }
+            response.status.value in 200..299
+        } catch (t: Throwable) {
+            Logger.e("AuthApi", "logout failed: ${t.message}")
+            false
+        }
     }
 
     override suspend fun refresh(refreshToken: String): AuthTokens? {
@@ -107,5 +119,10 @@ private data class AuthResponseDto(
 
 @Serializable
 private data class RefreshPayload(
+    val refresh_token: String
+)
+
+@Serializable
+private data class LogoutPayload(
     val refresh_token: String
 )

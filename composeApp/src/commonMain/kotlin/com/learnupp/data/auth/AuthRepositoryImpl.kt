@@ -41,19 +41,10 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun logout(): Boolean {
-        val token = SessionManager.getBearerToken()
-
-        if (token.isNullOrEmpty()) {
-            // If we have no token, there's nothing to do or we're already logged out.
-            return true
-        }
-        val result = authApi.logout()
-        if (result) {
-            // Clear data in storages
-//            cameraStorage.clearAllData()
-            // Remove data from phone
-            SessionManager.logout()
-        }
+        val refresh = SessionManager.getRefreshToken()
+        val result = authApi.logout(refresh)
+        // Always clear local state regardless of server result
+        SessionManager.logout()
         return result
     }
 }
