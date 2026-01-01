@@ -101,7 +101,8 @@ object DatabaseSeeder {
                 it[channelName] = author
                 it[viewsCount] = 80_000 + r.nextInt(60_000)
                 it[likesCount] = 10 + r.nextInt(200)
-                it[fullCourseId] = if (r.nextFloat() < 0.4f) "course-${index + 200}" else null
+                // ~20% of videos will act as course previews
+                it[fullCourseId] = if (r.nextFloat() < 0.2f) "course-${index + 200}" else null
                 it[fullVideoUrl] = "https://storage.googleapis.com/exoplayer-test-media-1/mp4/android-screens-10s.mp4"
             }
         }

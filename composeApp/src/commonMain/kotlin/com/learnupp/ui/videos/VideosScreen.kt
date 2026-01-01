@@ -20,6 +20,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,6 +46,7 @@ import com.learnupp.domain.model.Video
 import com.learnupp.safePush
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
+import com.learnupp.ui.courses.CoursesScreen
 import com.learnupp.ui.widgets.RefreshableBox
 import com.learnupp.ui.widgets.SearchFilterChipsSection
 import com.learnupp.util.LearnUppStrings
@@ -136,6 +139,9 @@ private fun VideoCard(
     onToggleLike: () -> Unit,
     onShare: () -> Unit
 ) {
+    val navigator = LocalNavigator.current
+    val isCoursePreview = video.courseUrl != null
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
@@ -187,6 +193,22 @@ private fun VideoCard(
             }
 
             Column(modifier = Modifier.weight(1f)) {
+                if (isCoursePreview) {
+                    Box(
+                        modifier = Modifier
+                            .padding(bottom = 6.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = LearnUppStrings.COURSE_PREVIEW_LABEL.getValue(),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
                 Text(
                     text = video.title,
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -240,6 +262,32 @@ private fun VideoCard(
                 contentDescription = "More",
                 tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
             )
+        }
+
+        if (isCoursePreview) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = {
+                        navigator?.safePush(CoursesScreen())
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Text(
+                        text = LearnUppStrings.VIEW_FULL_COURSE.getValue(),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
         }
     }
 }

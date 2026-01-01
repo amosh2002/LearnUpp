@@ -57,6 +57,7 @@ private fun ResultRow.toVideo(): Video =
         viewsCount = this[VideosTable.viewsCount],
         likesCount = this[VideosTable.likesCount],
         fullCourseId = this[VideosTable.fullCourseId],
+        courseUrl = this[VideosTable.fullCourseId]?.let { "/courses/$it" },
         fullVideoUrl = this[VideosTable.fullVideoUrl],
     )
 

@@ -204,6 +204,10 @@ enum class LearnUppStrings(
     EMAIL_UPDATE_OTP_SENT("We’ll send an OTP to your new email.", "OTP կուղարկենք ձեր նոր էլփոստին։", "Мы отправим OTP на ваш новый email."),
     ONLY_ONE_LOGIN_ACTIVE("Only one login method can be active at a time.", "Միայն մեկ մուտքի մեթոդ կարող է լինել ակտիվ։", "Только один способ входа может быть активным."),
 
+    // Videos / course previews
+    COURSE_PREVIEW_LABEL("Course Preview", "Դասընթացի նախադիտում", "Превью курса"),
+    VIEW_FULL_COURSE("View Full Course", "Դիտել ամբողջական դասընթացը", "Смотреть полный курс"),
+
     // Legacy (kept for reference in older screens)
     REGISTER_TITLE("Create Account", "Գրանցել հաշիվ", "Создать аккаунт"),
     REGISTER_FULL_NAME("Full Name", "Անուն Ազգանուն", "Полное имя"),

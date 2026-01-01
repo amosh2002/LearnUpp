@@ -21,6 +21,8 @@ data class Video(
     val likesCount: Int,
     @SerialName("full_course_id")
     val fullCourseId: String? = null,
+    @SerialName("course_url")
+    val courseUrl: String? = null,
     @SerialName("full_video_url")
     val fullVideoUrl: String,
 )
