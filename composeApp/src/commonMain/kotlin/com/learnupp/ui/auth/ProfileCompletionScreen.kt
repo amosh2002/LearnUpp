@@ -152,13 +152,24 @@ class ProfileCompletionScreen : BaseScreen(
                 ) {
                     OutlinedTextField(
                         value = username,
-                        onValueChange = { username = it },
+                        onValueChange = { input ->
+                            // Always keep internal value without leading '@'
+                            username = input.removePrefix("@")
+                        },
                         label = { Text(LearnUppStrings.USERNAME_LABEL.getValue()) },
                         placeholder = { Text(LearnUppStrings.USERNAME_PLACEHOLDER.getValue()) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(18.dp),
+                        leadingIcon = {
+                            Text(
+                                text = "@",
+                                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        },
                         colors = textFieldColors
                     )
                     when (status) {

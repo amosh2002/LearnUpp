@@ -110,8 +110,14 @@ android {
         }
     }
     buildTypes {
+        getByName("debug") {
+            // Expose Android build type flag to platform-specific BuildConfig
+            buildConfigField("boolean", "IS_DEBUG_MODE", "true")
+        }
         getByName("release") {
+            // Keep current minify behavior, just expose a flag
             isMinifyEnabled = false
+            buildConfigField("boolean", "IS_DEBUG_MODE", "false")
         }
     }
     compileOptions {
@@ -127,6 +133,20 @@ android {
 buildkonfig {
     packageName = "com.learnupp"
     defaultConfigs {
+        // Expose build type (DEBUG/RELEASE) to common code for all platforms
+        val kotlinBuildType = (project.findProperty("kotlin.build.type") as String?)?.uppercase()
+        val isNativeDebug = kotlinBuildType == "DEBUG"
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN,
+            "IS_DEBUG_BUILD",
+            isNativeDebug.toString()
+        )
+        // Simple environment string we can use for things like email mode later
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "ENVIRONMENT",
+            if (isNativeDebug) "\"dev\"" else "\"prod\""
+        )
     }
 }
 
