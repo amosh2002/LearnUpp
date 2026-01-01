@@ -84,7 +84,7 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
 
             // Shared domain/data models used by both client and server
-            implementation(project(":sharedModel"))
+            api(project(":sharedModel"))
         }
 
         iosMain.dependencies {

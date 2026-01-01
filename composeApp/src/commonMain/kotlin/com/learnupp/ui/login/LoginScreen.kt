@@ -49,6 +49,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.learnupp.DialogParams
 import com.learnupp.DialogType
 import com.learnupp.LocalDialogState
+import com.learnupp.safePush
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.videos.VideosScreen
@@ -253,7 +254,7 @@ class LoginScreen : BaseScreen(
                             text = LearnUppStrings.SIGN_UP_CTA.getValue(),
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.clickable { navigator.push(RegisterScreen()) }
+                            modifier = Modifier.clickable { navigator.safePush(RegisterScreen()) }
                         )
                     }
                 }

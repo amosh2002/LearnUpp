@@ -113,7 +113,8 @@ fun AlertDialogWithBlur(
                             text = title,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
 
                         /* — scrollable message — */

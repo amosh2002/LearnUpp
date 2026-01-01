@@ -3,13 +3,18 @@ package com.learnupp.server.auth
 import com.learnupp.server.db.RefreshTokensTable
 import com.learnupp.server.db.UsersTable
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.selectAll
 import java.security.MessageDigest
 import java.time.Instant
 import java.util.UUID
@@ -19,11 +24,17 @@ class DbAuthStore(
     private val refreshTtlSeconds: Long = 30L * 24 * 60 * 60,
 ) : AuthStore {
 
-    override fun createUser(fullName: String, email: String, passwordHash: String): AuthUserRecord =
+    override fun createUser(email: String, username: String?, fullName: String?): AuthUserRecord =
         transaction(db) {
             val emailLower = email.trim().lowercase()
-            if (UsersTable.select { UsersTable.email eq emailLower }.any()) {
+            if (UsersTable.selectAll().where { UsersTable.email eq emailLower }.any()) {
                 error("USER_EXISTS")
+            }
+            if (!username.isNullOrBlank() && UsersTable.selectAll()
+                    .where { UsersTable.username eq username }
+                    .any()
+            ) {
+                error("USERNAME_EXISTS")
             }
             val id = UUID.randomUUID().toString()
             val now = Instant.now()
@@ -31,11 +42,50 @@ class DbAuthStore(
                 it[UsersTable.id] = id
                 it[UsersTable.fullName] = fullName
                 it[UsersTable.email] = emailLower
-                it[UsersTable.passwordHash] = passwordHash
+                it[UsersTable.username] = username
                 it[UsersTable.avatarUrl] = null
+                it[UsersTable.isSignUpComplete] = false
                 it[UsersTable.createdAt] = now.epochSecond
             }
-            AuthUserRecord(id, fullName, emailLower, passwordHash)
+            AuthUserRecord(
+                id,
+                emailLower = emailLower,
+                username = username,
+                fullName = fullName,
+                avatarUrl = null,
+                isSignUpComplete = false,
+            )
+        }
+
+    override fun updateProfile(
+        userId: String,
+        username: String,
+        fullName: String?
+    ): AuthUserRecord? =
+        transaction(db) {
+            val userRow = UsersTable.selectAll().where { UsersTable.id eq userId }.firstOrNull()
+                ?: return@transaction null
+            val usernameLower = username.trim().lowercase()
+            if (UsersTable.selectAll()
+                    .where { (UsersTable.username eq usernameLower) and (UsersTable.id neq userId) }
+                    .any()
+            ) {
+                error("USERNAME_EXISTS")
+            }
+            UsersTable.update({ UsersTable.id eq userId }) {
+                it[UsersTable.username] = usernameLower
+                it[UsersTable.fullName] = fullName
+                it[UsersTable.isSignUpComplete] = true
+            }
+            UsersTable.selectAll().where { UsersTable.id eq userId }.firstOrNull()?.toAuthUser()
+        }
+
+    override fun isUsernameAvailable(username: String, excludeUserId: String?): Boolean =
+        transaction(db) {
+            val usernameLower = username.trim().lowercase()
+            val query = UsersTable.selectAll().where { UsersTable.username eq usernameLower }
+            val rows = query.toList()
+            rows.isEmpty() || rows.all { it[UsersTable.id] == excludeUserId }
         }
 
     override fun findUserByEmail(email: String): AuthUserRecord? =
@@ -72,7 +122,10 @@ class DbAuthStore(
             RefreshSession(sessionId, userId, hash, expires)
         }
 
-    override fun rotateRefreshToken(oldRefreshToken: String, newRefreshToken: String): RefreshSession? =
+    override fun rotateRefreshToken(
+        oldRefreshToken: String,
+        newRefreshToken: String
+    ): RefreshSession? =
         transaction(db) {
             val now = Instant.now()
             val oldHash = sha256Hex(oldRefreshToken)
@@ -99,9 +152,10 @@ class DbAuthStore(
         transaction(db) {
             val now = Instant.now()
             val hash = sha256Hex(refreshToken)
-            val updated = RefreshTokensTable.update({ RefreshTokensTable.refreshTokenHash eq hash }) {
-                it[revokedAt] = now.epochSecond
-            }
+            val updated =
+                RefreshTokensTable.update({ RefreshTokensTable.refreshTokenHash eq hash }) {
+                    it[revokedAt] = now.epochSecond
+                }
             updated > 0
         }
 
@@ -123,9 +177,11 @@ class DbAuthStore(
 
     private fun ResultRow.toAuthUser() = AuthUserRecord(
         id = this[UsersTable.id],
-        fullName = this[UsersTable.fullName],
         emailLower = this[UsersTable.email],
-        passwordHash = this[UsersTable.passwordHash],
+        username = this[UsersTable.username],
+        fullName = this[UsersTable.fullName],
+        avatarUrl = this[UsersTable.avatarUrl],
+        isSignUpComplete = this[UsersTable.isSignUpComplete],
     )
 
     private fun ResultRow.toRefreshSession(): RefreshSession =

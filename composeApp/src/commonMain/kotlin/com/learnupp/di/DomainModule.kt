@@ -1,11 +1,15 @@
 package com.learnupp.di
 
-import com.learnupp.domain.usecase.auth.LoginUseCase
-import com.learnupp.domain.usecase.auth.LoginUseCaseImpl
 import com.learnupp.domain.usecase.auth.LogoutUseCase
 import com.learnupp.domain.usecase.auth.LogoutUseCaseImpl
-import com.learnupp.domain.usecase.auth.RegisterUseCase
-import com.learnupp.domain.usecase.auth.RegisterUseCaseImpl
+import com.learnupp.domain.usecase.auth.RequestOtpUseCase
+import com.learnupp.domain.usecase.auth.RequestOtpUseCaseImpl
+import com.learnupp.domain.usecase.auth.VerifyOtpUseCase
+import com.learnupp.domain.usecase.auth.VerifyOtpUseCaseImpl
+import com.learnupp.domain.usecase.auth.CompleteProfileUseCase
+import com.learnupp.domain.usecase.auth.CompleteProfileUseCaseImpl
+import com.learnupp.domain.usecase.auth.CheckUsernameUseCase
+import com.learnupp.domain.usecase.auth.CheckUsernameUseCaseImpl
 import com.learnupp.domain.usecase.messages.GetMessagesUseCase
 import com.learnupp.domain.usecase.messages.GetMessagesUseCaseImpl
 import com.learnupp.domain.usecase.messages.PreloadMessagesUseCase
@@ -80,9 +84,11 @@ import org.koin.dsl.module
 
 val domainModule = module {
     // Auth
-    single<LoginUseCase> { LoginUseCaseImpl(get()) }
+    single<RequestOtpUseCase> { RequestOtpUseCaseImpl(get()) }
+    single<VerifyOtpUseCase> { VerifyOtpUseCaseImpl(get()) }
+    single<CompleteProfileUseCase> { CompleteProfileUseCaseImpl(get()) }
+    single<CheckUsernameUseCase> { CheckUsernameUseCaseImpl(get()) }
     single<LogoutUseCase> { LogoutUseCaseImpl(get()) }
-    single<RegisterUseCase> { RegisterUseCaseImpl(get()) }
 
     // Profile
     single<GetProfileUseCase> { GetProfileUseCaseImpl(get()) }

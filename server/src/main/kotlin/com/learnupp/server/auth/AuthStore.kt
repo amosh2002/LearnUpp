@@ -1,7 +1,9 @@
 package com.learnupp.server.auth
 
 interface AuthStore {
-    fun createUser(fullName: String, email: String, passwordHash: String): AuthUserRecord
+    fun createUser(email: String, username: String? = null, fullName: String? = null): AuthUserRecord
+    fun updateProfile(userId: String, username: String, fullName: String?): AuthUserRecord?
+    fun isUsernameAvailable(username: String, excludeUserId: String? = null): Boolean
     fun findUserByEmail(email: String): AuthUserRecord?
     fun findUserById(userId: String): AuthUserRecord?
 
@@ -13,9 +15,11 @@ interface AuthStore {
 
 data class AuthUserRecord(
     val id: String,
-    val fullName: String,
     val emailLower: String,
-    val passwordHash: String,
+    val username: String?,
+    val fullName: String?,
+    val avatarUrl: String? = null,
+    val isSignUpComplete: Boolean = false,
 )
 
 data class RefreshSession(

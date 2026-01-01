@@ -54,6 +54,10 @@ enum class ScreenNameStrings(val label: LearnUppStrings) {
     WITHDRAW_FUNDS(LearnUppStrings.SCREEN_WITHDRAW_FUNDS),
     WITHDRAW_PAYOUT_METHODS(LearnUppStrings.SCREEN_WITHDRAW_METHODS),
     WITHDRAW_SUCCESS(LearnUppStrings.SCREEN_WITHDRAW_SUCCESS),
+    AUTH_START(LearnUppStrings.SCREEN_AUTH_START),
+    VERIFY_OTP(LearnUppStrings.SCREEN_VERIFY_OTP),
+    PROFILE_SETUP(LearnUppStrings.SCREEN_PROFILE_SETUP),
+    // Legacy
     SIGN_UP(LearnUppStrings.SCREEN_SIGN_UP),
     LOGIN(LearnUppStrings.SCREEN_LOGIN);
 }

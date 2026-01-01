@@ -42,7 +42,8 @@ import cafe.adriel.voyager.transitions.FadeTransition
 import com.learnupp.ui.base.AppTheme
 import com.learnupp.ui.base.LearnUppBottomNavBar
 import com.learnupp.ui.base.LearnUppTopAppBar
-import com.learnupp.ui.login.LoginScreen
+import com.learnupp.ui.auth.AuthStartScreen
+import com.learnupp.ui.auth.ProfileCompletionScreen
 import com.learnupp.ui.videos.VideosScreen
 import com.learnupp.ui.widgets.AlertDialogWithBlur
 import com.learnupp.ui.widgets.LoadingScreen
@@ -142,10 +143,12 @@ fun App(
             } else {
                 // Decide the start screen based on login status
                 Logger.i(TAG, "User logged in: ${SessionManager.isLoggedIn()}")
-                val startScreen = if (SessionManager.isLoggedIn()) {
-                    VideosScreen()
-                } else {
-                    LoginScreen()
+                val startScreen = when {
+                    SessionManager.isLoggedIn() && SessionManager.requiresProfileCompletion() ->
+                        ProfileCompletionScreen()
+                    SessionManager.isLoggedIn() ->
+                        VideosScreen()
+                    else -> AuthStartScreen()
                 }
 
                 Navigator(startScreen) { navigator ->
@@ -291,7 +294,7 @@ fun App(
                     /* listen once for every logout and kill the back-stack */
                     LaunchedEffect(Unit) {
                         SessionManager.logoutEvents.collect {
-                            if (navigator.lastItem !is LoginScreen) {
+                            if (navigator.lastItem !is AuthStartScreen) {
                                 dialogState.value = DialogParams(
                                     title = LearnUppStrings.FAILED_TO_AUTHENTICATE.getValue(),
                                     message = LearnUppStrings.PLEASE_LOG_IN_AGAIN.getValue(),
@@ -300,18 +303,20 @@ fun App(
                                     confirmText = LearnUppStrings.OK.getValue(),
                                     onConfirm = {
                                         dialogState.value = null
-                                        if (navigator.items.contains(LoginScreen())) {
-                                            navigator.popUntil { it == LoginScreen() }
+                                        val hasAuthStart = navigator.items.any { it is AuthStartScreen }
+                                        if (hasAuthStart) {
+                                            navigator.popUntil { it is AuthStartScreen }
                                         } else {
-                                            navigator.replaceAll(LoginScreen())
+                                            navigator.replaceAll(AuthStartScreen())
                                         }
                                     },
                                     onDismiss = {
                                         dialogState.value = null
-                                        if (navigator.items.contains(LoginScreen())) {
-                                            navigator.popUntil { it == LoginScreen() }
+                                        val hasAuthStart = navigator.items.any { it is AuthStartScreen }
+                                        if (hasAuthStart) {
+                                            navigator.popUntil { it is AuthStartScreen }
                                         } else {
-                                            navigator.replaceAll(LoginScreen())
+                                            navigator.replaceAll(AuthStartScreen())
                                         }
                                     }
                                 )

@@ -1,6 +1,7 @@
 package com.learnupp.server.plugins
 
 import com.learnupp.server.auth.DbAuthStore
+import com.learnupp.server.auth.OtpService
 import com.learnupp.server.auth.TokenRevocationRepository
 import com.learnupp.server.auth.TokenService
 import com.learnupp.server.auth.authRoutes
@@ -46,7 +47,8 @@ fun Application.configureRouting(
                 refreshTtlSeconds = (System.getenv("REFRESH_TOKEN_TTL_SEC") ?: "${30L * 24 * 60 * 60}").toLong()
             )
         }
-        authRoutes(store = authStore, tokenService = tokenService, tokenRevocationRepository = tokenRevocationRepository)
+        val otpService = db?.let { OtpService(it) }
+        authRoutes(store = authStore, tokenService = tokenService, tokenRevocationRepository = tokenRevocationRepository, otpService = otpService)
 
         contentRoutes(repo = contentRepository)
         extendedRoutes(repo = contentRepository?.let { com.learnupp.server.db.ExtendedRepository(it.database) })

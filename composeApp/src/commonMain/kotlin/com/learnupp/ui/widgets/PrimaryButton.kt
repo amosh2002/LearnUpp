@@ -24,10 +24,10 @@ fun PrimaryButton(
     text: String,
     enabled: Boolean = true,
     buttonColors: ButtonColors = ButtonColors(
-        containerColor = MaterialTheme.colorScheme.onPrimary,
-        contentColor = Color.White,
-        disabledContainerColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
-        disabledContentColor = Color.White.copy(alpha = 0.5f)
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+        disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
     ),
     onClick: () -> Unit,
     shape: RoundedCornerShape = RoundedCornerShape(10.dp),
@@ -56,6 +56,7 @@ fun PrimaryButton(
                 lineHeight = 17.sp,
                 textAlign = TextAlign.Center
             ),
+            color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.padding(vertical = 2.dp)
         )
     }

@@ -145,10 +145,66 @@ enum class LearnUppStrings(
     SCREEN_WITHDRAW_FUNDS("Withdraw Funds", "Հանել միջոցներ", "Снять средства"),
     SCREEN_WITHDRAW_METHODS("Select Payout Method", "Ընտրեք վճարման եղանակ", "Выберите способ выплаты"),
     SCREEN_WITHDRAW_SUCCESS("Withdrawal Successful", "Հանելն ավարտված է", "Успешный вывод"),
+    SCREEN_AUTH_START("Sign In / Sign Up", "Մուտք / Գրանցում", "Вход / Регистрация"),
+    SCREEN_VERIFY_OTP("Verification Code", "Վավերացման կոդ", "Код подтверждения"),
+    SCREEN_PROFILE_SETUP("Complete Profile", "Լրացրեք պրոֆիլը", "Заполните профиль"),
+    // Legacy screen titles kept for older flows
     SCREEN_LOGIN("Login", "Մուտք", "Логин"),
     SCREEN_SIGN_UP("Create Account", "Գրանցել հաշիվ", "Создать аккаунт"),
 
-    // Register screen
+    // Auth start
+    AUTH_WELCOME_TITLE("Welcome to LearnUpp", "Բարի գալուստ LearnUpp", "Добро пожаловать в LearnUpp"),
+    AUTH_WELCOME_SUBTITLE(
+        "Sign in with email, Google, or Apple to continue.",
+        "Մուտք գործեք email-ով, Google-ով կամ Apple-ով՝ շարունակելու համար։",
+        "Войдите с email, Google или Apple, чтобы продолжить."
+    ),
+    AUTH_CONTINUE_WITH_EMAIL("Continue with Email", "Շարունակել էլփոստով", "Продолжить с email"),
+    AUTH_SEND_CODE("Send Code", "Ուղարկել կոդը", "Отправить код"),
+    AUTH_SOCIAL_COMING_SOON(
+        "Google/Apple sign-in is coming soon.",
+        "Google/Apple մուտքը շուտով կլինի։",
+        "Вход через Google/Apple скоро будет."
+    ),
+
+    // OTP
+    OTP_TITLE("Verification Code", "Վավերացման կոդ", "Код подтверждения"),
+    OTP_SUBTITLE(
+        "Enter the 5-digit code we sent to your email.",
+        "Մուտքագրեք ձեր էլ. հասցեին ուղարկված 5-նիշ կոդը։",
+        "Введите 5-значный код, отправленный на вашу почту."
+    ),
+    OTP_DIDNT_RECEIVE("Didn't receive the code?", "Չե՞ք ստացել կոդը։", "Не получили код?"),
+    OTP_RESEND("Resend Code", "Կրկին ուղարկել կոդը", "Отправить код еще раз"),
+    OTP_VERIFY_BUTTON("Verify Code", "Ստուգել կոդը", "Подтвердить код"),
+    OTP_GO_BACK("Go Back to Sign In", "Վերադառնալ մուտք", "Вернуться ко входу"),
+
+    // Profile completion
+    PROFILE_SETUP_TITLE("Complete your profile", "Լրացրեք ձեր պրոֆիլը", "Заполните профиль"),
+    PROFILE_SETUP_SUBTITLE(
+        "Choose a username so others can find you.",
+        "Ընտրեք օգտանուն, որպեսզի մյուսները գտնեն ձեզ։",
+        "Выберите имя пользователя, чтобы вас могли найти."
+    ),
+    USERNAME_LABEL("Username", "Օգտանուն", "Имя пользователя"),
+    USERNAME_PLACEHOLDER("@username", "@օգտանուն", "@username"),
+    USERNAME_TAKEN("That username is already taken", "Այդ օգտանունը զբաղված է", "Это имя уже занято"),
+    USERNAME_AVAILABLE("Username is available", "Օգտանունը ազատ է", "Имя доступно"),
+    USERNAME_CHECKING("Checking availability...", "Ստուգում է հասանելիությունը...", "Проверяем доступность..."),
+    FULL_NAME_OPTIONAL("Full name (optional)", "Անուն Ազգանուն (ըստ ցանկության)", "Полное имя (необязательно)"),
+    COMPLETE_PROFILE_BUTTON("Finish", "Ավարտել", "Готово"),
+
+    // Account / login methods
+    ACCOUNT_AND_LOGIN("Account & Login", "Հաշիվ և մուտք", "Аккаунт и вход"),
+    CHANGE_EMAIL("Change Email", "Փոխել էլ. հասցեն", "Сменить email"),
+    LINK_GOOGLE("Link Google", "Կապել Google-ը", "Привязать Google"),
+    LINK_APPLE("Link Apple", "Կապել Apple-ը", "Привязать Apple"),
+    SET_AS_PRIMARY("Set as primary", "Դարձնել հիմնական", "Сделать основным"),
+    COMING_SOON("Coming soon", "Շուտով", "Скоро"),
+    EMAIL_UPDATE_OTP_SENT("We’ll send an OTP to your new email.", "OTP կուղարկենք ձեր նոր էլփոստին։", "Мы отправим OTP на ваш новый email."),
+    ONLY_ONE_LOGIN_ACTIVE("Only one login method can be active at a time.", "Միայն մեկ մուտքի մեթոդ կարող է լինել ակտիվ։", "Только один способ входа может быть активным."),
+
+    // Legacy (kept for reference in older screens)
     REGISTER_TITLE("Create Account", "Գրանցել հաշիվ", "Создать аккаунт"),
     REGISTER_FULL_NAME("Full Name", "Անուն Ազգանուն", "Полное имя"),
     REGISTER_FULL_NAME_PLACEHOLDER("Enter your full name", "Մուտքագրեք ձեր անունը", "Введите ваше имя"),

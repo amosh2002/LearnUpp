@@ -31,6 +31,7 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.learnupp.domain.model.earnings.EarningsTransaction
+import com.learnupp.safePush
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.widgets.PrimaryButton
@@ -65,7 +66,7 @@ class EarningsScreen : BaseScreen(ScreenNameStrings.EARNINGS) {
                     ),
                     shape = RoundedCornerShape(18.dp),
                     height = 56.dp,
-                    onClick = { navigator.push(WithdrawFundsScreen) }
+                    onClick = { navigator.safePush(WithdrawFundsScreen) }
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(

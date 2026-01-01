@@ -17,7 +17,6 @@ class InMemoryAuthStore(
     data class UserRecord(
         val user: User,
         val emailLower: String,
-        val passwordHash: String,
     )
 
     data class RefreshSession(
@@ -34,15 +33,16 @@ class InMemoryAuthStore(
     private val usersById = ConcurrentHashMap<String, UserRecord>()
     private val sessionsByTokenHash = ConcurrentHashMap<String, RefreshSession>()
 
-    fun createUser(fullName: String, email: String, passwordHash: String): UserRecord {
+    fun createUser(email: String, username: String?, fullName: String?): UserRecord {
         val emailLower = email.trim().lowercase()
         require(emailLower.isNotBlank())
 
         if (usersByEmail.containsKey(emailLower)) error("USER_EXISTS")
+        if (!username.isNullOrBlank() && usersByEmail.values.any { it.user.username == username.lowercase() }) error("USERNAME_EXISTS")
 
         val id = UUID.randomUUID().toString()
-        val user = User(id = id, fullName = fullName, email = emailLower, avatarUrl = null)
-        val record = UserRecord(user = user, emailLower = emailLower, passwordHash = passwordHash)
+        val user = User(id = id, email = emailLower, username = username?.lowercase(), fullName = fullName, avatarUrl = null)
+        val record = UserRecord(user = user, emailLower = emailLower)
 
         usersByEmail[emailLower] = record
         usersById[id] = record
@@ -54,6 +54,22 @@ class InMemoryAuthStore(
 
     fun findUserById(userId: String): UserRecord? =
         usersById[userId]
+
+    fun updateProfile(userId: String, username: String, fullName: String?): UserRecord? {
+        val existing = usersById[userId] ?: return null
+        val usernameLower = username.trim().lowercase()
+        if (usersByEmail.values.any { it.user.username == usernameLower && it.user.id != userId }) error("USERNAME_EXISTS")
+        val updatedUser = existing.user.copy(username = usernameLower, fullName = fullName)
+        val updated = existing.copy(user = updatedUser)
+        usersById[userId] = updated
+        usersByEmail[existing.emailLower] = updated
+        return updated
+    }
+
+    fun isUsernameAvailable(username: String, excludeUserId: String? = null): Boolean {
+        val usernameLower = username.trim().lowercase()
+        return usersByEmail.values.none { it.user.username == usernameLower && it.user.id != excludeUserId }
+    }
 
     fun createRefreshSession(userId: String, refreshToken: String): RefreshSession {
         val now = Instant.now()

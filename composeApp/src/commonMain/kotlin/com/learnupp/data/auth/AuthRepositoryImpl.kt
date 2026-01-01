@@ -1,26 +1,42 @@
 package com.learnupp.data.auth
 
-//import com.learnupp.data.camera.CameraStorage
 import com.learnupp.domain.repo.AuthRepository
+import com.learnupp.data.auth.VerifyOtpResult
+import com.learnupp.data.auth.OtpRequestResult
+import com.learnupp.util.Logger
 import com.learnupp.util.SessionManager
 
 class AuthRepositoryImpl(
-//    private val cameraStorage: CameraStorage,
     private val authApi: AuthApi,
 ) : AuthRepository {
-    override suspend fun login(
-        email: String,
-        password: String
-    ): Boolean {
-        // Call API to get bearer token
-        val tokens = authApi.login(email, password)
-        return if (tokens != null) {
+    override suspend fun requestOtp(email: String): OtpRequestResult =
+        authApi.requestOtp(email)
+
+    override suspend fun verifyOtp(email: String, code: String): VerifyOtpResult? {
+        val result = authApi.verifyOtp(email, code)
+        result?.tokens?.let { tokens ->
             SessionManager.setTokens(tokens.accessToken, tokens.refreshToken)
-            true
-        } else {
-            com.learnupp.util.Logger.e("AuthRepository", "login returned null tokens")
-            false
+            SessionManager.setRequiresProfileCompletion(tokens.requiresProfileCompletion)
         }
+        return result
+    }
+
+    override suspend fun completeProfile(username: String, fullName: String?): Boolean {
+        val ok = authApi.completeProfile(username, fullName)
+        if (ok) {
+            SessionManager.setRequiresProfileCompletion(false)
+        }
+        return ok
+    }
+
+    override suspend fun isUsernameAvailable(username: String): Boolean {
+        return authApi.checkUsername(username)
+    }
+
+    override suspend fun login(email: String, password: String): Boolean {
+        // Deprecated path; passwordless flow only. Return false to indicate unsupported.
+        Logger.e("AuthRepository", "Password login is no longer supported.")
+        return false
     }
 
     override suspend fun register(
@@ -29,15 +45,11 @@ class AuthRepositoryImpl(
         password: String,
         confirmPassword: String
     ): Boolean {
-        if (password != confirmPassword) return false
-        val tokens = authApi.register(fullName, email, password)
-        return if (tokens != null) {
-            SessionManager.setTokens(tokens.accessToken, tokens.refreshToken)
-            true
-        } else {
-            com.learnupp.util.Logger.e("AuthRepository", "register returned null tokens")
-            false
-        }
+        Logger.e(
+            "AuthRepository",
+            "Password registration is no longer supported."
+        )
+        return false
     }
 
     override suspend fun logout(): Boolean {

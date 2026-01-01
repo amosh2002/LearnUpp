@@ -1,17 +1,11 @@
 package com.learnupp.domain.repo
 
 interface AuthRepository {
-    suspend fun login(
-        email: String,
-        password: String
-    ): Boolean
-
-    suspend fun register(
-        fullName: String,
-        email: String,
-        password: String,
-        confirmPassword: String
-    ): Boolean
-
+    suspend fun requestOtp(email: String): com.learnupp.data.auth.OtpRequestResult
+    suspend fun verifyOtp(email: String, code: String): com.learnupp.data.auth.VerifyOtpResult?
+    suspend fun completeProfile(username: String, fullName: String?): Boolean
+    suspend fun isUsernameAvailable(username: String): Boolean
+    suspend fun login(email: String, password: String): Boolean = false
+    suspend fun register(fullName: String, email: String, password: String, confirmPassword: String): Boolean = false
     suspend fun logout(): Boolean
 }

@@ -1,7 +1,9 @@
 package com.learnupp.di
 
+import com.learnupp.ui.auth.AuthStartScreenModel
+import com.learnupp.ui.auth.OtpScreenModel
+import com.learnupp.ui.auth.ProfileCompletionScreenModel
 import com.learnupp.ui.courses.CoursesScreenModel
-import com.learnupp.ui.login.LoginScreenModel
 import com.learnupp.ui.messages.MessagesScreenModel
 import com.learnupp.ui.more.MoreScreenModel
 import com.learnupp.ui.reels.ReelsScreenModel
@@ -10,21 +12,13 @@ import com.learnupp.ui.settings.language.LanguageSelectionScreenModel
 import com.learnupp.ui.settings.notifications.NotificationsSettingsScreenModel
 import com.learnupp.ui.settings.payments.PaymentMethodsScreenModel
 import com.learnupp.ui.videos.VideosScreenModel
-import com.learnupp.ui.register.RegisterScreenModel
 import org.koin.dsl.module
 
 val screenModelsModule = module {
-    // Login
-    single {
-        LoginScreenModel(
-            get()
-        )
-    }
-    single {
-        RegisterScreenModel(
-            get()
-        )
-    }
+    // Auth
+    single { AuthStartScreenModel(get()) }
+    single { OtpScreenModel(get(), get()) }
+    single { ProfileCompletionScreenModel(get(), get()) }
 
     // Reels
     single {

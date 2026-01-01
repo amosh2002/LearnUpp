@@ -4,11 +4,15 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,12 +26,33 @@ import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.base.getValue
 import com.learnupp.ui.widgets.PrimaryButton
+import com.learnupp.util.PreferencesManager
+import com.learnupp.util.LearnUppStrings
+import com.learnupp.util.getValue
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.KeyboardType
+import com.learnupp.safePush
+import org.koin.mp.KoinPlatform.getKoin
 
 object WithdrawFundsScreen : BaseScreen(ScreenNameStrings.WITHDRAW_FUNDS) {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val prefs: PreferencesManager = getKoin().get()
+        val scope = rememberCoroutineScope()
+
+        var isPinSet by remember { mutableStateOf(false) }
+        var showAuthDialog by remember { mutableStateOf(false) }
+
+        LaunchedEffect(Unit) {
+            isPinSet = prefs.getString(PIN_KEY) != null
+        }
 
         Column(
             modifier = Modifier
@@ -40,13 +65,13 @@ object WithdrawFundsScreen : BaseScreen(ScreenNameStrings.WITHDRAW_FUNDS) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                PayoutMethod(onClick = { navigator.push(PaymentMethodsScreen) })
+                PayoutMethod(onClick = { navigator.safePush(PaymentMethodsScreen) })
                 AmountToWithdraw()
             }
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 PrimaryButton(
                     text = "Withdraw",
-                    onClick = { navigator.push(WithdrawalSuccessfulScreen) },
+                    onClick = { showAuthDialog = true },
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedButton(
@@ -57,6 +82,29 @@ object WithdrawFundsScreen : BaseScreen(ScreenNameStrings.WITHDRAW_FUNDS) {
                     Text("Cancel")
                 }
             }
+        }
+
+        if (showAuthDialog) {
+            WithdrawAuthDialog(
+                isPinSet = isPinSet,
+                onDismiss = { showAuthDialog = false },
+                onPinCreated = { pin ->
+                    scope.launch {
+                        prefs.saveString(PIN_KEY, pin)
+                        isPinSet = true
+                        showAuthDialog = false
+                        navigator.safePush(WithdrawalSuccessfulScreen)
+                    }
+                },
+                onPinVerified = { success ->
+                    if (success) {
+                        showAuthDialog = false
+                        navigator.safePush(WithdrawalSuccessfulScreen)
+                    }
+                },
+                prefs = prefs,
+                scope = scope
+            )
         }
     }
 }
@@ -165,6 +213,7 @@ object WithdrawalSuccessfulScreen : BaseScreen(ScreenNameStrings.WITHDRAW_SUCCES
                 )
             }
         }
+
     }
 }
 
@@ -255,6 +304,138 @@ private fun AmountToWithdraw() {
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WithdrawAuthDialog(
+    isPinSet: Boolean,
+    onDismiss: () -> Unit,
+    onPinCreated: (String) -> Unit,
+    onPinVerified: (Boolean) -> Unit,
+    prefs: PreferencesManager,
+    scope: CoroutineScope
+) {
+    var pinInput by remember { mutableStateOf("") }
+    var confirmPinInput by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+    val minPinLength = 4
+
+    fun resetFields() {
+        pinInput = ""
+        confirmPinInput = ""
+        error = null
+    }
+
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = {
+            Text(
+                if (isPinSet) LearnUppStrings.ACCOUNT_AND_LOGIN.getValue()
+                else LearnUppStrings.CHANGE_EMAIL.getValue()
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (isPinSet) {
+                    Text(
+                        text = "Enter your withdrawal PIN to continue.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    OutlinedTextField(
+                        value = pinInput,
+                        onValueChange = {
+                            if (it.length <= 6) pinInput = it.filter { ch -> ch.isDigit() }
+                        },
+                        label = { Text("PIN") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                    )
+                    OutlinedButton(
+                        onClick = {
+                            error = LearnUppStrings.COMING_SOON.getValue()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+                    ) {
+                        Icon(
+                            Icons.Default.Fingerprint,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text("Use Face ID / Biometrics")
+                    }
+                } else {
+                    Text(
+                        text = "Set a 4-6 digit PIN for withdrawals. You’ll need it to proceed.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    OutlinedTextField(
+                        value = pinInput,
+                        onValueChange = {
+                            if (it.length <= 6) pinInput = it.filter { ch -> ch.isDigit() }
+                        },
+                        label = { Text("New PIN") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                    )
+                    OutlinedTextField(
+                        value = confirmPinInput,
+                        onValueChange = {
+                            if (it.length <= 6) confirmPinInput = it.filter { ch -> ch.isDigit() }
+                        },
+                        label = { Text("Confirm PIN") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                    )
+                }
+
+                error?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                error = null
+                if (isPinSet) {
+                    scope.launch {
+                        val saved = prefs.getString(PIN_KEY)
+                        if (!saved.isNullOrEmpty() && saved == pinInput) {
+                            onPinVerified(true)
+                            resetFields()
+                        } else {
+                            error = "Incorrect PIN"
+                        }
+                    }
+                } else {
+                    if (pinInput.length < minPinLength) {
+                        error = "PIN must be at least $minPinLength digits"
+                        return@TextButton
+                    }
+                    if (pinInput != confirmPinInput) {
+                        error = "PINs do not match"
+                        return@TextButton
+                    }
+                    onPinCreated(pinInput)
+                    resetFields()
+                }
+            }) {
+                Text("Continue")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                resetFields()
+                onDismiss()
+            }) { Text("Cancel") }
+        }
+    )
+}
+
+private const val PIN_KEY = "withdraw_pin_value"
 
 @Composable
 private fun PaymentMethodItem(

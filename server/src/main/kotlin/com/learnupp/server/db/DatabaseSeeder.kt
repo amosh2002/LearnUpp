@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -18,6 +19,7 @@ object DatabaseSeeder {
             SchemaUtils.createMissingTablesAndColumns(
                 UsersTable,
                 RefreshTokensTable,
+                OtpCodesTable,
                 RevokedTokensTable,
                 VideosTable,
                 ReelsTable,
@@ -30,6 +32,8 @@ object DatabaseSeeder {
                 PaymentMethodsTable,
                 LanguageOptionsTable
             )
+            // Drop legacy password_hash column if it still exists (removed in passwordless auth).
+            TransactionManager.current().exec("ALTER TABLE IF EXISTS users DROP COLUMN IF EXISTS password_hash")
         }
     }
 
@@ -55,11 +59,12 @@ object DatabaseSeeder {
             it[id] = "user-1"
             it[fullName] = "Test User"
             it[email] = "user@example.com"
-            it[passwordHash] = com.learnupp.server.auth.PasswordManager.hash("pass")
+            it[username] = "user"
             it[avatarUrl] = null
+            it[isSignUpComplete] = true
             it[createdAt] = now.epochSecond
         }
-        Logger.i("Seeder", "Seeded users (user@example.com / pass)")
+        Logger.i("Seeder", "Seeded users (user@example.com)")
     }
 
     private fun seedVideos() {

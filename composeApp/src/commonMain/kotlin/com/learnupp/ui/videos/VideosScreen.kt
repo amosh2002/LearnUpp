@@ -41,6 +41,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.learnupp.domain.model.Video
+import com.learnupp.safePush
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.widgets.RefreshableBox
@@ -93,7 +94,7 @@ class VideosScreen : BaseScreen(ScreenNameStrings.VIDEOS, hideTopAppBar = true) 
                             video = video,
                             isLiked = liked.contains(video.id),
                             onClick = {
-                                navigator?.push(
+                                navigator?.safePush(
                                     VideoDetailsScreen(
                                         title = video.title,
                                         url = video.fullVideoUrl

@@ -30,6 +30,9 @@ import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,6 +73,7 @@ import com.learnupp.LocalDialogState
 import com.learnupp.domain.model.Profile
 import com.learnupp.domain.model.Reel
 import com.learnupp.domain.model.Video
+import com.learnupp.safePush
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
 import com.learnupp.ui.settings.earnings.EarningsScreen
@@ -130,13 +134,83 @@ class MoreScreen : BaseScreen(
                             .align(Alignment.CenterHorizontally)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = LearnUppStrings.ACCOUNT_AND_LOGIN.getValue(),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.Email,
+                        text = LearnUppStrings.CHANGE_EMAIL.getValue(),
+                        iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
+                    ) {
+                        dialogState.value = DialogParams(
+                            title = LearnUppStrings.CHANGE_EMAIL.getValue(),
+                            message = LearnUppStrings.EMAIL_UPDATE_OTP_SENT.getValue(),
+                            dialogType = DialogType.INFO,
+                            buttonCount = 1,
+                            confirmText = LearnUppStrings.OK.getValue(),
+                            onConfirm = { dialogState.value = null },
+                            onDismiss = { dialogState.value = null }
+                        )
+                        showSettingsSheet = false
+                    }
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.Link,
+                        text = LearnUppStrings.LINK_GOOGLE.getValue(),
+                        iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
+                    ) {
+                        dialogState.value = DialogParams(
+                            title = LearnUppStrings.LINK_GOOGLE.getValue(),
+                            message = LearnUppStrings.COMING_SOON.getValue(),
+                            dialogType = DialogType.INFO,
+                            buttonCount = 1,
+                            confirmText = LearnUppStrings.OK.getValue(),
+                            onConfirm = { dialogState.value = null },
+                            onDismiss = { dialogState.value = null }
+                        )
+                        showSettingsSheet = false
+                    }
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.AccountCircle,
+                        text = LearnUppStrings.LINK_APPLE.getValue(),
+                        iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
+                    ) {
+                        dialogState.value = DialogParams(
+                            title = LearnUppStrings.LINK_APPLE.getValue(),
+                            message = LearnUppStrings.COMING_SOON.getValue(),
+                            dialogType = DialogType.INFO,
+                            buttonCount = 1,
+                            confirmText = LearnUppStrings.OK.getValue(),
+                            onConfirm = { dialogState.value = null },
+                            onDismiss = { dialogState.value = null }
+                        )
+                        showSettingsSheet = false
+                    }
+                    SettingsSheetOption(
+                        icon = Icons.Outlined.Settings,
+                        text = LearnUppStrings.SET_AS_PRIMARY.getValue(),
+                        iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
+                    ) {
+                        dialogState.value = DialogParams(
+                            title = LearnUppStrings.SET_AS_PRIMARY.getValue(),
+                            message = LearnUppStrings.COMING_SOON.getValue(),
+                            dialogType = DialogType.INFO,
+                            buttonCount = 1,
+                            confirmText = LearnUppStrings.OK.getValue(),
+                            onConfirm = { dialogState.value = null },
+                            onDismiss = { dialogState.value = null }
+                        )
+                        showSettingsSheet = false
+                    }
                     SettingsSheetOption(
                         icon = Icons.Outlined.Notifications,
                         text = LearnUppStrings.NOTIFICATIONS.getValue(),
                         iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
                     ) {
                         showSettingsSheet = false
-                        navigator.push(NotificationsSettingsScreen())
+                        navigator.safePush(NotificationsSettingsScreen())
                     }
                     SettingsSheetOption(
                         icon = Icons.Outlined.AttachMoney,
@@ -144,7 +218,7 @@ class MoreScreen : BaseScreen(
                         iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
                     ) {
                         showSettingsSheet = false
-                        navigator.push(EarningsScreen())
+                        navigator.safePush(EarningsScreen())
                     }
                     SettingsSheetOption(
                         icon = Icons.Outlined.Payment,
@@ -152,7 +226,7 @@ class MoreScreen : BaseScreen(
                         iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
                     ) {
                         showSettingsSheet = false
-                        navigator.push(PaymentMethodsScreen())
+                        navigator.safePush(PaymentMethodsScreen())
                     }
                     SettingsSheetOption(
                         icon = Icons.Outlined.Language,
@@ -160,7 +234,7 @@ class MoreScreen : BaseScreen(
                         iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
                     ) {
                         showSettingsSheet = false
-                        navigator.push(LanguageSelectionScreen())
+                        navigator.safePush(LanguageSelectionScreen())
                     }
                     SettingsSheetOption(
                         icon = Icons.Outlined.HelpOutline,
@@ -168,7 +242,7 @@ class MoreScreen : BaseScreen(
                         iconBackground = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.08f)
                     ) {
                         showSettingsSheet = false
-                        navigator.push(HelpSupportScreen())
+                        navigator.safePush(HelpSupportScreen())
                     }
                     SettingsSheetOption(
                         icon = Icons.Outlined.Logout,
@@ -190,7 +264,7 @@ class MoreScreen : BaseScreen(
                                 dialogState.value = null
                                 moreScreenModel.screenModelScope.launch {
                                     val success = moreScreenModel.logout()
-                                    if (success) navigator.replaceAll(com.learnupp.ui.login.LoginScreen())
+                                    if (success) navigator.replaceAll(com.learnupp.ui.auth.AuthStartScreen())
                                 }
                             },
                             onDismiss = { dialogState.value = null }

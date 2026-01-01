@@ -62,7 +62,7 @@ import org.koin.dsl.module
 
 val dataModule = module {
     // Auth
-    single<AuthApi> { KtorAuthApi(client = get(Qualifiers.Plain)) }
+    single<AuthApi> { KtorAuthApi(client = get(Qualifiers.Auth)) }
     single<AuthRepository> { AuthRepositoryImpl(get()) }
 
     // Profile (real)
