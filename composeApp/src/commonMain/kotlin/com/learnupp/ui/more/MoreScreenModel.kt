@@ -87,7 +87,10 @@ class MoreScreenModel(
     }
 
     fun updateAbout(text: String) {
-        screenModelScope.launch { updateProfileAbout(text) }
+        screenModelScope.launch {
+            updateProfileAbout(text)
+            reloadProfile()
+        }
     }
 
     suspend fun logout(): Boolean {

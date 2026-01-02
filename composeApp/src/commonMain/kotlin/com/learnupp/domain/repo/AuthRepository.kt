@@ -9,6 +9,7 @@ interface AuthRepository {
     suspend fun isUsernameAvailable(username: String): Boolean
     suspend fun login(email: String, password: String): Boolean = false
     suspend fun loginWithProvider(provider: AuthProvider): Boolean = false
+    suspend fun updateAbout(about: String): Boolean = false
     suspend fun register(
         fullName: String,
         email: String,

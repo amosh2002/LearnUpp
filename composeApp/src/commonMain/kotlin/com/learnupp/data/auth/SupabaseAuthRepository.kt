@@ -39,120 +39,124 @@ class SupabaseAuthRepository(
         }
     }
 
-    override suspend fun verifyOtp(email: String, code: String): VerifyOtpResult? = withContext(Dispatchers.IO) {
-        try {
-            // FIX: Use OtpType.Email.EMAIL (Standard for v3 SDK)
-            auth.verifyEmailOtp(
-                type = OtpType.Email.EMAIL,
-                email = email,
-                token = code
-            )
+    override suspend fun verifyOtp(email: String, code: String): VerifyOtpResult? =
+        withContext(Dispatchers.IO) {
+            try {
+                // FIX: Use OtpType.Email.EMAIL (Standard for v3 SDK)
+                auth.verifyEmailOtp(
+                    type = OtpType.Email.EMAIL,
+                    email = email,
+                    token = code
+                )
 
-            val session = auth.currentSessionOrNull()
-            val user = auth.currentUserOrNull()
+                val session = auth.currentSessionOrNull()
+                val user = auth.currentUserOrNull()
 
-            if (session == null || user == null) {
-                Logger.e("SupabaseAuth", "verifyOtp: no active session")
-                return@withContext null
+                if (session == null || user == null) {
+                    Logger.e("SupabaseAuth", "verifyOtp: no active session")
+                    return@withContext null
+                }
+
+                // Sync tokens to your legacy SessionManager for UI flags
+                SessionManager.setTokens(
+                    accessToken = session.accessToken,
+                    refreshToken = session.refreshToken ?: ""
+                )
+
+                // 1. Check Metadata (Fastest)
+                // Safety: convert to string then boolean to handle JSON primitive types safely
+                val metaFlag = user.userMetadata?.get("is_signup_complete")?.toString()?.toBoolean()
+
+                // 2. Check DB (Fallback)
+                val fromProfiles = try {
+                    client.from("profiles")
+                        .select {
+                            filter { eq("user_id", user.id) }
+                            limit(1)
+                        }
+                        .decodeList<ProfileRow>()
+                        .firstOrNull()
+                } catch (e: Exception) {
+                    Logger.e("SupabaseAuth", "Failed to fetch profile: ${e.message}")
+                    null
+                }
+
+                val isComplete = (metaFlag == true) || (fromProfiles?.isSignUpComplete == true)
+                // If user exists but has no username, force completion
+                val requiresProfileCompletion =
+                    !isComplete || fromProfiles?.username.isNullOrBlank()
+
+                VerifyOtpResult(
+                    tokens = AuthTokens(
+                        accessToken = session.accessToken,
+                        refreshToken = session.refreshToken ?: "",
+                        expiresInSec = session.expiresIn?.toInt() ?: 3600, // Safe Long->Int cast
+                        requiresProfileCompletion = requiresProfileCompletion,
+                        userId = user.id,
+                    )
+                )
+            } catch (t: Throwable) {
+                Logger.e("SupabaseAuth", "verifyOtp failed: ${t.message}")
+                null
             }
+        }
 
-            // Sync tokens to your legacy SessionManager for UI flags
-            SessionManager.setTokens(
-                accessToken = session.accessToken,
-                refreshToken = session.refreshToken ?: ""
-            )
+    override suspend fun completeProfile(username: String, fullName: String?): Boolean =
+        withContext(Dispatchers.IO) {
+            try {
+                val currentUser = auth.currentUserOrNull() ?: return@withContext false
+                val normalizedUsername = username.trim().removePrefix("@")
 
-            // 1. Check Metadata (Fastest)
-            // Safety: convert to string then boolean to handle JSON primitive types safely
-            val metaFlag = user.userMetadata?.get("is_signup_complete")?.toString()?.toBoolean()
+                // 1. Update 'profiles' table via update() to comply with RLS policy
+                // We create a JSON object for partial update matching ProfileRow structure
+                val updates = buildJsonObject {
+                    put("username", normalizedUsername)
+                    if (!fullName.isNullOrBlank()) {
+                        put("full_name", fullName)
+                    }
+                    put("is_signup_complete", true)
+                }
 
-            // 2. Check DB (Fallback)
-            val fromProfiles = try {
-                client.from("profiles")
+                client.from("profiles").update(updates) {
+                    filter {
+                        eq("user_id", currentUser.id)
+                    }
+                }
+
+                // 2. Update Auth Metadata
+                // FIX: Use buildJsonObject for correct JSON encoding
+                auth.updateUser {
+                    data = buildJsonObject {
+                        put("is_signup_complete", true)
+                        put("username", normalizedUsername)
+                        put("full_name", fullName ?: "")
+                    }
+                }
+
+                SessionManager.setRequiresProfileCompletion(false)
+                true
+            } catch (t: Throwable) {
+                Logger.e("SupabaseAuth", "completeProfile failed: ${t.message}")
+                false
+            }
+        }
+
+    override suspend fun isUsernameAvailable(username: String): Boolean =
+        withContext(Dispatchers.IO) {
+            try {
+                val normalized = username.trim().removePrefix("@")
+                val rows = client.from("profiles")
                     .select {
-                        filter { eq("user_id", user.id) }
+                        filter { eq("username", normalized) }
                         limit(1)
                     }
                     .decodeList<ProfileRow>()
-                    .firstOrNull()
-            } catch (e: Exception) {
-                Logger.e("SupabaseAuth", "Failed to fetch profile: ${e.message}")
-                null
+                rows.isEmpty()
+            } catch (t: Throwable) {
+                Logger.e("SupabaseAuth", "isUsernameAvailable failed: ${t.message}")
+                false
             }
-
-            val isComplete = (metaFlag == true) || (fromProfiles?.isSignUpComplete == true)
-            // If user exists but has no username, force completion
-            val requiresProfileCompletion = !isComplete || fromProfiles?.username.isNullOrBlank()
-
-            VerifyOtpResult(
-                tokens = AuthTokens(
-                    accessToken = session.accessToken,
-                    refreshToken = session.refreshToken ?: "",
-                    expiresInSec = session.expiresIn?.toInt() ?: 3600, // Safe Long->Int cast
-                    requiresProfileCompletion = requiresProfileCompletion,
-                    userId = user.id,
-                )
-            )
-        } catch (t: Throwable) {
-            Logger.e("SupabaseAuth", "verifyOtp failed: ${t.message}")
-            null
         }
-    }
-
-    override suspend fun completeProfile(username: String, fullName: String?): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val currentUser = auth.currentUserOrNull() ?: return@withContext false
-            val normalizedUsername = username.trim().removePrefix("@")
-
-            // 1. Update 'profiles' table via update() to comply with RLS policy
-            // We create a JSON object for partial update matching ProfileRow structure
-            val updates = buildJsonObject {
-                put("username", normalizedUsername)
-                if (!fullName.isNullOrBlank()) {
-                    put("full_name", fullName)
-                }
-                put("is_signup_complete", true)
-            }
-
-            client.from("profiles").update(updates) {
-                filter {
-                    eq("user_id", currentUser.id)
-                }
-            }
-
-            // 2. Update Auth Metadata
-            // FIX: Use buildJsonObject for correct JSON encoding
-            auth.updateUser {
-                data = buildJsonObject {
-                    put("is_signup_complete", true)
-                    put("username", normalizedUsername)
-                    put("full_name", fullName ?: "")
-                }
-            }
-
-            SessionManager.setRequiresProfileCompletion(false)
-            true
-        } catch (t: Throwable) {
-            Logger.e("SupabaseAuth", "completeProfile failed: ${t.message}")
-            false
-        }
-    }
-
-    override suspend fun isUsernameAvailable(username: String): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val normalized = username.trim().removePrefix("@")
-            val rows = client.from("profiles")
-                .select {
-                    filter { eq("username", normalized) }
-                    limit(1)
-                }
-                .decodeList<ProfileRow>()
-            rows.isEmpty()
-        } catch (t: Throwable) {
-            Logger.e("SupabaseAuth", "isUsernameAvailable failed: ${t.message}")
-            false
-        }
-    }
 
     // --- Legacy / Unused in OTP flow ---
     override suspend fun login(e: String, p: String): Boolean = false
@@ -177,6 +181,26 @@ class SupabaseAuthRepository(
         } catch (e: Exception) {
             Logger.e("Auth", "Login failed: ${e.message}")
             throw e
+        }
+    }
+
+    override suspend fun updateAbout(about: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val currentUser = auth.currentUserOrNull() ?: return@withContext false
+
+            val updates = buildJsonObject {
+                put("about", about)
+            }
+
+            client.from("profiles").update(updates) {
+                filter {
+                    eq("user_id", currentUser.id)
+                }
+            }
+            true
+        } catch (t: Throwable) {
+            Logger.e("SupabaseAuth", "updateAbout failed: ${t.message}")
+            false
         }
     }
 
@@ -245,10 +269,11 @@ data class VerifyOtpResult(
 
 @Serializable
 data class ProfileRow(
-    val user_id: String, // Snake_case matching DB
+    val user_id: String,
     val username: String? = null,
     val full_name: String? = null,
-    val is_signup_complete: Boolean = false, // Snake_case matching DB
+    val is_signup_complete: Boolean = false,
+    val about: String? = null
 ) {
     // Helper properties if you want camelCase usage in code
     val isSignUpComplete get() = is_signup_complete

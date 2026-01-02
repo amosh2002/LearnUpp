@@ -98,6 +98,7 @@ val domainModule = module {
     single<PreloadProfileUseCase> { PreloadProfileUseCaseImpl(get()) }
     single<ReloadProfileUseCase> { ReloadProfileUseCaseImpl(get()) }
     single<UpdateProfileAboutUseCase> { UpdateProfileAboutUseCaseImpl(get()) }
+    single<UpdateProfileAboutUseCase> { UpdateProfileAboutUseCaseImpl(get()) }
 
     // Courses
     single<GetCoursesUseCase> { GetCoursesUseCaseImpl(get()) }
