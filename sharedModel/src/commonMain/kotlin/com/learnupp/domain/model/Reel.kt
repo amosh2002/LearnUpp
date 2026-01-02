@@ -3,30 +3,24 @@ package com.learnupp.domain.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/**
- * Simple domain model representing a short learning reel.
- * For now we only support a thumbnail image and metadata; videoUrl is kept for future integration.
- */
 @Serializable
 data class Reel(
     val id: String,
-    val title: String,
-    @SerialName("video_url")
-    val videoUrl: String, // Placeholder for future playback integration
-    @SerialName("thumbnail_url")
-    val thumbnailUrl: String,
-    @SerialName("author_name")
-    val authorName: String,
-    @SerialName("author_title")
-    val authorTitle: String,
-    @SerialName("likes_count")
-    val likesCount: Int,
-    @SerialName("comments_count")
-    val commentsCount: Int,
+    val title: String? = null,
+    @SerialName("video_url") val videoUrl: String,
+    @SerialName("thumbnail_url") val thumbnailUrl: String? = null,
+    @SerialName("likes_count") val likesCount: Int = 0,
+    @SerialName("comments_count") val commentsCount: Int = 0,
+    val description: String? = null,
+
+    // Author Data
+    @SerialName("profiles")
+    val author: Profile? = null,
+
     @SerialName("full_course_id")
-    val fullCourseId: String? = null, // Optional: if null, no "View Full Course" button is shown
-    @SerialName("description")
-    val description: String? = null, // Optional: shown with plus button when there's no course
-)
-
-
+    val fullCourseId: String? = null
+) {
+    val authorName: String get() = author?.fullName ?: "Unknown"
+    val authorAvatar: String? get() = author?.avatarUrl
+    val isCoursePreview: Boolean get() = fullCourseId != null
+}

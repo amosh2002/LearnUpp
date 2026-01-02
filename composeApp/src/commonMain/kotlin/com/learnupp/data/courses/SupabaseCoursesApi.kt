@@ -1,9 +1,10 @@
 package com.learnupp.data.courses
 
 import com.learnupp.domain.model.Course
-import com.learnupp.util.Logger
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.Order
 
 class SupabaseCoursesApi(
     private val client: SupabaseClient,
@@ -12,19 +13,18 @@ class SupabaseCoursesApi(
         return try {
             val offset = (page * pageSize).toLong()
             val end = offset + pageSize - 1
-            Logger.d("CoursesApi", "Supabase courses page=$page pageSize=$pageSize")
 
-            val courses = client.from("courses")
-                .select {
-                    range(offset, end)
-                }
-                .decodeList<Course>()
+            client.from("courses").select(
+                // Fetch Course columns + join Profiles table
+                columns = Columns.raw("*, profiles(*)")
+            ) {
+                range(offset, end)
+                // Filter logic can go here (e.g., .eq("category", "Mobile Dev"))
+                order("created_at", order = Order.DESCENDING)
+            }.decodeList<Course>()
 
-            Logger.d("CoursesApi", "Supabase courses success count=${courses.size}")
-            courses
         } catch (t: Throwable) {
-            Logger.e("CoursesApi", "Supabase courses failed: ${t.message}")
-            throw t
+            emptyList()
         }
     }
 }

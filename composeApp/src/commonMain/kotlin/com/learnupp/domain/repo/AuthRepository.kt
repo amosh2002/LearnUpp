@@ -8,4 +8,5 @@ interface AuthRepository {
     suspend fun login(email: String, password: String): Boolean = false
     suspend fun register(fullName: String, email: String, password: String, confirmPassword: String): Boolean = false
     suspend fun logout(): Boolean
+    suspend fun isProfileIncomplete(): Boolean
 }

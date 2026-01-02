@@ -326,7 +326,7 @@ private fun ReelItem(
                                         style = MaterialTheme.typography.titleMedium
                                     )
                                     Text(
-                                        reel.authorTitle,
+                                        reel.author?.title ?: "",
                                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
                                     )
                                 }
@@ -334,7 +334,7 @@ private fun ReelItem(
 
                             // Course title
                             Text(
-                                reel.title,
+                                reel.title ?: "",
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 style = MaterialTheme.typography.titleLarge
                             )

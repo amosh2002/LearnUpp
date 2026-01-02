@@ -7,24 +7,23 @@ import kotlinx.serialization.Serializable
 data class Video(
     val id: String,
     val title: String,
-    @SerialName("preview_image_url")
-    val previewImageUrl: String,
-    @SerialName("duration_sec")
-    val durationSec: Int,
-    @SerialName("author_name")
-    val authorName: String,
-    @SerialName("channel_name")
-    val channelName: String,
-    @SerialName("views_count")
-    val viewsCount: Int,
-    @SerialName("likes_count")
-    val likesCount: Int,
+    @SerialName("video_url") val videoUrl: String,
+    @SerialName("thumbnail_url") val thumbnailUrl: String,
+    @SerialName("duration_sec") val durationSec: Int,
+    @SerialName("views_count") val viewsCount: Int,
+    @SerialName("likes_count") val likesCount: Int,
+
+    // Author Data (Already Done)
+    @SerialName("profiles")
+    val author: Profile? = null,
+
+    // Keep this just in case you need the raw ID quickly
     @SerialName("full_course_id")
-    val fullCourseId: String? = null,
-    @SerialName("course_url")
-    val courseUrl: String? = null,
-    @SerialName("full_video_url")
-    val fullVideoUrl: String,
-)
+    val fullCourseId: String? = null
+) {
+    val displayAuthorName: String get() = author?.fullName ?: "Unknown"
+    val displayAuthorAvatar: String? get() = author?.avatarUrl
 
-
+    // Helper to check if this video belongs to a course
+    val isCoursePreview: Boolean get() = fullCourseId != null
+}

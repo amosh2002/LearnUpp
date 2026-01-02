@@ -338,7 +338,7 @@ private fun ProfileScaffold(
                     if (shouldTriggerLoad(index, videos.size)) {
                         LaunchedEffect(videos.size) { onLoadMoreVideos() }
                     }
-                    GridThumb(url = video.previewImageUrl)
+                    GridThumb(url = video.thumbnailUrl)
                 }
             }
 
@@ -347,14 +347,14 @@ private fun ProfileScaffold(
                     if (shouldTriggerLoad(index, reels.size)) {
                         LaunchedEffect(reels.size) { onLoadMoreReels() }
                     }
-                    GridThumb(url = reel.thumbnailUrl)
+                    GridThumb(url = reel.thumbnailUrl ?: "")
                 }
             }
 
             ProfileTab.Courses -> {
                 if (profile.isLecturer) {
                     itemsIndexed(videos, key = { _, v -> "course-${v.id}" }) { _, video ->
-                        GridThumb(url = video.previewImageUrl)
+                        GridThumb(url = video.thumbnailUrl)
                     }
                 } else {
                     item(span = { GridItemSpan(maxLineSpan) }) {

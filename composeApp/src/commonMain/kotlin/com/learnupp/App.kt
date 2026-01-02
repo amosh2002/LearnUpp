@@ -59,6 +59,7 @@ import com.learnupp.util.SessionManager
 import com.learnupp.util.currentPlatform
 import com.learnupp.util.getValue
 import kotlinx.coroutines.runBlocking
+import org.koin.compose.koinInject
 
 private const val TAG = "App.kt"
 
@@ -68,6 +69,9 @@ fun App(
     localizationService: LocalizationService,
 ) {
     val loadingState = remember { mutableStateOf(true) }
+    
+    // Inject repository to verify profile status
+    val authRepository: com.learnupp.domain.repo.AuthRepository = koinInject()
 
     val appJustOpened = remember { mutableStateOf(true) }
 
@@ -133,6 +137,12 @@ fun App(
             LaunchedEffect(Unit) {
                 // Initialize the session manager to load user roles
                 SessionManager.initialize(preferencesManager)
+
+                // If logged in, double-check profile completion status from server
+                if (SessionManager.isLoggedIn()) {
+                    val needsCompletion = authRepository.isProfileIncomplete()
+                    SessionManager.setRequiresProfileCompletion(needsCompletion)
+                }
 
                 // Done loading
                 loadingState.value = false

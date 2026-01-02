@@ -119,7 +119,7 @@ private fun CourseCard(course: Course) {
     ) {
         Column {
             KamelImage(
-                resource = asyncPainterResource(course.previewImageUrl),
+                resource = asyncPainterResource(course.previewImageUrl ?: ""),
                 contentDescription = course.title,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -162,7 +162,7 @@ private fun CourseCard(course: Course) {
                     )
                     Dot()
                     Text(
-                        text = course.durationText,
+                        text = course.durationText ?: "",
                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
                     )
                 }

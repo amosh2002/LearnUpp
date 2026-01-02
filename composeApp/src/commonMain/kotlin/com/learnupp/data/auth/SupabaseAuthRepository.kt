@@ -97,15 +97,21 @@ class SupabaseAuthRepository(
             val currentUser = auth.currentUserOrNull() ?: return false
             val normalizedUsername = username.trim().removePrefix("@")
 
-            // 1. Upsert into 'profiles' table
-            // Note: ProfileRow uses snake_case (@SerialName not needed if property names match DB)
-            val row = ProfileRow(
-                user_id = currentUser.id,
-                username = normalizedUsername,
-                full_name = fullName,
-                is_signup_complete = true
-            )
-            client.from("profiles").upsert(row)
+            // 1. Update 'profiles' table via update() to comply with RLS policy
+            // We create a JSON object for partial update matching ProfileRow structure
+            val updates = buildJsonObject {
+                put("username", normalizedUsername)
+                if (!fullName.isNullOrBlank()) {
+                    put("full_name", fullName)
+                }
+                put("is_signup_complete", true)
+            }
+
+            client.from("profiles").update(updates) {
+                filter {
+                    eq("user_id", currentUser.id)
+                }
+            }
 
             // 2. Update Auth Metadata
             // FIX: Use buildJsonObject for correct JSON encoding
@@ -152,6 +158,35 @@ class SupabaseAuthRepository(
             true
         } catch (t: Throwable) {
             SessionManager.logout()
+            false
+        }
+    }
+
+    override suspend fun isProfileIncomplete(): Boolean {
+        return try {
+            val user = auth.currentUserOrNull() ?: return false
+            // 1. Check Metadata
+            val metaFlag = user.userMetadata?.get("is_signup_complete")?.toString()?.toBoolean() == true
+            if (metaFlag) return false
+
+            // 2. Check DB
+            val profile = client.from("profiles")
+                .select {
+                    filter { eq("user_id", user.id) }
+                    limit(1)
+                }
+                .decodeList<ProfileRow>()
+                .firstOrNull()
+
+            val isComplete = profile?.isSignUpComplete == true
+            val hasUsername = !profile?.username.isNullOrBlank()
+            
+            !isComplete || !hasUsername
+        } catch (e: Exception) {
+            Logger.e("SupabaseAuth", "isProfileIncomplete check failed: ${e.message}")
+            // Default to incomplete if check fails, to be safe? Or false to not block user?
+            // Safer to return true if we suspect they might be incomplete, but let's default to false to avoid blocking on error if token is valid.
+            // Actually, if we can't verify, we shouldn't block.
             false
         }
     }

@@ -19,13 +19,6 @@ datastorePreferencesCore = "1.1.1"
 
 # Server / shared-model
 kotlinx-serialization-json = "1.6.3"
-logback = "1.4.14"
-exposed = "0.49.0"
-postgresql = "42.7.2"
-hikari = "5.1.0"
-bcrypt = "0.10.2"
-firebase-admin = "9.2.0"
-guava = "32.1.1-jre"
 
 [libraries]
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
@@ -54,30 +47,6 @@ androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-p
 
 # Shared (pure serialization runtime; no Ktor dependency required)
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
-
-# Ktor Server Dependencies
-ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
-ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
-ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
-ktor-server-auth = { module = "io.ktor:ktor-server-auth-jvm", version.ref = "ktor" }
-ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.ref = "ktor" }
-ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging-jvm", version.ref = "ktor" }
-ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" }
-ktor-server-cors = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" }
-
-# Database & Persistence
-exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
-exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
-exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
-exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
-postgresql-driver = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
-hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
-
-# Security & External Services
-bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebase-admin" }
-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

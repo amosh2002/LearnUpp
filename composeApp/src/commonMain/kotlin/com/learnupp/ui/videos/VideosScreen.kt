@@ -100,7 +100,7 @@ class VideosScreen : BaseScreen(ScreenNameStrings.VIDEOS, hideTopAppBar = true) 
                                 navigator?.safePush(
                                     VideoDetailsScreen(
                                         title = video.title,
-                                        url = video.fullVideoUrl
+                                        url = video.videoUrl
                                     )
                                 )
                             },
@@ -140,7 +140,7 @@ private fun VideoCard(
     onShare: () -> Unit
 ) {
     val navigator = LocalNavigator.current
-    val isCoursePreview = video.courseUrl != null
+    val isCoursePreview = video.isCoursePreview
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Box(
@@ -149,7 +149,7 @@ private fun VideoCard(
                 .clickable { onClick() }
         ) {
             KamelImage(
-                resource = asyncPainterResource(video.previewImageUrl),
+                resource = asyncPainterResource(video.thumbnailUrl),
                 contentDescription = video.title,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -185,7 +185,7 @@ private fun VideoCard(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = video.authorName.split(" ").mapNotNull { it.firstOrNull() }
+                    text = video.displayAuthorName.split(" ").mapNotNull { it.firstOrNull() }
                         .joinToString(""),
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold
@@ -218,7 +218,7 @@ private fun VideoCard(
                 )
                 Spacer(modifier = Modifier.size(2.dp))
                 Text(
-                    text = video.channelName,
+                    text = video.displayAuthorName,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
                 )
 

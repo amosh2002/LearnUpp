@@ -153,19 +153,19 @@ buildkonfig {
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "ENVIRONMENT",
-            if (isNativeDebug) "\"dev\"" else "\"prod\""
+            if (isNativeDebug) "dev" else "prod"
         )
 
         // Supabase configuration (populated from local.properties)
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "SUPABASE_URL",
-            "\"${getSupabaseUrl()}\""
+            getSupabaseUrl()
         )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "SUPABASE_ANON_KEY",
-            "\"${getSupabaseAnonKey()}\""
+            getSupabaseAnonKey()
         )
     }
 }

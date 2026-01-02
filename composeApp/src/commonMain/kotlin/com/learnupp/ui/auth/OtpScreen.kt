@@ -70,7 +70,7 @@ class OtpScreen(
         if (isLoading) LoadingScreen()
 
         fun verifyIfComplete() {
-            if (code.length < 5) return
+            if (code.length < 6) return
             scope.launch {
                 errorText = null
                 val result = screenModel.verify(email, code)
@@ -128,9 +128,9 @@ class OtpScreen(
                     OtpInput(
                         value = code,
                         onValueChange = {
-                            if (it.length <= 5) {
+                            if (it.length <= 6) {
                                 code = it.filter { ch -> ch.isDigit() }
-                                if (code.length == 5) verifyIfComplete()
+                                if (code.length == 6) verifyIfComplete()
                             }
                         }
                     )
@@ -184,7 +184,7 @@ class OtpScreen(
                     modifier = Modifier.fillMaxWidth(),
                     height = 56.dp,
                     shape = RoundedCornerShape(26.dp),
-                    enabled = code.length == 5,
+                    enabled = code.length == 6,
                     buttonColors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -212,7 +212,7 @@ private fun OtpInput(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                repeat(5) { index ->
+                repeat(6) { index ->
                     val char = value.getOrNull(index)?.toString() ?: ""
                     Box(
                         modifier = Modifier

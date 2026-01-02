@@ -170,9 +170,9 @@ enum class LearnUppStrings(
     // OTP
     OTP_TITLE("Verification Code", "Վավերացման կոդ", "Код подтверждения"),
     OTP_SUBTITLE(
-        "Enter the 5-digit code we sent to your email.",
-        "Մուտքագրեք ձեր էլ. հասցեին ուղարկված 5-նիշ կոդը։",
-        "Введите 5-значный код, отправленный на вашу почту."
+        "Enter the 6-digit code we sent to your email.",
+        "Մուտքագրեք ձեր էլ. հասցեին ուղարկված 6-նիշ կոդը։",
+        "Введите 6-значный код, отправленный на вашу почту."
     ),
     OTP_DIDNT_RECEIVE("Didn't receive the code?", "Չե՞ք ստացել կոդը։", "Не получили код?"),
     OTP_RESEND("Resend Code", "Կրկին ուղարկել կոդը", "Отправить код еще раз"),
