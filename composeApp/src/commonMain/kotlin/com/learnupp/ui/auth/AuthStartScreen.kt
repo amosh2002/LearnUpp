@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.learnupp.domain.model.AuthProvider
 import com.learnupp.safePush
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
@@ -169,13 +170,17 @@ class AuthStartScreen : BaseScreen(
                         AuthSocialButton(
                             text = LearnUppStrings.GOOGLE_LABEL.getValue(),
                             onClick = {
-                                infoText = LearnUppStrings.AUTH_SOCIAL_COMING_SOON.getValue()
+                                scope.launch {
+                                    screenModel.loginWithProvider(AuthProvider.GOOGLE)
+                                }
                             }
                         )
                         AuthSocialButton(
                             text = LearnUppStrings.APPLE_LABEL.getValue(),
                             onClick = {
-                                infoText = LearnUppStrings.AUTH_SOCIAL_COMING_SOON.getValue()
+                                scope.launch {
+                                    screenModel.loginWithProvider(AuthProvider.APPLE)
+                                }
                             }
                         )
                     }

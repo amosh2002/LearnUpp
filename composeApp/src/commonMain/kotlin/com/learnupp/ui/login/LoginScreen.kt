@@ -32,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +50,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.learnupp.DialogParams
 import com.learnupp.DialogType
 import com.learnupp.LocalDialogState
+import com.learnupp.domain.model.AuthProvider
 import com.learnupp.safePush
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
@@ -230,13 +232,24 @@ class LoginScreen : BaseScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+                        val scope = rememberCoroutineScope()
                         SocialLoginButton(
                             text = LearnUppStrings.GOOGLE_LABEL.getValue(),
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                scope.launch {
+                                    screenModel.loginWithProvider(AuthProvider.GOOGLE)
+                                }
+                            }
                         )
                         SocialLoginButton(
                             text = LearnUppStrings.APPLE_LABEL.getValue(),
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                scope.launch {
+                                    screenModel.loginWithProvider(AuthProvider.APPLE)
+                                }
+                            }
                         )
                     }
 

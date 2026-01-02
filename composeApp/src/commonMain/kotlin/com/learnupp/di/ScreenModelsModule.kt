@@ -16,7 +16,7 @@ import org.koin.dsl.module
 
 val screenModelsModule = module {
     // Auth
-    single { AuthStartScreenModel(get()) }
+    single { AuthStartScreenModel(get(), get()) }
     single { OtpScreenModel(get(), get()) }
     single { ProfileCompletionScreenModel(get(), get()) }
 

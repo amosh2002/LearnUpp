@@ -25,6 +25,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,6 +40,9 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.FadeTransition
+import com.learnupp.domain.usecase.auth.LogoutUseCase
+import com.learnupp.domain.usecase.auth.RequestOtpUseCase
+import com.learnupp.ui.auth.AuthStartScreenModel
 import com.learnupp.ui.base.AppTheme
 import com.learnupp.ui.base.LearnUppBottomNavBar
 import com.learnupp.ui.base.LearnUppTopAppBar
@@ -58,6 +62,11 @@ import com.learnupp.util.PreferencesManager
 import com.learnupp.util.SessionManager
 import com.learnupp.util.currentPlatform
 import com.learnupp.util.getValue
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.gotrue.auth
+import io.github.jan.supabase.gotrue.SessionStatus
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.compose.koinInject
 
@@ -72,6 +81,7 @@ fun App(
     
     // Inject repository to verify profile status
     val authRepository: com.learnupp.domain.repo.AuthRepository = koinInject()
+    val supabaseClient: SupabaseClient = koinInject()
 
     val appJustOpened = remember { mutableStateOf(true) }
 
@@ -146,22 +156,68 @@ fun App(
 
                 // Done loading
                 loadingState.value = false
+
+                // Listen for Supabase session changes (OAuth login, etc.)
+                // Use GlobalScope or a persistent scope to prevent cancellation when UI recomposes
+                GlobalScope.launch {
+                    supabaseClient.auth.sessionStatus.collect { status ->
+                        if (status is SessionStatus.Authenticated) {
+                            val session = status.session
+                            Logger.i(TAG, "Supabase session authenticated: ${session.user?.email}")
+                            
+                            // Sync tokens to SessionManager
+                            SessionManager.setTokens(
+                                accessToken = session.accessToken,
+                                refreshToken = session.refreshToken ?: ""
+                            )
+                            
+                            // Check profile status
+                            val needsCompletion = authRepository.isProfileIncomplete()
+                            SessionManager.setRequiresProfileCompletion(needsCompletion)
+                        } else if (status is SessionStatus.NotAuthenticated) {
+                            Logger.i(TAG, "Supabase session not authenticated")
+                            // Optional: Handle explicit logout if needed, though usually handled via SessionManager.logoutEvents
+                        }
+                    }
+                }
             }
+
+            // Observe SessionManager token changes to trigger navigation
+            val isLoggedIn by SessionManager.bearerTokenFlow.collectAsState()
+            val requiresProfile by SessionManager.requiresProfileFlow.collectAsState()
 
             if (loadingState.value) {
                 LoadingScreen()
             } else {
                 // Decide the start screen based on login status
-                Logger.i(TAG, "User logged in: ${SessionManager.isLoggedIn()}")
-                val startScreen = when {
-                    SessionManager.isLoggedIn() && SessionManager.requiresProfileCompletion() ->
-                        ProfileCompletionScreen()
-                    SessionManager.isLoggedIn() ->
-                        VideosScreen()
-                    else -> AuthStartScreen()
+                // We use key(isLoggedIn) to force recomposition/re-evaluation when login state changes
+                val startScreen = remember(isLoggedIn, requiresProfile) {
+                     when {
+                        isLoggedIn != null && requiresProfile -> ProfileCompletionScreen()
+                        isLoggedIn != null -> VideosScreen()
+                        else -> AuthStartScreen()
+                    }
                 }
 
                 Navigator(startScreen) { navigator ->
+                    // Listen for login state changes to navigate dynamically
+                    LaunchedEffect(isLoggedIn, requiresProfile) {
+                        if (isLoggedIn != null) {
+                            if (requiresProfile) {
+                                if (navigator.lastItem !is ProfileCompletionScreen) {
+                                    navigator.replaceAll(ProfileCompletionScreen())
+                                }
+                            } else {
+                                if (navigator.lastItem !is VideosScreen) {
+                                    navigator.replaceAll(VideosScreen())
+                                }
+                            }
+                        } else {
+                            if (navigator.lastItem !is AuthStartScreen) {
+                                navigator.replaceAll(AuthStartScreen())
+                            }
+                        }
+                    }
                     Box(
                         Modifier.fillMaxSize() // Full-screen container
                     ) {

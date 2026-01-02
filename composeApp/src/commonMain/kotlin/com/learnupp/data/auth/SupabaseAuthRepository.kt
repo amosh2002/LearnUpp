@@ -1,16 +1,23 @@
 package com.learnupp.data.auth
 
+import com.learnupp.domain.model.AuthProvider
 import com.learnupp.domain.repo.AuthRepository
 import com.learnupp.util.Logger
 import com.learnupp.util.SessionManager
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.OtpType
 import io.github.jan.supabase.gotrue.auth
+import io.github.jan.supabase.gotrue.providers.Apple
+import io.github.jan.supabase.gotrue.providers.Google
 import io.github.jan.supabase.gotrue.providers.builtin.OTP
 import io.github.jan.supabase.postgrest.from
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 
 class SupabaseAuthRepository(
     private val client: SupabaseClient,
@@ -18,8 +25,8 @@ class SupabaseAuthRepository(
 
     private val auth = client.auth
 
-    override suspend fun requestOtp(email: String): OtpRequestResult {
-        return try {
+    override suspend fun requestOtp(email: String): OtpRequestResult = withContext(Dispatchers.IO) {
+        try {
             auth.signInWith(OTP) {
                 this.email = email
                 createUser = true
@@ -32,8 +39,8 @@ class SupabaseAuthRepository(
         }
     }
 
-    override suspend fun verifyOtp(email: String, code: String): VerifyOtpResult? {
-        return try {
+    override suspend fun verifyOtp(email: String, code: String): VerifyOtpResult? = withContext(Dispatchers.IO) {
+        try {
             // FIX: Use OtpType.Email.EMAIL (Standard for v3 SDK)
             auth.verifyEmailOtp(
                 type = OtpType.Email.EMAIL,
@@ -46,7 +53,7 @@ class SupabaseAuthRepository(
 
             if (session == null || user == null) {
                 Logger.e("SupabaseAuth", "verifyOtp: no active session")
-                return null
+                return@withContext null
             }
 
             // Sync tokens to your legacy SessionManager for UI flags
@@ -92,9 +99,9 @@ class SupabaseAuthRepository(
         }
     }
 
-    override suspend fun completeProfile(username: String, fullName: String?): Boolean {
-        return try {
-            val currentUser = auth.currentUserOrNull() ?: return false
+    override suspend fun completeProfile(username: String, fullName: String?): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val currentUser = auth.currentUserOrNull() ?: return@withContext false
             val normalizedUsername = username.trim().removePrefix("@")
 
             // 1. Update 'profiles' table via update() to comply with RLS policy
@@ -131,8 +138,8 @@ class SupabaseAuthRepository(
         }
     }
 
-    override suspend fun isUsernameAvailable(username: String): Boolean {
-        return try {
+    override suspend fun isUsernameAvailable(username: String): Boolean = withContext(Dispatchers.IO) {
+        try {
             val normalized = username.trim().removePrefix("@")
             val rows = client.from("profiles")
                 .select {
@@ -149,6 +156,30 @@ class SupabaseAuthRepository(
 
     // --- Legacy / Unused in OTP flow ---
     override suspend fun login(e: String, p: String): Boolean = false
+    override suspend fun loginWithProvider(provider: AuthProvider): Boolean {
+        return try {
+            val supabaseProvider = when (provider) {
+                AuthProvider.GOOGLE -> Google
+                AuthProvider.APPLE -> Apple
+            }
+            // This opens the system browser
+            auth.signInWith(supabaseProvider) {
+                if (supabaseProvider == Google) {
+                    // Force account selection on Google sign-in
+                    queryParams["prompt"] = "select_account"
+                }
+            }
+
+            // Note: The app will close (go to background) here.
+            // When the user finishes in the browser, the OS re-opens the app via Deep Link.
+            // The Supabase library automatically catches the link and logs them in.
+            true
+        } catch (e: Exception) {
+            Logger.e("Auth", "Login failed: ${e.message}")
+            throw e
+        }
+    }
+
     override suspend fun register(n: String, e: String, p: String, c: String): Boolean = false
 
     override suspend fun logout(): Boolean {
@@ -162,12 +193,13 @@ class SupabaseAuthRepository(
         }
     }
 
-    override suspend fun isProfileIncomplete(): Boolean {
-        return try {
-            val user = auth.currentUserOrNull() ?: return false
+    override suspend fun isProfileIncomplete(): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val user = auth.currentUserOrNull() ?: return@withContext false
             // 1. Check Metadata
-            val metaFlag = user.userMetadata?.get("is_signup_complete")?.toString()?.toBoolean() == true
-            if (metaFlag) return false
+            val metaFlag =
+                user.userMetadata?.get("is_signup_complete")?.toString()?.toBoolean() == true
+            if (metaFlag) return@withContext false
 
             // 2. Check DB
             val profile = client.from("profiles")
@@ -180,7 +212,7 @@ class SupabaseAuthRepository(
 
             val isComplete = profile?.isSignUpComplete == true
             val hasUsername = !profile?.username.isNullOrBlank()
-            
+
             !isComplete || !hasUsername
         } catch (e: Exception) {
             Logger.e("SupabaseAuth", "isProfileIncomplete check failed: ${e.message}")

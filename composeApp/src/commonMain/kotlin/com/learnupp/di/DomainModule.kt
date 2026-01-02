@@ -10,6 +10,8 @@ import com.learnupp.domain.usecase.auth.CompleteProfileUseCase
 import com.learnupp.domain.usecase.auth.CompleteProfileUseCaseImpl
 import com.learnupp.domain.usecase.auth.CheckUsernameUseCase
 import com.learnupp.domain.usecase.auth.CheckUsernameUseCaseImpl
+import com.learnupp.domain.usecase.auth.LoginWithProviderUseCase
+import com.learnupp.domain.usecase.auth.LoginWithProviderUseCaseImpl
 import com.learnupp.domain.usecase.messages.GetMessagesUseCase
 import com.learnupp.domain.usecase.messages.GetMessagesUseCaseImpl
 import com.learnupp.domain.usecase.messages.PreloadMessagesUseCase
@@ -88,6 +90,7 @@ val domainModule = module {
     single<VerifyOtpUseCase> { VerifyOtpUseCaseImpl(get()) }
     single<CompleteProfileUseCase> { CompleteProfileUseCaseImpl(get()) }
     single<CheckUsernameUseCase> { CheckUsernameUseCaseImpl(get()) }
+    single<LoginWithProviderUseCase> { LoginWithProviderUseCaseImpl(get()) }
     single<LogoutUseCase> { LogoutUseCaseImpl(get()) }
 
     // Profile
