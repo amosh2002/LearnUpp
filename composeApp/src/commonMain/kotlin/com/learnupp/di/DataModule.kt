@@ -1,13 +1,11 @@
 package com.learnupp.di
 
-import com.learnupp.data.auth.AuthApi
-import com.learnupp.data.auth.AuthRepositoryImpl
-import com.learnupp.data.auth.KtorAuthApi
+import com.learnupp.data.auth.SupabaseAuthRepository
 import com.learnupp.data.courses.CoursesApi
 import com.learnupp.data.courses.CoursesRepositoryImpl
 import com.learnupp.data.courses.CoursesStorage
 import com.learnupp.data.courses.InMemoryCoursesStorage
-import com.learnupp.data.courses.KtorCoursesApi
+import com.learnupp.data.courses.SupabaseCoursesApi
 import com.learnupp.data.earnings.EarningsApi
 import com.learnupp.data.earnings.EarningsRepositoryImpl
 import com.learnupp.data.earnings.EarningsStorage
@@ -34,17 +32,17 @@ import com.learnupp.data.settings.notifications.NotificationsApi
 import com.learnupp.data.settings.notifications.NotificationsRepositoryImpl
 import com.learnupp.data.settings.notifications.NotificationsStorage
 import com.learnupp.data.profile.InMemoryProfileStorage
-import com.learnupp.data.profile.KtorProfileApi
+import com.learnupp.data.profile.SupabaseProfileApi
 import com.learnupp.data.profile.ProfileApi
 import com.learnupp.data.profile.ProfileRepositoryImpl
 import com.learnupp.data.profile.ProfileStorage
 import com.learnupp.data.reels.InMemoryReelsStorage
-import com.learnupp.data.reels.KtorReelsApi
+import com.learnupp.data.reels.SupabaseReelsApi
 import com.learnupp.data.reels.ReelsApi
 import com.learnupp.data.reels.ReelsRepositoryImpl
 import com.learnupp.data.reels.ReelsStorage
 import com.learnupp.data.videos.InMemoryVideosStorage
-import com.learnupp.data.videos.KtorVideosApi
+import com.learnupp.data.videos.SupabaseVideosApi
 import com.learnupp.data.videos.VideosApi
 import com.learnupp.data.videos.VideosRepositoryImpl
 import com.learnupp.data.videos.VideosStorage
@@ -61,12 +59,11 @@ import com.learnupp.domain.repo.PaymentMethodsRepository
 import org.koin.dsl.module
 
 val dataModule = module {
-    // Auth
-    single<AuthApi> { KtorAuthApi(client = get(Qualifiers.Auth)) }
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
+    // Auth (Supabase-backed)
+    single<AuthRepository> { SupabaseAuthRepository(client = get()) }
 
-    // Profile (real)
-    single<ProfileApi> { KtorProfileApi(client = get(Qualifiers.Plain)) }
+    // Profile – Supabase-backed
+    single<ProfileApi> { SupabaseProfileApi(client = get()) }
     single<ProfileStorage> { InMemoryProfileStorage() }
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get()) }
 
@@ -75,8 +72,8 @@ val dataModule = module {
     single<MessagesStorage> { InMemoryMessagesStorage() }
     single<MessagesRepository> { MessagesRepositoryImpl(get(), get()) }
 
-    // Courses (real)
-    single<CoursesApi> { KtorCoursesApi(client = get(Qualifiers.Plain)) }
+    // Courses – Supabase-backed
+    single<CoursesApi> { SupabaseCoursesApi(client = get()) }
     single<CoursesStorage> { InMemoryCoursesStorage() }
     single<CoursesRepository> { CoursesRepositoryImpl(get(), get()) }
 
@@ -100,13 +97,13 @@ val dataModule = module {
     single<LanguageOptionsStorage> { InMemoryLanguageOptionsStorage() }
     single<LanguageOptionsRepository> { LanguageOptionsRepositoryImpl(get(), get(), get()) }
 
-    // Reels (real)
-    single<ReelsApi> { KtorReelsApi(client = get(Qualifiers.Plain)) }
+    // Reels – Supabase-backed
+    single<ReelsApi> { SupabaseReelsApi(client = get()) }
     single<ReelsStorage> { InMemoryReelsStorage() }
     single<ReelsRepository> { ReelsRepositoryImpl(get(), get()) }
 
-    // Videos (real)
-    single<VideosApi> { KtorVideosApi(client = get(Qualifiers.Plain)) }
+    // Videos – Supabase-backed
+    single<VideosApi> { SupabaseVideosApi(client = get()) }
     single<VideosStorage> { InMemoryVideosStorage() }
     single<VideosRepository> { VideosRepositoryImpl(get(), get()) }
 }

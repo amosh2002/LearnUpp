@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -85,6 +86,13 @@ kotlin {
 
             // Shared domain/data models used by both client and server
             api(project(":sharedModel"))
+
+            // Supabase Kotlin Multiplatform SDK (Auth + PostgREST)
+            implementation(platform("io.github.jan-tennert.supabase:bom:2.4.0"))
+            // Core Supabase client + Auth (GoTrue) + PostgREST
+            implementation("io.github.jan-tennert.supabase:supabase-kt")
+            implementation("io.github.jan-tennert.supabase:gotrue-kt")
+            implementation("io.github.jan-tennert.supabase:postgrest-kt")
         }
 
         iosMain.dependencies {
@@ -147,7 +155,37 @@ buildkonfig {
             "ENVIRONMENT",
             if (isNativeDebug) "\"dev\"" else "\"prod\""
         )
+
+        // Supabase configuration (populated from local.properties)
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SUPABASE_URL",
+            "\"${getSupabaseUrl()}\""
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SUPABASE_ANON_KEY",
+            "\"${getSupabaseAnonKey()}\""
+        )
     }
+}
+
+fun getSupabaseUrl(): String {
+    val properties = Properties()
+    val file = project.rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { properties.load(it) }
+    }
+    return properties.getProperty("SUPABASE_URL", "")
+}
+
+fun getSupabaseAnonKey(): String {
+    val properties = Properties()
+    val file = project.rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { properties.load(it) }
+    }
+    return properties.getProperty("SUPABASE_ANON_KEY", "")
 }
 
 dependencies {

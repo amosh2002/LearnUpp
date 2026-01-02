@@ -15,7 +15,7 @@ class InMemoryCoursesStorage : CoursesStorage {
     }
 
     override suspend fun append(courses: List<Course>) {
-        coursesState.value = coursesState.value + courses
+        coursesState.value += courses
     }
 
     override suspend fun clear() {

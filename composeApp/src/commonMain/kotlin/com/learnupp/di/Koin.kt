@@ -6,8 +6,8 @@ fun sharedModules(): List<Module> = listOf(
 	dataModule,
 	domainModule,
 	screenModelsModule,
-	networkModule,
-	permissionsModule
+	permissionsModule,
+    supabaseModule
 )
 
 
