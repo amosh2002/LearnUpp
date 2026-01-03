@@ -75,7 +75,7 @@ val dataModule = module {
     // Courses – Supabase-backed
     single<CoursesApi> { SupabaseCoursesApi(client = get()) }
     single<CoursesStorage> { InMemoryCoursesStorage() }
-    single<CoursesRepository> { CoursesRepositoryImpl(get(), get()) }
+    single<CoursesRepository> { CoursesRepositoryImpl(get(), get(), get()) }
 
     // Notifications
     single<NotificationsApi> { MockNotificationsApi() }
@@ -100,7 +100,7 @@ val dataModule = module {
     // Reels – Supabase-backed
     single<ReelsApi> { SupabaseReelsApi(client = get()) }
     single<ReelsStorage> { InMemoryReelsStorage() }
-    single<ReelsRepository> { ReelsRepositoryImpl(get(), get()) }
+    single<ReelsRepository> { ReelsRepositoryImpl(get(), get(), get()) }
 
     // Videos – Supabase-backed
     single<VideosApi> { SupabaseVideosApi(client = get()) }

@@ -6,18 +6,28 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class InMemoryReelsStorage : ReelsStorage {
-    private val reelsState = MutableStateFlow<List<Reel>>(emptyList())
+    private val globalReelsState = MutableStateFlow<List<Reel>>(emptyList())
+    private val myProfileReelsState = MutableStateFlow<List<Reel>>(emptyList())
     private val likedState = MutableStateFlow<Set<String>>(emptySet())
 
-    override fun getReels(): Flow<List<Reel>> = reelsState.asStateFlow()
+    override fun getGlobalFeed(): Flow<List<Reel>> = globalReelsState.asStateFlow()
+    override fun getMyProfileFeed(): Flow<List<Reel>> = myProfileReelsState.asStateFlow()
     override fun getLikedReels(): Flow<Set<String>> = likedState.asStateFlow()
 
-    override suspend fun saveReels(reels: List<Reel>) {
-        reelsState.value = reels
+    override fun saveGlobal(reels: List<Reel>) {
+        globalReelsState.value = reels
     }
 
-    override suspend fun appendReels(reels: List<Reel>) {
-        reelsState.value += reels
+    override fun appendGlobal(reels: List<Reel>) {
+        globalReelsState.value += reels
+    }
+
+    override fun saveMyProfile(reels: List<Reel>) {
+        myProfileReelsState.value = reels
+    }
+
+    override fun appendMyProfile(reels: List<Reel>) {
+        myProfileReelsState.value += reels
     }
 
     override suspend fun toggleReelLike(reelId: String) {

@@ -6,20 +6,31 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class InMemoryCoursesStorage : CoursesStorage {
-    private val coursesState = MutableStateFlow<List<Course>>(emptyList())
+    private val globalCoursesState = MutableStateFlow<List<Course>>(emptyList())
+    private val myProfileCoursesState = MutableStateFlow<List<Course>>(emptyList())
 
-    override fun getCourses(): Flow<List<Course>> = coursesState.asStateFlow()
+    override fun getGlobalFeed(): Flow<List<Course>> = globalCoursesState.asStateFlow()
+    override fun getMyProfileFeed(): Flow<List<Course>> = myProfileCoursesState.asStateFlow()
 
-    override suspend fun save(courses: List<Course>) {
-        coursesState.value = courses
+    override suspend fun saveGlobal(courses: List<Course>) {
+        globalCoursesState.value = courses
     }
 
-    override suspend fun append(courses: List<Course>) {
-        coursesState.value += courses
+    override suspend fun appendGlobal(courses: List<Course>) {
+        globalCoursesState.value += courses
+    }
+
+    override suspend fun saveMyProfile(courses: List<Course>) {
+        myProfileCoursesState.value = courses
+    }
+
+    override suspend fun appendMyProfile(courses: List<Course>) {
+        myProfileCoursesState.value += courses
     }
 
     override suspend fun clear() {
-        coursesState.value = emptyList()
+        globalCoursesState.value = emptyList()
+        myProfileCoursesState.value = emptyList()
     }
 }
 

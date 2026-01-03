@@ -9,6 +9,7 @@ import com.learnupp.domain.model.Reel
 interface ReelsApi {
     // Paged fetch, page is 0-based
     suspend fun fetchReels(page: Int, pageSize: Int): List<Reel>
+    suspend fun fetchUserReels(userId: String, page: Int, pageSize: Int): List<Reel>
 }
 
 

@@ -3,13 +3,12 @@ package com.learnupp.domain.usecase.reels
 import com.learnupp.domain.repo.ReelsRepository
 import com.learnupp.domain.usecase.base.ParameterlessSuspendUseCase
 
-abstract class ReloadReelsUseCase : ParameterlessSuspendUseCase<Unit>()
+abstract class PreloadMyProfileReelsUseCase : ParameterlessSuspendUseCase<Unit>()
 
-class ReloadReelsUseCaseImpl(
+class PreloadMyProfileReelsUseCaseImpl(
     private val repo: ReelsRepository
-) : ReloadReelsUseCase() {
+) : PreloadMyProfileReelsUseCase() {
     override suspend fun invoke() {
-        repo.refreshData()
+        repo.refreshMyProfile()
     }
 }
-

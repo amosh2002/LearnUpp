@@ -1,10 +1,9 @@
 package com.learnupp.ui.courses
 
 import cafe.adriel.voyager.core.model.screenModelScope
-import com.learnupp.domain.model.Course
-import com.learnupp.domain.usecase.courses.GetCoursesUseCase
-import com.learnupp.domain.usecase.courses.LoadMoreCoursesUseCase
-import com.learnupp.domain.usecase.courses.PreloadCoursesUseCase
+import com.learnupp.domain.usecase.courses.GetGlobalCoursesUseCase
+import com.learnupp.domain.usecase.courses.LoadMoreGlobalCoursesUseCase
+import com.learnupp.domain.usecase.courses.PreloadGlobalCoursesUseCase
 import com.learnupp.domain.usecase.courses.ReloadCoursesUseCase
 import com.learnupp.ui.base.BaseScreenModel
 import kotlinx.coroutines.Dispatchers
@@ -14,10 +13,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CoursesScreenModel(
-    private val preloadCourses: PreloadCoursesUseCase,
+    private val preloadCourses: PreloadGlobalCoursesUseCase,
     private val reloadCourses: ReloadCoursesUseCase,
-    private val getCourses: GetCoursesUseCase,
-    private val loadMoreCourses: LoadMoreCoursesUseCase,
+    private val getCourses: GetGlobalCoursesUseCase,
+    private val loadMoreCourses: LoadMoreGlobalCoursesUseCase,
 ) : BaseScreenModel() {
 
     val courses = getCourses()

@@ -18,12 +18,20 @@ import com.learnupp.domain.usecase.messages.PreloadMessagesUseCase
 import com.learnupp.domain.usecase.messages.PreloadMessagesUseCaseImpl
 import com.learnupp.domain.usecase.messages.ReloadMessagesUseCase
 import com.learnupp.domain.usecase.messages.ReloadMessagesUseCaseImpl
-import com.learnupp.domain.usecase.courses.GetCoursesUseCase
-import com.learnupp.domain.usecase.courses.GetCoursesUseCaseImpl
-import com.learnupp.domain.usecase.courses.LoadMoreCoursesUseCase
-import com.learnupp.domain.usecase.courses.LoadMoreCoursesUseCaseImpl
-import com.learnupp.domain.usecase.courses.PreloadCoursesUseCase
-import com.learnupp.domain.usecase.courses.PreloadCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.GetGlobalCoursesUseCase
+import com.learnupp.domain.usecase.courses.GetGlobalCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.GetMyProfileCoursesUseCase
+import com.learnupp.domain.usecase.courses.GetMyProfileCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.LoadMoreGlobalCoursesUseCase
+import com.learnupp.domain.usecase.courses.LoadMoreGlobalCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.LoadMoreMyProfileCoursesUseCase
+import com.learnupp.domain.usecase.courses.LoadMoreMyProfileCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.PreloadGlobalCoursesUseCase
+import com.learnupp.domain.usecase.courses.PreloadGlobalCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.PreloadMyProfileCoursesUseCase
+import com.learnupp.domain.usecase.courses.PreloadMyProfileCoursesUseCaseImpl
+import com.learnupp.domain.usecase.courses.RefreshMyProfileCoursesUseCase
+import com.learnupp.domain.usecase.courses.RefreshMyProfileCoursesUseCaseImpl
 import com.learnupp.domain.usecase.courses.ReloadCoursesUseCase
 import com.learnupp.domain.usecase.courses.ReloadCoursesUseCaseImpl
 import com.learnupp.domain.usecase.earnings.GetEarningsSummaryUseCase
@@ -54,14 +62,22 @@ import com.learnupp.domain.usecase.profile.ReloadProfileUseCase
 import com.learnupp.domain.usecase.profile.ReloadProfileUseCaseImpl
 import com.learnupp.domain.usecase.profile.UpdateProfileAboutUseCase
 import com.learnupp.domain.usecase.profile.UpdateProfileAboutUseCaseImpl
+import com.learnupp.domain.usecase.reels.GetGlobalReelsUseCase
+import com.learnupp.domain.usecase.reels.GetGlobalReelsUseCaseImpl
 import com.learnupp.domain.usecase.reels.GetLikedReelsUseCase
 import com.learnupp.domain.usecase.reels.GetLikedReelsUseCaseImpl
-import com.learnupp.domain.usecase.reels.GetReelsUseCase
-import com.learnupp.domain.usecase.reels.GetReelsUseCaseImpl
-import com.learnupp.domain.usecase.reels.LoadMoreReelsUseCase
-import com.learnupp.domain.usecase.reels.LoadMoreReelsUseCaseImpl
-import com.learnupp.domain.usecase.reels.PreloadReelsUseCase
-import com.learnupp.domain.usecase.reels.PreloadReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.GetMyProfileReelsUseCase
+import com.learnupp.domain.usecase.reels.GetMyProfileReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.LoadMoreGlobalReelsUseCase
+import com.learnupp.domain.usecase.reels.LoadMoreGlobalReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.LoadMoreMyProfileReelsUseCase
+import com.learnupp.domain.usecase.reels.LoadMoreMyProfileReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.PreloadGlobalReelsUseCase
+import com.learnupp.domain.usecase.reels.PreloadGlobalReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.PreloadMyProfileReelsUseCase
+import com.learnupp.domain.usecase.reels.PreloadMyProfileReelsUseCaseImpl
+import com.learnupp.domain.usecase.reels.RefreshMyProfileReelsUseCase
+import com.learnupp.domain.usecase.reels.RefreshMyProfileReelsUseCaseImpl
 import com.learnupp.domain.usecase.reels.ReloadReelsUseCase
 import com.learnupp.domain.usecase.reels.ReloadReelsUseCaseImpl
 import com.learnupp.domain.usecase.reels.ShareReelUseCase
@@ -109,10 +125,14 @@ val domainModule = module {
     single<UpdateProfileAboutUseCase> { UpdateProfileAboutUseCaseImpl(get()) }
 
     // Courses
-    single<GetCoursesUseCase> { GetCoursesUseCaseImpl(get()) }
-    single<PreloadCoursesUseCase> { PreloadCoursesUseCaseImpl(get()) }
+    single<GetGlobalCoursesUseCase> { GetGlobalCoursesUseCaseImpl(get()) }
+    single<GetMyProfileCoursesUseCase> { GetMyProfileCoursesUseCaseImpl(get()) }
+    single<LoadMoreGlobalCoursesUseCase> { LoadMoreGlobalCoursesUseCaseImpl(get()) }
+    single<LoadMoreMyProfileCoursesUseCase> { LoadMoreMyProfileCoursesUseCaseImpl(get()) }
+    single<RefreshMyProfileCoursesUseCase> { RefreshMyProfileCoursesUseCaseImpl(get()) }
+    single<PreloadGlobalCoursesUseCase> { PreloadGlobalCoursesUseCaseImpl(get()) }
+    single<PreloadMyProfileCoursesUseCase> { PreloadMyProfileCoursesUseCaseImpl(get()) }
     single<ReloadCoursesUseCase> { ReloadCoursesUseCaseImpl(get()) }
-    single<LoadMoreCoursesUseCase> { LoadMoreCoursesUseCaseImpl(get()) }
 
     // Notifications
     single<GetNotificationSettingsUseCase> { GetNotificationSettingsUseCaseImpl(get()) }
@@ -138,12 +158,17 @@ val domainModule = module {
     single<ReloadMessagesUseCase> { ReloadMessagesUseCaseImpl(get()) }
 
     // Reels
-    single<GetReelsUseCase> { GetReelsUseCaseImpl(get()) }
+    single<GetGlobalReelsUseCase> { GetGlobalReelsUseCaseImpl(get()) }
+    single<GetMyProfileReelsUseCase> { GetMyProfileReelsUseCaseImpl(get()) }
+    single<LoadMoreGlobalReelsUseCase> { LoadMoreGlobalReelsUseCaseImpl(get()) }
+    single<LoadMoreMyProfileReelsUseCase> { LoadMoreMyProfileReelsUseCaseImpl(get()) }
+    single<RefreshMyProfileReelsUseCase> { RefreshMyProfileReelsUseCaseImpl(get()) }
+    single<PreloadGlobalReelsUseCase> { PreloadGlobalReelsUseCaseImpl(get()) }
+    single<PreloadMyProfileReelsUseCase> { PreloadMyProfileReelsUseCaseImpl(get()) }
+
     single<GetLikedReelsUseCase> { GetLikedReelsUseCaseImpl(get()) }
-    single<PreloadReelsUseCase> { PreloadReelsUseCaseImpl(get()) }
     single<ReloadReelsUseCase> { ReloadReelsUseCaseImpl(get()) }
     single<ToggleReelLikeUseCase> { ToggleReelLikeUseCaseImpl(get()) }
-    single<LoadMoreReelsUseCase> { LoadMoreReelsUseCaseImpl(get()) }
     single<ShareReelUseCase> { ShareReelUseCaseImpl(get()) }
 
     // Videos

@@ -3,13 +3,12 @@ package com.learnupp.domain.usecase.courses
 import com.learnupp.domain.repo.CoursesRepository
 import com.learnupp.domain.usecase.base.ParameterlessSuspendUseCase
 
-abstract class ReloadCoursesUseCase : ParameterlessSuspendUseCase<Unit>()
+abstract class PreloadMyProfileCoursesUseCase : ParameterlessSuspendUseCase<Unit>()
 
-class ReloadCoursesUseCaseImpl(
+class PreloadMyProfileCoursesUseCaseImpl(
     private val repo: CoursesRepository
-) : ReloadCoursesUseCase() {
+) : PreloadMyProfileCoursesUseCase() {
     override suspend fun invoke() {
-        repo.refreshData()
+        repo.refreshMyProfile()
     }
 }
-

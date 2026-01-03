@@ -49,7 +49,7 @@ val screenModelsModule = module {
     // Courses
     single {
         CoursesScreenModel(
-            get(),
+           get(),
             get(),
             get(),
             get()
@@ -69,9 +69,21 @@ val screenModelsModule = module {
     single {
         MoreScreenModel(
             get(), // Logout
-            get(), get(), get(), get(), // Profile
-            get(), get(), get(), get(), // Videos (Preload, RefreshMyProfile, GetMyProfile, LoadMoreMyProfile)
-            get(), get(), get(), get()  // Reels
+            get(),
+            get(),
+            get(),
+            get(), // Profile
+            get(),
+            get(),
+            get(),
+            get(), // Videos (Preload, RefreshMyProfile, GetMyProfile, LoadMoreMyProfile)
+            get(),
+            get(),
+            get(),
+            get(), get(),
+            get(),
+            get(),
+            get(),  // Reels (Preload, RefreshMyProfile, GetMyProfile, LoadMoreMyProfile)
         )
     }
 

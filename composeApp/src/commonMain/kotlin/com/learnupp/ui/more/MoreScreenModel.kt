@@ -3,14 +3,18 @@ package com.learnupp.ui.more
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.learnupp.domain.model.Profile
 import com.learnupp.domain.usecase.auth.LogoutUseCase
+import com.learnupp.domain.usecase.courses.GetMyProfileCoursesUseCase
+import com.learnupp.domain.usecase.courses.LoadMoreMyProfileCoursesUseCase
+import com.learnupp.domain.usecase.courses.PreloadMyProfileCoursesUseCase
+import com.learnupp.domain.usecase.courses.RefreshMyProfileCoursesUseCase
 import com.learnupp.domain.usecase.profile.GetProfileUseCase
 import com.learnupp.domain.usecase.profile.PreloadProfileUseCase
 import com.learnupp.domain.usecase.profile.ReloadProfileUseCase
 import com.learnupp.domain.usecase.profile.UpdateProfileAboutUseCase
-import com.learnupp.domain.usecase.reels.GetReelsUseCase
-import com.learnupp.domain.usecase.reels.LoadMoreReelsUseCase
-import com.learnupp.domain.usecase.reels.PreloadReelsUseCase
-import com.learnupp.domain.usecase.reels.ReloadReelsUseCase
+import com.learnupp.domain.usecase.reels.GetMyProfileReelsUseCase
+import com.learnupp.domain.usecase.reels.LoadMoreMyProfileReelsUseCase
+import com.learnupp.domain.usecase.reels.PreloadMyProfileReelsUseCase
+import com.learnupp.domain.usecase.reels.RefreshMyProfileReelsUseCase
 import com.learnupp.domain.usecase.videos.GetMyProfileVideosUseCase
 import com.learnupp.domain.usecase.videos.LoadMoreMyProfileVideosUseCase
 import com.learnupp.domain.usecase.videos.PreloadMyProfileVideosUseCase
@@ -40,10 +44,15 @@ class MoreScreenModel(
     private val getMyProfileVideos: GetMyProfileVideosUseCase,
     private val loadMoreMyProfileVideos: LoadMoreMyProfileVideosUseCase,
     // Reels
-    private val preloadReels: PreloadReelsUseCase,
-    private val reloadReels: ReloadReelsUseCase,
-    private val getReels: GetReelsUseCase,
-    private val loadMoreReels: LoadMoreReelsUseCase,
+    private val preloadReels: PreloadMyProfileReelsUseCase,
+    private val refreshMyProfileReels: RefreshMyProfileReelsUseCase,
+    private val getReels: GetMyProfileReelsUseCase,
+    private val loadMoreReels: LoadMoreMyProfileReelsUseCase,
+    // Courses
+    private val preloadCourses: PreloadMyProfileCoursesUseCase,
+    private val refreshMyProfileCourses: RefreshMyProfileCoursesUseCase,
+    private val getCourses: GetMyProfileCoursesUseCase,
+    private val loadMoreCourses: LoadMoreMyProfileCoursesUseCase,
 ) : BaseScreenModel() {
 
     // Loading used for destructive actions like logout
@@ -59,11 +68,15 @@ class MoreScreenModel(
     val reels = getReels()
         .stateIn(screenModelScope, SharingStarted.Eagerly, emptyList())
 
+    val courses = getCourses()
+        .stateIn(screenModelScope, SharingStarted.Eagerly, emptyList())
+
     init {
         screenModelScope.launch {
             preloadProfile()
             preloadVideos()
             preloadReels()
+            preloadCourses()
             reloadAll()
         }
     }
@@ -71,13 +84,16 @@ class MoreScreenModel(
     private suspend fun reloadAll() {
         reloadProfile()
         refreshMyProfileVideos()
-        reloadReels()
+        refreshMyProfileReels()
+        refreshMyProfileCourses()
     }
 
     fun refreshProfile() {
         screenModelScope.launch { 
             reloadProfile()
             refreshMyProfileVideos()
+            refreshMyProfileReels()
+            refreshMyProfileCourses()
         }
     }
 
@@ -87,6 +103,10 @@ class MoreScreenModel(
 
     fun loadMoreForReels() {
         screenModelScope.launch { loadMoreReels() }
+    }
+
+    fun loadMoreForCourses() {
+        screenModelScope.launch { loadMoreCourses() }
     }
 
     fun updateAbout(text: String) {

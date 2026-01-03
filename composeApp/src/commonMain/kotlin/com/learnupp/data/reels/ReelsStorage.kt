@@ -4,10 +4,16 @@ import com.learnupp.domain.model.Reel
 import kotlinx.coroutines.flow.Flow
 
 interface ReelsStorage {
-    fun getReels(): Flow<List<Reel>>
+    fun getGlobalFeed(): Flow<List<Reel>>
+    fun getMyProfileFeed(): Flow<List<Reel>>
     fun getLikedReels(): Flow<Set<String>>
-    suspend fun saveReels(reels: List<Reel>)
-    suspend fun appendReels(reels: List<Reel>)
+    
+    fun saveGlobal(reels: List<Reel>)
+    fun appendGlobal(reels: List<Reel>)
+    
+    fun saveMyProfile(reels: List<Reel>)
+    fun appendMyProfile(reels: List<Reel>)
+    
     suspend fun toggleReelLike(reelId: String)
     suspend fun shareReel(reelId: String)
 }

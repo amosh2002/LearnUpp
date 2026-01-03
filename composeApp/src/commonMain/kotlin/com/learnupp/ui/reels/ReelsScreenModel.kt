@@ -2,10 +2,10 @@ package com.learnupp.ui.reels
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.learnupp.domain.model.Reel
+import com.learnupp.domain.usecase.reels.GetGlobalReelsUseCase
 import com.learnupp.domain.usecase.reels.GetLikedReelsUseCase
-import com.learnupp.domain.usecase.reels.GetReelsUseCase
-import com.learnupp.domain.usecase.reels.LoadMoreReelsUseCase
-import com.learnupp.domain.usecase.reels.PreloadReelsUseCase
+import com.learnupp.domain.usecase.reels.LoadMoreGlobalReelsUseCase
+import com.learnupp.domain.usecase.reels.PreloadGlobalReelsUseCase
 import com.learnupp.domain.usecase.reels.ReloadReelsUseCase
 import com.learnupp.domain.usecase.reels.ShareReelUseCase
 import com.learnupp.domain.usecase.reels.ToggleReelLikeUseCase
@@ -22,12 +22,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ReelsScreenModel(
-    private val preloadReelsUseCase: PreloadReelsUseCase,
+    private val preloadReelsUseCase: PreloadGlobalReelsUseCase,
     private val reloadReelsUseCase: ReloadReelsUseCase,
-    private val getReelsUseCase: GetReelsUseCase,
+    private val getReelsUseCase: GetGlobalReelsUseCase,
     private val getLikedReelsUseCase: GetLikedReelsUseCase,
     private val toggleReelLikeUseCase: ToggleReelLikeUseCase,
-    private val loadMoreReelsUseCase: LoadMoreReelsUseCase,
+    private val loadMoreReelsUseCase: LoadMoreGlobalReelsUseCase,
     private val shareReelUseCase: ShareReelUseCase,
 ) : BaseScreenModel() {
 
