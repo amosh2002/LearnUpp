@@ -137,6 +137,7 @@ enum class LearnUppStrings(
     SCREEN_COURSES("Courses", "Դասընթացներ", "Курсы"),
     SCREEN_MESSAGES("Messages", "Հաղորդագրություններ", "Сообщения"),
     SCREEN_MORE("More", "Ավելին", "Еще"),
+    SCREEN_EDIT_PROFILE("Edit Profile", "Խմբագրել պրոֆիլը", "Редактировать профиль"),
     SCREEN_NOTIFICATIONS("Notifications", "Ծանուցումներ", "Уведомления"),
     SCREEN_EARNINGS("Earnings", "Եկամուտներ", "Заработок"),
     SCREEN_PAYMENTS("Payment Methods", "Վճարման եղանակներ", "Методы оплаты"),
@@ -193,6 +194,27 @@ enum class LearnUppStrings(
     USERNAME_CHECKING("Checking availability...", "Ստուգում է հասանելիությունը...", "Проверяем доступность..."),
     FULL_NAME_OPTIONAL("Full name (optional)", "Անուն Ազգանուն (ըստ ցանկության)", "Полное имя (необязательно)"),
     COMPLETE_PROFILE_BUTTON("Finish", "Ավարտել", "Готово"),
+    EDIT_PROFILE_TITLE("Edit Profile", "Խմբագրել պրոֆիլը", "Редактировать профиль"),
+    CHANGE_PHOTO("Change Photo", "Փոխել լուսանկարը", "Изменить фото"),
+    PROFILE_FULL_NAME_LABEL("Full Name", "Անուն Ազգանուն", "Полное имя"),
+    PROFILE_EMAIL_LABEL("Email Address", "Էլ. հասցե", "Эл. адрес"),
+    PROFILE_BIO_LABEL("Bio", "Կենսագրություն", "Биография"),
+    PROFILE_BIO_PLACEHOLDER(
+        "Share a short intro about yourself.",
+        "Պատմեք կարճ ձեր մասին։",
+        "Расскажите кратко о себе."
+    ),
+    SAVE_CHANGES("Save Changes", "Պահպանել փոփոխությունները", "Сохранить изменения"),
+    PROFILE_UPDATE_FAILED(
+        "Failed to update profile. Please try again.",
+        "Չհաջողվեց թարմացնել պրոֆիլը։ Կրկին փորձեք։",
+        "Не удалось обновить профиль. Повторите попытку."
+    ),
+    PHOTO_CHANGE_COMING_SOON(
+        "Photo updates are coming soon.",
+        "Լուսանկարի թարմացումները շուտով կլինեն։",
+        "Обновление фото будет доступно позже."
+    ),
 
     // Account / login methods
     ACCOUNT_AND_LOGIN("Account & Login", "Հաշիվ և մուտք", "Аккаунт и вход"),

@@ -2,6 +2,7 @@ package com.learnupp.ui.more
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.learnupp.domain.model.Profile
+import com.learnupp.domain.usecase.auth.CheckUsernameUseCase
 import com.learnupp.domain.usecase.auth.LogoutUseCase
 import com.learnupp.domain.usecase.profile.UpdateProfileUseCase
 import com.learnupp.domain.usecase.courses.GetMyProfileCoursesUseCase
@@ -38,6 +39,7 @@ class MoreScreenModel(
     private val reloadProfile: ReloadProfileUseCase,
     private val getProfile: GetProfileUseCase,
     private val updateProfile: UpdateProfileUseCase,
+    private val checkUsernameUseCase: CheckUsernameUseCase,
     // Videos
     private val preloadVideos: PreloadMyProfileVideosUseCase,
     private val refreshMyProfileVideos: RefreshMyProfileVideosUseCase,
@@ -108,16 +110,20 @@ class MoreScreenModel(
         screenModelScope.launch { loadMoreCourses() }
     }
 
-    fun updateProfileInfo(
+    suspend fun updateProfileInfo(
         username: String? = null,
         fullName: String? = null,
         about: String? = null
-    ) {
-        screenModelScope.launch {
-            updateProfile(username, fullName, about)
-            reloadProfile()
+    ): Boolean {
+        val success = updateProfile(username, fullName, about)
+        if (success) {
+            reloadAll()
         }
+        return success
     }
+
+    suspend fun checkUsername(username: String): Boolean =
+        checkUsernameUseCase(username)
 
     suspend fun logout(): Boolean {
         _isLoading.value = true

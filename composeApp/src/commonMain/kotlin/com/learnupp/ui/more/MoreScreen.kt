@@ -46,7 +46,6 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -73,8 +72,10 @@ import com.learnupp.domain.model.Profile
 import com.learnupp.domain.model.Reel
 import com.learnupp.domain.model.Video
 import com.learnupp.safePush
+import com.learnupp.ui.auth.AuthStartScreen
 import com.learnupp.ui.base.BaseScreen
 import com.learnupp.ui.base.ScreenNameStrings
+import com.learnupp.ui.more.EditProfileScreen
 import com.learnupp.ui.settings.earnings.EarningsScreen
 import com.learnupp.ui.settings.help.HelpSupportScreen
 import com.learnupp.ui.settings.language.LanguageSelectionScreen
@@ -263,7 +264,7 @@ class MoreScreen : BaseScreen(
                                 dialogState.value = null
                                 moreScreenModel.screenModelScope.launch {
                                     val success = moreScreenModel.logout()
-                                    if (success) navigator.replaceAll(com.learnupp.ui.auth.AuthStartScreen())
+                                    if (success) navigator.replaceAll(AuthStartScreen())
                                 }
                             },
                             onDismiss = { dialogState.value = null }
@@ -280,7 +281,7 @@ class MoreScreen : BaseScreen(
             reels = reels,
             onLoadMoreVideos = { moreScreenModel.loadMoreForVideos() },
             onLoadMoreReels = { moreScreenModel.loadMoreForReels() },
-            onEditAbout = { moreScreenModel.updateProfileInfo(about = it) },
+            onEditProfile = { navigator.safePush(EditProfileScreen()) },
             onSettingsClick = { showSettingsSheet = true }
         )
     }
@@ -295,7 +296,7 @@ private fun ProfileScaffold(
     reels: List<Reel>,
     onLoadMoreVideos: () -> Unit,
     onLoadMoreReels: () -> Unit,
-    onEditAbout: (String) -> Unit,
+    onEditProfile: () -> Unit,
     onSettingsClick: () -> Unit,
 ) {
     var selectedTab by remember { mutableStateOf(ProfileTab.Videos) }
@@ -316,7 +317,7 @@ private fun ProfileScaffold(
                 Spacer(Modifier.height(16.dp))
                 AboutSection(
                     text = profile.about,
-                    onEdit = onEditAbout
+                    onEditProfile = onEditProfile
                 )
                 Spacer(Modifier.height(12.dp))
             }
@@ -492,8 +493,7 @@ private fun StatCard(value: String, label: String, modifier: Modifier = Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AboutSection(text: String, onEdit: (String) -> Unit) {
-    var showEditor by remember { mutableStateOf(false) }
+private fun AboutSection(text: String, onEditProfile: () -> Unit) {
     Column(Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -502,7 +502,7 @@ private fun AboutSection(text: String, onEdit: (String) -> Unit) {
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(Modifier.weight(1f))
-            IconButton(onClick = { showEditor = true }) {
+            IconButton(onClick = onEditProfile) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = LearnUppStrings.EDIT_ABOUT.getValue(),
@@ -514,40 +514,6 @@ private fun AboutSection(text: String, onEdit: (String) -> Unit) {
             text = text,
             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
             style = MaterialTheme.typography.bodyMedium
-        )
-    }
-
-    if (showEditor) {
-        var draft by remember(text) { mutableStateOf(text) }
-        androidx.compose.material3.AlertDialog(
-            onDismissRequest = { showEditor = false },
-            title = { Text(LearnUppStrings.EDIT_ABOUT.getValue()) },
-            text = {
-                TextField(
-                    value = draft,
-                    onValueChange = { draft = it }
-                )
-            },
-            confirmButton = {
-                Text(
-                    text = LearnUppStrings.SAVE.getValue(),
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .clickable {
-                            onEdit(draft)
-                            showEditor = false
-                        }
-                )
-            },
-            dismissButton = {
-                Text(
-                    text = LearnUppStrings.CANCEL.getValue(),
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .clickable { showEditor = false }
-                )
-            }
         )
     }
 }

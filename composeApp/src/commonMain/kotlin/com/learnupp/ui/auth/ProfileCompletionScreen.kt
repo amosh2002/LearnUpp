@@ -48,7 +48,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private enum class UsernameStatus { Idle, Checking, Available, Taken, Error }
+public enum class UsernameStatus { Idle, Checking, Available, Taken, Error }
 
 class ProfileCompletionScreen : BaseScreen(
     ScreenNameStrings.PROFILE_SETUP,
