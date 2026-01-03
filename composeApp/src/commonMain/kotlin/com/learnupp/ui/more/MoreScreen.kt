@@ -69,7 +69,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.learnupp.DialogParams
 import com.learnupp.DialogType
 import com.learnupp.LocalDialogState
-import com.learnupp.LocalDialogState
 import com.learnupp.domain.model.Profile
 import com.learnupp.domain.model.Reel
 import com.learnupp.domain.model.Video
@@ -415,12 +414,12 @@ private fun ProfileHeader(profile: Profile, onSettingsClick: () -> Unit) {
                 .weight(1f)
         ) {
             Text(
-                text = profile.fullName,
+                text = profile.fullName ?: "",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = profile.title,
+                text = profile.title ?: "",
                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)
             )
         }
@@ -441,24 +440,24 @@ private fun StatsRow(profile: Profile) {
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         StatCard(
-            value = formatCount(if (profile.isLecturer) profile.students else profile.followers),
+            value = formatCount(if (profile.isLecturer) profile.studentsCount else profile.followersCount),
             label = (
-                if (profile.isLecturer) LearnUppStrings.STUDENTS_LABEL else LearnUppStrings.FOLLOWERS_LABEL
-            ).getValue(),
+                    if (profile.isLecturer) LearnUppStrings.STUDENTS_LABEL else LearnUppStrings.FOLLOWERS_LABEL
+                    ).getValue(),
             modifier = Modifier.weight(1f)
         )
         StatCard(
-            value = formatCount(if (profile.isLecturer) profile.courses else profile.following),
+            value = formatCount(if (profile.isLecturer) profile.coursesCount else profile.followingCount),
             label = (
-                if (profile.isLecturer) LearnUppStrings.COURSES_LABEL else LearnUppStrings.FOLLOWING_LABEL
-            ).getValue(),
+                    if (profile.isLecturer) LearnUppStrings.COURSES_LABEL else LearnUppStrings.FOLLOWING_LABEL
+                    ).getValue(),
             modifier = Modifier.weight(1f)
         )
         StatCard(
-            value = if (profile.isLecturer) formatRating(profile.rating) else formatCount(profile.posts),
+            value = if (profile.isLecturer) formatRating(profile.rating) else formatCount(profile.postsCount),
             label = (
-                if (profile.isLecturer) LearnUppStrings.RATING_LABEL else LearnUppStrings.POSTS_LABEL
-            ).getValue(),
+                    if (profile.isLecturer) LearnUppStrings.RATING_LABEL else LearnUppStrings.POSTS_LABEL
+                    ).getValue(),
             modifier = Modifier.weight(1f)
         )
     }

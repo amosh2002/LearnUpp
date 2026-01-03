@@ -27,25 +27,32 @@ class SupabaseProfileApi(
                 .decodeList<ProfileRow>()
 
             val row = rows.firstOrNull()
-                ?: ProfileRow(userId = user.id, fullName = user.userMetadata?.get("full_name")?.toString() ?: "", title = "")
+                ?: ProfileRow(
+                    userId = user.id,
+                    fullName = user.userMetadata?.get("full_name")?.toString() ?: "",
+                    title = "",
+                    username = user.email ?: "unknown"
+                )
 
             Profile(
-                id = row.userId,
-                fullName = row.fullName ?: "",
-                title = row.title ?: "",
+                userId = row.userId,
+                fullName = row.fullName,
+                title = row.title,
                 avatarUrl = row.avatarUrl,
                 isLecturer = row.isLecturer ?: false,
-                username = row.username,
+                username = row.username ?: user.email?.substringBefore("@") ?: "unknown",
                 isSignUpComplete = row.isSignUpComplete,
                 email = user.email,
                 primaryLogin = null,
                 linkedProviders = emptyList(),
-                students = row.students ?: 0,
-                courses = row.courses ?: 0,
+                studentsCount = row.students ?: 0,
+                coursesCount = row.courses ?: 0,
                 rating = row.rating ?: 0.0,
-                followers = row.followers ?: 0,
-                following = row.following ?: 0,
-                posts = row.posts ?: 0,
+                followersCount = row.followers ?: 0,
+                followingCount = row.following ?: 0,
+                postsCount = row.posts ?: 0,
+                videosCount = row.videosCount ?: 0,
+                reelsCount = row.reelsCount ?: 0,
                 about = row.about ?: "",
             )
         } catch (t: Throwable) {
@@ -64,12 +71,14 @@ private data class ProfileRow(
     @SerialName("is_lecturer") val isLecturer: Boolean? = null,
     val username: String? = null,
     @SerialName("is_signup_complete") val isSignUpComplete: Boolean = false,
-    val students: Int? = null,
-    val courses: Int? = null,
+    @SerialName("students_count") val students: Int? = null,
+    @SerialName("courses_count") val courses: Int? = null,
     val rating: Double? = null,
-    val followers: Int? = null,
-    val following: Int? = null,
-    val posts: Int? = null,
+    @SerialName("followers_count") val followers: Int? = null,
+    @SerialName("following_count") val following: Int? = null,
+    @SerialName("posts_count") val posts: Int? = null,
+    @SerialName("videos_count") val videosCount: Int? = null,
+    @SerialName("reels_count") val reelsCount: Int? = null,
     val about: String? = null,
 )
 

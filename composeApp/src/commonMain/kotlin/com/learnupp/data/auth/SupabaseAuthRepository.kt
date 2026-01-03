@@ -273,7 +273,16 @@ data class ProfileRow(
     val username: String? = null,
     val full_name: String? = null,
     val is_signup_complete: Boolean = false,
-    val about: String? = null
+    val about: String? = null,
+    // Add count fields just in case they are needed here later, though primarily used for Auth checks
+    val students_count: Int? = null,
+    val courses_count: Int? = null,
+    val followers_count: Int? = null,
+    val following_count: Int? = null,
+    val posts_count: Int? = null,
+    val videos_count: Int? = null,
+    val reels_count: Int? = null,
+    val rating: Double? = null,
 ) {
     // Helper properties if you want camelCase usage in code
     val isSignUpComplete get() = is_signup_complete
