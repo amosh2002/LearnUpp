@@ -178,20 +178,6 @@ class SupabaseAuthRepository(
         }
     }
 
-    override suspend fun updateAbout(about: String): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val currentUser = auth.currentUserOrNull() ?: return@withContext false
-            val updates = buildJsonObject { put("about", about) }
-
-            client.from("profiles").update(updates) {
-                filter { eq("user_id", currentUser.id) }
-            }
-            true
-        } catch (t: Throwable) {
-            false
-        }
-    }
-
     override suspend fun isProfileIncomplete(): Boolean = withContext(Dispatchers.IO) {
         // (Your existing implementation here is correct)
         try {

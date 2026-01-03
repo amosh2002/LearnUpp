@@ -12,6 +12,8 @@ import com.learnupp.domain.usecase.auth.CheckUsernameUseCase
 import com.learnupp.domain.usecase.auth.CheckUsernameUseCaseImpl
 import com.learnupp.domain.usecase.auth.LoginWithProviderUseCase
 import com.learnupp.domain.usecase.auth.LoginWithProviderUseCaseImpl
+import com.learnupp.domain.usecase.profile.UpdateProfileUseCase
+import com.learnupp.domain.usecase.profile.UpdateProfileUseCaseImpl
 import com.learnupp.domain.usecase.messages.GetMessagesUseCase
 import com.learnupp.domain.usecase.messages.GetMessagesUseCaseImpl
 import com.learnupp.domain.usecase.messages.PreloadMessagesUseCase
@@ -60,8 +62,6 @@ import com.learnupp.domain.usecase.profile.PreloadProfileUseCase
 import com.learnupp.domain.usecase.profile.PreloadProfileUseCaseImpl
 import com.learnupp.domain.usecase.profile.ReloadProfileUseCase
 import com.learnupp.domain.usecase.profile.ReloadProfileUseCaseImpl
-import com.learnupp.domain.usecase.profile.UpdateProfileAboutUseCase
-import com.learnupp.domain.usecase.profile.UpdateProfileAboutUseCaseImpl
 import com.learnupp.domain.usecase.reels.GetGlobalReelsUseCase
 import com.learnupp.domain.usecase.reels.GetGlobalReelsUseCaseImpl
 import com.learnupp.domain.usecase.reels.GetLikedReelsUseCase
@@ -119,10 +119,9 @@ val domainModule = module {
 
     // Profile
     single<GetProfileUseCase> { GetProfileUseCaseImpl(get()) }
+    single<UpdateProfileUseCase> { UpdateProfileUseCaseImpl(get()) }
     single<PreloadProfileUseCase> { PreloadProfileUseCaseImpl(get()) }
     single<ReloadProfileUseCase> { ReloadProfileUseCaseImpl(get()) }
-    single<UpdateProfileAboutUseCase> { UpdateProfileAboutUseCaseImpl(get()) }
-    single<UpdateProfileAboutUseCase> { UpdateProfileAboutUseCaseImpl(get()) }
 
     // Courses
     single<GetGlobalCoursesUseCase> { GetGlobalCoursesUseCaseImpl(get()) }

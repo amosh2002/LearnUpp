@@ -280,7 +280,7 @@ class MoreScreen : BaseScreen(
             reels = reels,
             onLoadMoreVideos = { moreScreenModel.loadMoreForVideos() },
             onLoadMoreReels = { moreScreenModel.loadMoreForReels() },
-            onEditAbout = { moreScreenModel.updateAbout(it) },
+            onEditAbout = { moreScreenModel.updateProfileInfo(about = it) },
             onSettingsClick = { showSettingsSheet = true }
         )
     }

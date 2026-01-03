@@ -10,7 +10,6 @@ interface AuthRepository {
     suspend fun completeProfile(username: String, fullName: String?): Boolean
     suspend fun isUsernameAvailable(username: String): Boolean
     suspend fun loginWithProvider(provider: AuthProvider): Boolean = false
-    suspend fun updateAbout(about: String): Boolean = false
     suspend fun logout(): Boolean
     suspend fun isProfileIncomplete(): Boolean
 }

@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository : BaseRepository {
     fun getProfile(): Flow<Profile>
-    suspend fun updateAbout(about: String)
+    suspend fun updateProfile(username: String?, fullName: String?, about: String?): Boolean
 }
 

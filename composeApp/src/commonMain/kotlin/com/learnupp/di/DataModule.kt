@@ -65,7 +65,7 @@ val dataModule = module {
     // Profile – Supabase-backed
     single<ProfileApi> { SupabaseProfileApi(client = get()) }
     single<ProfileStorage> { InMemoryProfileStorage() }
-    single<ProfileRepository> { ProfileRepositoryImpl(get(), get()) }
+    single<ProfileRepository> { ProfileRepositoryImpl(get(), get(), get()) }
 
     // Messages (mocked)
     single<MessagesApi> { MockMessagesApi() }

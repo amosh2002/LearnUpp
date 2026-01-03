@@ -3,6 +3,7 @@ package com.learnupp.ui.more
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.learnupp.domain.model.Profile
 import com.learnupp.domain.usecase.auth.LogoutUseCase
+import com.learnupp.domain.usecase.profile.UpdateProfileUseCase
 import com.learnupp.domain.usecase.courses.GetMyProfileCoursesUseCase
 import com.learnupp.domain.usecase.courses.LoadMoreMyProfileCoursesUseCase
 import com.learnupp.domain.usecase.courses.PreloadMyProfileCoursesUseCase
@@ -10,7 +11,6 @@ import com.learnupp.domain.usecase.courses.RefreshMyProfileCoursesUseCase
 import com.learnupp.domain.usecase.profile.GetProfileUseCase
 import com.learnupp.domain.usecase.profile.PreloadProfileUseCase
 import com.learnupp.domain.usecase.profile.ReloadProfileUseCase
-import com.learnupp.domain.usecase.profile.UpdateProfileAboutUseCase
 import com.learnupp.domain.usecase.reels.GetMyProfileReelsUseCase
 import com.learnupp.domain.usecase.reels.LoadMoreMyProfileReelsUseCase
 import com.learnupp.domain.usecase.reels.PreloadMyProfileReelsUseCase
@@ -37,7 +37,7 @@ class MoreScreenModel(
     private val preloadProfile: PreloadProfileUseCase,
     private val reloadProfile: ReloadProfileUseCase,
     private val getProfile: GetProfileUseCase,
-    private val updateProfileAbout: UpdateProfileAboutUseCase,
+    private val updateProfile: UpdateProfileUseCase,
     // Videos
     private val preloadVideos: PreloadMyProfileVideosUseCase,
     private val refreshMyProfileVideos: RefreshMyProfileVideosUseCase,
@@ -77,7 +77,6 @@ class MoreScreenModel(
             preloadVideos()
             preloadReels()
             preloadCourses()
-            reloadAll()
         }
     }
 
@@ -89,7 +88,7 @@ class MoreScreenModel(
     }
 
     fun refreshProfile() {
-        screenModelScope.launch { 
+        screenModelScope.launch {
             reloadProfile()
             refreshMyProfileVideos()
             refreshMyProfileReels()
@@ -109,9 +108,13 @@ class MoreScreenModel(
         screenModelScope.launch { loadMoreCourses() }
     }
 
-    fun updateAbout(text: String) {
+    fun updateProfileInfo(
+        username: String? = null,
+        fullName: String? = null,
+        about: String? = null
+    ) {
         screenModelScope.launch {
-            updateProfileAbout(text)
+            updateProfile(username, fullName, about)
             reloadProfile()
         }
     }
