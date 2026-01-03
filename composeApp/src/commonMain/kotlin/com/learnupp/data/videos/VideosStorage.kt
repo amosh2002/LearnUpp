@@ -4,12 +4,14 @@ import com.learnupp.domain.model.Video
 import kotlinx.coroutines.flow.Flow
 
 interface VideosStorage {
-    fun getVideos(): Flow<List<Video>>
+    fun getGlobalFeed(): Flow<List<Video>>
+    fun getMyProfileFeed(): Flow<List<Video>>
     fun getLiked(): Flow<Set<String>>
-    suspend fun save(videos: List<Video>)
-    suspend fun append(videos: List<Video>)
+    fun saveGlobal(videos: List<Video>)
+    fun appendGlobal(videos: List<Video>)
+    fun saveMyProfile(videos: List<Video>)
+    fun appendMyProfile(videos: List<Video>)
     suspend fun toggleLike(videoId: String)
-    suspend fun share(videoId: String)
 }
 
 

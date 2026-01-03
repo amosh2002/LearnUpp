@@ -105,7 +105,7 @@ val dataModule = module {
     // Videos – Supabase-backed
     single<VideosApi> { SupabaseVideosApi(client = get()) }
     single<VideosStorage> { InMemoryVideosStorage() }
-    single<VideosRepository> { VideosRepositoryImpl(get(), get()) }
+    single<VideosRepository> { VideosRepositoryImpl(get(), get(), get()) }
 }
 
 

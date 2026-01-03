@@ -11,10 +11,10 @@ import com.learnupp.domain.usecase.reels.GetReelsUseCase
 import com.learnupp.domain.usecase.reels.LoadMoreReelsUseCase
 import com.learnupp.domain.usecase.reels.PreloadReelsUseCase
 import com.learnupp.domain.usecase.reels.ReloadReelsUseCase
-import com.learnupp.domain.usecase.videos.GetVideosUseCase
-import com.learnupp.domain.usecase.videos.LoadMoreVideosUseCase
-import com.learnupp.domain.usecase.videos.PreloadVideosUseCase
-import com.learnupp.domain.usecase.videos.ReloadVideosUseCase
+import com.learnupp.domain.usecase.videos.GetMyProfileVideosUseCase
+import com.learnupp.domain.usecase.videos.LoadMoreMyProfileVideosUseCase
+import com.learnupp.domain.usecase.videos.PreloadMyProfileVideosUseCase
+import com.learnupp.domain.usecase.videos.RefreshMyProfileVideosUseCase
 import com.learnupp.ui.base.BaseScreenModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,10 +35,10 @@ class MoreScreenModel(
     private val getProfile: GetProfileUseCase,
     private val updateProfileAbout: UpdateProfileAboutUseCase,
     // Videos
-    private val preloadVideos: PreloadVideosUseCase,
-    private val reloadVideos: ReloadVideosUseCase,
-    private val getVideos: GetVideosUseCase,
-    private val loadMoreVideos: LoadMoreVideosUseCase,
+    private val preloadVideos: PreloadMyProfileVideosUseCase,
+    private val refreshMyProfileVideos: RefreshMyProfileVideosUseCase,
+    private val getMyProfileVideos: GetMyProfileVideosUseCase,
+    private val loadMoreMyProfileVideos: LoadMoreMyProfileVideosUseCase,
     // Reels
     private val preloadReels: PreloadReelsUseCase,
     private val reloadReels: ReloadReelsUseCase,
@@ -53,7 +53,7 @@ class MoreScreenModel(
     val profile = getProfile()
         .stateIn(screenModelScope, SharingStarted.Eagerly, Profile.empty())
 
-    val videos = getVideos()
+    val videos = getMyProfileVideos()
         .stateIn(screenModelScope, SharingStarted.Eagerly, emptyList())
 
     val reels = getReels()
@@ -70,16 +70,19 @@ class MoreScreenModel(
 
     private suspend fun reloadAll() {
         reloadProfile()
-        reloadVideos()
+        refreshMyProfileVideos()
         reloadReels()
     }
 
     fun refreshProfile() {
-        screenModelScope.launch { reloadProfile() }
+        screenModelScope.launch { 
+            reloadProfile()
+            refreshMyProfileVideos()
+        }
     }
 
     fun loadMoreForVideos() {
-        screenModelScope.launch { loadMoreVideos() }
+        screenModelScope.launch { loadMoreMyProfileVideos() }
     }
 
     fun loadMoreForReels() {

@@ -2,10 +2,10 @@ package com.learnupp.ui.videos
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.learnupp.domain.model.Video
+import com.learnupp.domain.usecase.videos.GetGlobalVideosUseCase
 import com.learnupp.domain.usecase.videos.GetLikedVideosUseCase
-import com.learnupp.domain.usecase.videos.GetVideosUseCase
-import com.learnupp.domain.usecase.videos.LoadMoreVideosUseCase
-import com.learnupp.domain.usecase.videos.PreloadVideosUseCase
+import com.learnupp.domain.usecase.videos.LoadMoreGlobalVideosUseCase
+import com.learnupp.domain.usecase.videos.PreloadGlobalVideosUseCase
 import com.learnupp.domain.usecase.videos.ReloadVideosUseCase
 import com.learnupp.domain.usecase.videos.ShareVideoUseCase
 import com.learnupp.domain.usecase.videos.ToggleVideoLikeUseCase
@@ -22,12 +22,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class VideosScreenModel(
-    private val preloadVideos: PreloadVideosUseCase,
+    private val preloadVideos: PreloadGlobalVideosUseCase,
     private val reloadVideos: ReloadVideosUseCase,
-    private val getVideos: GetVideosUseCase,
+    private val getGlobalVideos: GetGlobalVideosUseCase,
     private val getLiked: GetLikedVideosUseCase,
     private val toggleVideoLike: ToggleVideoLikeUseCase,
-    private val loadMore: LoadMoreVideosUseCase,
+    private val loadMore: LoadMoreGlobalVideosUseCase,
     private val shareVideo: ShareVideoUseCase,
 ) : BaseScreenModel() {
 
@@ -43,7 +43,7 @@ class VideosScreenModel(
     }
 
     private suspend fun loadVideos() {
-        val list = getVideos()
+        val list = getGlobalVideos()
             .catch { emit(emptyList()) }
             .flowOn(Dispatchers.IO)
             .first()

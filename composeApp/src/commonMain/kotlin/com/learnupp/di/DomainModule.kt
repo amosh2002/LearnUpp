@@ -68,14 +68,22 @@ import com.learnupp.domain.usecase.reels.ShareReelUseCase
 import com.learnupp.domain.usecase.reels.ShareReelUseCaseImpl
 import com.learnupp.domain.usecase.reels.ToggleReelLikeUseCase
 import com.learnupp.domain.usecase.reels.ToggleReelLikeUseCaseImpl
+import com.learnupp.domain.usecase.videos.GetGlobalVideosUseCase
+import com.learnupp.domain.usecase.videos.GetGlobalVideosUseCaseImpl
 import com.learnupp.domain.usecase.videos.GetLikedVideosUseCase
 import com.learnupp.domain.usecase.videos.GetLikedVideosUseCaseImpl
-import com.learnupp.domain.usecase.videos.GetVideosUseCase
-import com.learnupp.domain.usecase.videos.GetVideosUseCaseImpl
-import com.learnupp.domain.usecase.videos.LoadMoreVideosUseCase
-import com.learnupp.domain.usecase.videos.LoadMoreVideosUseCaseImpl
-import com.learnupp.domain.usecase.videos.PreloadVideosUseCase
-import com.learnupp.domain.usecase.videos.PreloadVideosUseCaseImpl
+import com.learnupp.domain.usecase.videos.GetMyProfileVideosUseCase
+import com.learnupp.domain.usecase.videos.GetMyProfileVideosUseCaseImpl
+import com.learnupp.domain.usecase.videos.LoadMoreGlobalVideosUseCase
+import com.learnupp.domain.usecase.videos.LoadMoreGlobalVideosUseCaseImpl
+import com.learnupp.domain.usecase.videos.LoadMoreMyProfileVideosUseCase
+import com.learnupp.domain.usecase.videos.LoadMoreMyProfileVideosUseCaseImpl
+import com.learnupp.domain.usecase.videos.PreloadGlobalVideosUseCase
+import com.learnupp.domain.usecase.videos.PreloadGlobalVideosUseCaseImpl
+import com.learnupp.domain.usecase.videos.PreloadMyProfileVideosUseCase
+import com.learnupp.domain.usecase.videos.PreloadMyProfileVideosUseCaseImpl
+import com.learnupp.domain.usecase.videos.RefreshMyProfileVideosUseCase
+import com.learnupp.domain.usecase.videos.RefreshMyProfileVideosUseCaseImpl
 import com.learnupp.domain.usecase.videos.ReloadVideosUseCase
 import com.learnupp.domain.usecase.videos.ReloadVideosUseCaseImpl
 import com.learnupp.domain.usecase.videos.ShareVideoUseCase
@@ -139,12 +147,17 @@ val domainModule = module {
     single<ShareReelUseCase> { ShareReelUseCaseImpl(get()) }
 
     // Videos
-    single<GetVideosUseCase> { GetVideosUseCaseImpl(get()) }
+    single<GetGlobalVideosUseCase> { GetGlobalVideosUseCaseImpl(get()) }
+    single<GetMyProfileVideosUseCase> { GetMyProfileVideosUseCaseImpl(get()) }
+    single<LoadMoreGlobalVideosUseCase> { LoadMoreGlobalVideosUseCaseImpl(get()) }
+    single<LoadMoreMyProfileVideosUseCase> { LoadMoreMyProfileVideosUseCaseImpl(get()) }
+    single<RefreshMyProfileVideosUseCase> { RefreshMyProfileVideosUseCaseImpl(get()) }
+    single<PreloadGlobalVideosUseCase> { PreloadGlobalVideosUseCaseImpl(get()) }
+    single<PreloadMyProfileVideosUseCase> { PreloadMyProfileVideosUseCaseImpl(get()) }
+
     single<GetLikedVideosUseCase> { GetLikedVideosUseCaseImpl(get()) }
-    single<PreloadVideosUseCase> { PreloadVideosUseCaseImpl(get()) }
     single<ReloadVideosUseCase> { ReloadVideosUseCaseImpl(get()) }
     single<ToggleVideoLikeUseCase> { ToggleVideoLikeUseCaseImpl(get()) }
-    single<LoadMoreVideosUseCase> { LoadMoreVideosUseCaseImpl(get()) }
     single<ShareVideoUseCase> { ShareVideoUseCaseImpl(get()) }
 }
 
